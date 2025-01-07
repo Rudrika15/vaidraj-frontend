@@ -3,11 +3,13 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/screens/mobile_verification/mobile_verification.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatelessWidget with NavigateHelper {
   const WelcomePage({super.key});
 
   @override
@@ -61,7 +63,9 @@ class WelcomePage extends StatelessWidget {
             /// btn to get started
             PrimaryBtn(
               btnText: "Get Statrted",
-              onTap: (){},
+              onTap: () {
+                push(context, const MobileVerification());
+              },
             )
           ],
         )),
