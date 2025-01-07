@@ -64,7 +64,7 @@ class WelcomePage extends StatelessWidget with NavigateHelper {
             PrimaryBtn(
               btnText: "Get Statrted",
               onTap: () {
-                push(context, const MobileVerification());
+                push(context, MobileVerification());
               },
             )
           ],

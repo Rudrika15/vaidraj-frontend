@@ -10,26 +10,58 @@ class CustomTextFieldWidget extends StatelessWidget {
       this.prefixIcon,
       this.suffixIcon,
       this.prefixColor,
-      this.suffixColor});
+      this.suffixColor,
+      required this.validator,
+      this.maxLength,
+      required this.keyboardType,
+      required this.controller,
+      this.minLines,
+      this.maxLines,
+      this.obscureText = false,
+      this.enabled = true,
+      this.suffix});
   final String hintText;
   final IconData? prefixIcon;
   final Color? prefixColor;
   final Color? suffixColor;
   final IconData? suffixIcon;
+  final String? Function(String?)? validator;
+  final int? maxLength;
+  final TextInputType? keyboardType;
+  final TextEditingController? controller;
+  final int? minLines;
+  final int? maxLines;
+  final bool obscureText;
+  final bool enabled;
+  final Widget? suffix;
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      validator: validator,
+      controller: controller,
+      maxLength: maxLength,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      enabled: enabled,
+      style: TextSizeHelper.smallHeaderStyle,
+      minLines: minLines,
+      maxLines: maxLines,
       decoration: BorderHelper.inputBorder.copyWith(
         hintText: hintText,
+        counterText: "",
         hintStyle: TextSizeHelper.smallTextStyle,
         prefixIcon: Icon(
           prefixIcon,
           color: prefixColor ?? AppColors.greenColor,
         ),
-        suffixIcon: Icon(
-          suffixIcon,
-          color: suffixColor ?? AppColors.greenColor,
-        ),
+        suffixIcon: suffix == null
+            ? Icon(
+                suffixIcon,
+                color: suffixColor ?? AppColors.greenColor,
+              )
+            : null,
+        suffix: suffix,
       ),
     );
   }
