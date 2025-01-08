@@ -14,7 +14,9 @@ class CustomContainer extends StatelessWidget {
       this.borderWidth,
       this.image,
       this.backGroundColor,
-      this.borderRadius});
+      this.borderRadius,
+      this.boxShadow,
+      this.shape = BoxShape.rectangle});
   final AlignmentGeometry? alignment;
   final Widget? child;
   final BoxConstraints? constraints;
@@ -27,6 +29,8 @@ class CustomContainer extends StatelessWidget {
   final DecorationImage? image;
   final Color? backGroundColor;
   final BorderRadiusGeometry? borderRadius;
+  final List<BoxShadow>? boxShadow;
+  final BoxShape shape;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,7 +47,9 @@ class CustomContainer extends StatelessWidget {
           ),
           borderRadius: borderRadius,
           color: backGroundColor,
-          image: image),
+          image: image,
+          shape:shape ,
+          boxShadow: boxShadow),
       child: child,
     );
   }
