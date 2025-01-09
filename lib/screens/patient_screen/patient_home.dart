@@ -82,38 +82,49 @@ class SpecialitiesRenderWidget extends StatelessWidget {
           itemCount: 10,
           padding: EdgeInsets.only(left: AppSizes.size10),
           itemBuilder: (context, index) {
-            return CustomContainer(
-              width: 30.w,
-              borderColor: AppColors.brownColor,
-              borderWidth: 1,
-              borderRadius: BorderRadius.circular(AppSizes.size10),
-              child: const Column(
-                children: [
-                  Expanded(
-                    flex: 8,
-                    child: CustomContainer(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(AppSizes.size10),
-                          topRight: Radius.circular(AppSizes.size10)),
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/pain.jpg"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Rheumatoid",
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )
-                ],
-              ),
-            );
+            return SpecialityTempletContainer();
           },
         ),
+      ),
+    );
+  }
+}
+
+class SpecialityTempletContainer extends StatelessWidget {
+  const SpecialityTempletContainer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomContainer(
+      width: 30.w,
+      borderColor: AppColors.brownColor,
+      borderWidth: 1,
+      borderRadius: BorderRadius.circular(AppSizes.size10),
+      child: const Column(
+        children: [
+          Expanded(
+            flex: 8,
+            child: CustomContainer(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(AppSizes.size10),
+                  topRight: Radius.circular(AppSizes.size10)),
+              image: DecorationImage(
+                image: AssetImage("assets/images/pain.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              "Rheumatoid",
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
+          )
+        ],
       ),
     );
   }

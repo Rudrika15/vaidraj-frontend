@@ -117,6 +117,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                             children: [
                               CustomTextFieldWidget(
                                 hintText: "Password",
+                                isGreenBorder: false,
                                 obscureText: showPassword,
                                 controller: passwordController,
                                 maxLines: 1,
@@ -167,6 +168,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                             padding: EdgeInsets.symmetric(horizontal: 10.w),
                             child: CustomTextFieldWidget(
                                 hintText: "Date Of Birth",
+                                isGreenBorder: false,
                                 prefixIcon: Icons.cake_outlined,
                                 suffix: IconButton(
                                     onPressed: () async {
@@ -204,6 +206,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                 children: [
                                   CustomTextFieldWidget(
                                     hintText: "Name",
+                                    isGreenBorder: false,
                                     controller: nameController,
                                     keyboardType: TextInputType.text,
                                     maxLength: 30,
@@ -218,6 +221,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   MethodHelper.heightBox(height: 1.h),
                                   CustomTextFieldWidget(
                                     hintText: "Contact Number",
+                                    isGreenBorder: false,
                                     controller: numberController,
                                     keyboardType: TextInputType.number,
                                     maxLength: 10,
@@ -232,6 +236,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   MethodHelper.heightBox(height: 1.h),
                                   CustomTextFieldWidget(
                                     hintText: "Email",
+                                    isGreenBorder: false,
                                     controller: emailController,
                                     keyboardType: TextInputType.emailAddress,
                                     maxLength: 40,
@@ -252,6 +257,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   ),
                                   CustomTextFieldWidget(
                                       hintText: "Date Of Birth",
+                                      isGreenBorder: false,
                                       prefixIcon: Icons.cake_outlined,
                                       suffix: IconButton(
                                           onPressed: () async {
@@ -310,6 +316,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   MethodHelper.heightBox(height: 1.h),
                                   CustomTextFieldWidget(
                                     hintText: "Address",
+                                    isGreenBorder: false,
                                     controller: addressController,
                                     minLines: 2,
                                     keyboardType: TextInputType.text,

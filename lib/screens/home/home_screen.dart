@@ -5,6 +5,7 @@ import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/screens/patient_screen/patient_home.dart';
+import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import '../../constants/color.dart';
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> screensTab = [
     PatientHomeScreen(),
-    Screen(number: "Tab 2"),
+    SpecialitiesScreen(),
     Screen(number: "Tab 3"),
     Screen(number: "Tab 4"),
     Screen(number: "Tab 5"),
