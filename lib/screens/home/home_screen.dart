@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedTabIndex = 0;
   int _selectedNavTabIndex = 0;
-  
+
   final List<Widget> screensNav = const [
     Screen(number: "Nav 1"),
     Screen(number: "Nav 2"),

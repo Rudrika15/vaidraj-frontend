@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/screens/home/home_screen.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_dropdown.dart';
+import 'package:vaidraj/widgets/green_divider.dart';
 import 'dart:math' as math;
 import '../../constants/color.dart';
 import '../../constants/sizes.dart';
@@ -95,16 +96,13 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                           .copyWith(color: AppColors.brownColor))
                 ],
               ),
-              Divider(
-                thickness: 2,
-                color: AppColors.greenColor,
-                indent: widget.UserStatus == "PATIENT"
-                    ? 25.w
-                    : widget.UserStatus == "NEW"
-                        ? 28.w
-                        : 16.w,
-                endIndent: 50.w,
-              ),
+              GreenDividerLine(
+                  endIndent: 50.w,
+                  indent: widget.UserStatus == "PATIENT"
+                      ? 25.w
+                      : widget.UserStatus == "NEW"
+                          ? 28.w
+                          : 16.w),
               MethodHelper.heightBox(height: 5.h),
               widget.UserStatus == "STAFF"
                   ?

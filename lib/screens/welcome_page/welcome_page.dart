@@ -9,6 +9,8 @@ import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 
+import '../../widgets/green_divider.dart';
+
 class WelcomePage extends StatelessWidget with NavigateHelper {
   const WelcomePage({super.key});
 
@@ -40,9 +42,7 @@ class WelcomePage extends StatelessWidget with NavigateHelper {
                         .copyWith(color: AppColors.brownColor))
               ],
             ),
-            Divider(
-              thickness: 2,
-              color: AppColors.greenColor,
+            GreenDividerLine(
               indent: 35.w,
               endIndent: 50.w,
             ),

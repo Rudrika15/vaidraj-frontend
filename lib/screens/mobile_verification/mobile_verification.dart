@@ -7,6 +7,7 @@ import 'package:vaidraj/screens/signin_signup/sign_in_sign_up.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
+import 'package:vaidraj/widgets/green_divider.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import 'dart:math' as math;
 
@@ -71,12 +72,7 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                             .copyWith(color: AppColors.brownColor))
                   ],
                 ),
-                Divider(
-                  thickness: 2,
-                  color: AppColors.greenColor,
-                  indent: 16.w,
-                  endIndent: 50.w,
-                ),
+                GreenDividerLine(endIndent: 50.w, indent: 16.w),
                 MethodHelper.heightBox(height: 5.h),
                 Form(
                     key: formkey,
