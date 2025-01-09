@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/screens/patient_screen/about_us.dart';
+import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
+import 'package:vaidraj/screens/patient_screen/patient_home.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import '../../constants/color.dart';
@@ -27,13 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<Widget> screensTab = const [
-    Screen(number: "Tab 1"),
+    PatientHomeScreen(),
     Screen(number: "Tab 2"),
     Screen(number: "Tab 3"),
     Screen(number: "Tab 4"),
     Screen(number: "Tab 5"),
-    Screen(number: "Tab 6"),
-    Screen(number: "Tab 7"),
+    AboutUsScreen(),
+    GetInTouchScreen(),
   ];
 
   final List<Map<String, dynamic>> drawerOptions = [
@@ -88,28 +91,52 @@ class _HomeScreenState extends State<HomeScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: AppColors.whiteColor,
+      surfaceTintColor: AppColors.whiteColor,
       title: Text(
-        widget.isDoctor ? "Hello Doctor" : "Hello Patient",
+        widget.isDoctor
+            ? "Hello Doctor"
+            : drawerOptions[_selectedTabIndex]['text'],
         style: TextSizeHelper.mediumTextStyle
             .copyWith(color: AppColors.brownColor),
       ),
-      leading: Padding(
-        padding: EdgeInsets.only(left: 5.w),
-        child: Image.asset(AppStrings.logo),
-      ),
+      leading: widget.isDoctor
+          ? const VaidrajLogo()
+          : _selectedTabIndex != 0
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedTabIndex = 0;
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: AppColors.brownColor,
+                  ))
+              : const VaidrajLogo(),
       actions: _buildAppBarActions(),
     );
   }
 
-  List<Widget> _buildAppBarActions() {
-    List<Widget> actions = [
-      IconButton.filledTonal(
-        onPressed: () {},
-        style: const ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(AppColors.backgroundColor)),
-        icon: const Icon(Icons.notifications, color: AppColors.brownColor),
-      ),
-    ];
+  List<Widget>? _buildAppBarActions() {
+    List<Widget> actions = [];
+    widget.isDoctor
+        ? actions.add(IconButton.filledTonal(
+            onPressed: () {},
+            style: const ButtonStyle(
+                backgroundColor:
+                    WidgetStatePropertyAll(AppColors.backgroundColor)),
+            icon: const Icon(Icons.notifications, color: AppColors.brownColor),
+          ))
+        : _selectedTabIndex != 0
+            ? null
+            : actions.add(IconButton.filledTonal(
+                onPressed: () {},
+                style: const ButtonStyle(
+                    backgroundColor:
+                        WidgetStatePropertyAll(AppColors.backgroundColor)),
+                icon: const Icon(Icons.notifications,
+                    color: AppColors.brownColor),
+              ));
 
     if (widget.isDoctor) {
       actions.add(SizedBox(width: 5.w));
@@ -133,6 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _selectedNavTabIndex = value;
           });
         },
+        indicatorColor: AppColors.lightBackGroundColor,
         backgroundColor: AppColors.backgroundColor,
         destinations: const [
           NavigationDestination(
@@ -167,6 +195,20 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedTabIndex = index;
       _scaffoldKey.currentState?.closeEndDrawer();
     });
+  }
+}
+
+class VaidrajLogo extends StatelessWidget {
+  const VaidrajLogo({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 5.w),
+      child: Image.asset(AppStrings.logo),
+    );
   }
 }
 
