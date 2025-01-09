@@ -14,4 +14,17 @@ class BorderHelper {
     focusedErrorBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: AppColors.errorColor)),
   );
+
+  static InputDecoration greenInputBorder = const InputDecoration(
+    border: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.greenColor)),
+    errorBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.errorColor)),
+    enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.greenColor)),
+    focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.greenColor)),
+    focusedErrorBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.errorColor)),
+  );
 }

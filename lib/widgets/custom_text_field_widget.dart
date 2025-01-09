@@ -19,7 +19,8 @@ class CustomTextFieldWidget extends StatelessWidget {
       this.maxLines,
       this.obscureText = false,
       this.enabled = true,
-      this.suffix});
+      this.suffix,
+      this.isGreenBorder = true});
   final String hintText;
   final IconData? prefixIcon;
   final Color? prefixColor;
@@ -34,6 +35,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final bool enabled;
   final Widget? suffix;
+  final bool isGreenBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -47,22 +49,43 @@ class CustomTextFieldWidget extends StatelessWidget {
       style: TextSizeHelper.smallHeaderStyle,
       minLines: minLines,
       maxLines: maxLines,
-      decoration: BorderHelper.inputBorder.copyWith(
-        hintText: hintText,
-        counterText: "",
-        hintStyle: TextSizeHelper.smallTextStyle,
-        prefixIcon: Icon(
-          prefixIcon,
-          color: prefixColor ?? AppColors.greenColor,
-        ),
-        suffixIcon: suffix == null
-            ? Icon(
-                suffixIcon,
-                color: suffixColor ?? AppColors.greenColor,
-              )
-            : null,
-        suffix: suffix,
-      ),
+      decoration: isGreenBorder
+          ? BorderHelper.greenInputBorder.copyWith(
+              hintText: hintText,
+              counterText: "",
+              hintStyle: TextSizeHelper.smallTextStyle,
+              prefixIcon: prefixIcon != null
+                  ? Icon(
+                      prefixIcon,
+                      color: prefixColor ?? AppColors.greenColor,
+                    )
+                  : null,
+              suffixIcon: suffix == null
+                  ? Icon(
+                      suffixIcon,
+                      color: suffixColor ?? AppColors.greenColor,
+                    )
+                  : null,
+              suffix: suffix,
+            )
+          : BorderHelper.inputBorder.copyWith(
+              hintText: hintText,
+              counterText: "",
+              hintStyle: TextSizeHelper.smallTextStyle,
+              prefixIcon: prefixIcon != null
+                  ? Icon(
+                      prefixIcon,
+                      color: prefixColor ?? AppColors.greenColor,
+                    )
+                  : null,
+              suffixIcon: suffix == null
+                  ? Icon(
+                      suffixIcon,
+                      color: suffixColor ?? AppColors.greenColor,
+                    )
+                  : null,
+              suffix: suffix,
+            ),
     );
   }
 }

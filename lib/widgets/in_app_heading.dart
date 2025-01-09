@@ -6,11 +6,11 @@ import '../constants/text_size.dart';
 import 'custom_container.dart';
 
 class InScreenHeading extends StatelessWidget {
-  const InScreenHeading({
-    super.key,
-    required this.heading,
-  });
+  const InScreenHeading(
+      {super.key, required this.heading, this.endIndent, this.indent});
   final String heading;
+  final double? endIndent;
+  final double? indent;
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
@@ -23,7 +23,7 @@ class InScreenHeading extends StatelessWidget {
             style: TextSizeHelper.mediumHeaderStyle
                 .copyWith(color: AppColors.brownColor),
           ),
-          GreenDividerLine(endIndent: 70.w, indent: 1.w)
+          GreenDividerLine(endIndent: endIndent ?? 70.w, indent: indent ?? 1.w)
         ],
       ),
     );

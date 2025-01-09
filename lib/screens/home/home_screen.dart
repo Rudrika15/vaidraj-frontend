@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Screen(number: "Nav 4"),
   ];
 
-  final List<Widget> screensTab = const [
+  final List<Widget> screensTab = [
     PatientHomeScreen(),
     Screen(number: "Tab 2"),
     Screen(number: "Tab 3"),
@@ -100,7 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
             .copyWith(color: AppColors.brownColor),
       ),
       leading: widget.isDoctor
-          ? const VaidrajLogo()
+          ? Padding(
+              padding: EdgeInsets.only(left: 3.w),
+              child: const VaidrajLogo(),
+            )
           : _selectedTabIndex != 0
               ? IconButton(
                   onPressed: () {
@@ -112,7 +115,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icons.arrow_back,
                     color: AppColors.brownColor,
                   ))
-              : const VaidrajLogo(),
+              : Padding(
+                  padding: EdgeInsets.only(left: 3.w),
+                  child: const VaidrajLogo(),
+                ),
       actions: _buildAppBarActions(),
     );
   }
@@ -205,10 +211,7 @@ class VaidrajLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 5.w),
-      child: Image.asset(AppStrings.logo),
-    );
+    return Image.asset(AppStrings.logo);
   }
 }
 
