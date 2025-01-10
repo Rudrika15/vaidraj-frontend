@@ -5,6 +5,7 @@ import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/screens/patient_screen/patient_home.dart';
+import 'package:vaidraj/screens/patient_screen/products.dart';
 import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> screensTab = [
     PatientHomeScreen(),
     SpecialitiesScreen(),
-    Screen(number: "Tab 3"),
+    ProductsScreen(),
     Screen(number: "Tab 4"),
     Screen(number: "Tab 5"),
     AboutUsScreen(),
@@ -56,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       backgroundColor: AppColors.whiteColor,
       endDrawer: _buildDrawer(),
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(isDoctor: widget.isDoctor),
       body: widget.isDoctor
           ? screensNav[_selectedNavTabIndex]
           : screensTab[_selectedTabIndex],
@@ -89,18 +90,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar({required bool isDoctor}) {
     return AppBar(
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: AppColors.whiteColor,
       title: Text(
-        widget.isDoctor
-            ? "Hello Doctor"
-            : drawerOptions[_selectedTabIndex]['text'],
+        isDoctor ? "Hello Doctor" : drawerOptions[_selectedTabIndex]['text'],
         style: TextSizeHelper.mediumTextStyle
             .copyWith(color: AppColors.brownColor),
       ),
-      leading: widget.isDoctor
+      leading: isDoctor
           ? Padding(
               padding: EdgeInsets.only(left: 3.w),
               child: const VaidrajLogo(),

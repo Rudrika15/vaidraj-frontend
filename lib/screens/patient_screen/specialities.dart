@@ -25,7 +25,7 @@ class SpecialitiesScreen extends StatelessWidget {
               itemCount: 20,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return SpecialityTempletContainer();
+                return SpecialityTempletContainer( image: "",title: "Rheumatoid",);
               },
             ),
           ),
