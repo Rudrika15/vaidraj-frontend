@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/screens/home/home_screen.dart';
+import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 
@@ -9,7 +12,7 @@ import '../../constants/color.dart';
 import '../../constants/text_size.dart';
 import '../../widgets/in_app_heading.dart';
 
-class ViewProductOrAppointment extends StatelessWidget {
+class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
   const ViewProductOrAppointment({super.key, required this.title});
   final String title;
   @override
@@ -59,6 +62,11 @@ class ViewProductOrAppointment extends StatelessWidget {
                       .copyWith(color: AppColors.whiteColor),
                   onTap: () {
                     // logic to send user to appointment page
+                    push(
+                        context,
+                        Appointment(
+                          fromPage: true,
+                        ));
                   }),
             ),
             MethodHelper.heightBox(height: 3.h),

@@ -45,61 +45,34 @@ class GetInTouchScreen extends StatelessWidget {
           padding: EdgeInsets.only(bottom: AppSizes.size30),
           child: Column(
             children: [
-              CustomContainer(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSizes.size10, vertical: AppSizes.size20),
-                backGroundColor: AppColors.backgroundColor,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Expanded(
-                        flex: 2,
-                        child: CustomContainer(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: AppSizes.size20),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color.fromRGBO(0, 0, 0, 0.24),
-                                  blurRadius: 8,
-                                  spreadRadius: 0,
-                                  offset: Offset(0, 0)),
-                            ],
-                            child: VaidrajLogo())),
-                    Expanded(
-                        flex: 3,
-                        child: CustomContainer(
-                          child: Column(
-                            children: [
-                              ContatInfoRender(
-                                icon: Icons.email,
-                                info: "drkrishnaravalmcdcr@gmail.com",
-                              ),
-                              ContatInfoRender(
-                                icon: Icons.email,
-                                info: "scientistdrhraval@gmail.com",
-                              ),
-                              MethodHelper.heightBox(height: 2.h),
-                              ContatInfoRender(
-                                icon: Icons.phone,
-                                info: "+91 98247 49263",
-                              ),
-                              ContatInfoRender(
-                                icon: Icons.phone,
-                                info: "+91 88288 88202",
-                              ),
-                              ContatInfoRender(
-                                icon: Icons.phone,
-                                info: "+91 88980 88980 ,",
-                              ),
-                              ContatInfoRender(
-                                icon: Icons.phone,
-                                info: "+91 98259 42366",
-                              ),
-                            ],
-                          ),
-                        ))
-                  ],
-                ),
+              LogoWithInfoContainer(
+                children: [
+                  ContatInfoRender(
+                    icon: Icons.email,
+                    info: "drkrishnaravalmcdcr@gmail.com",
+                  ),
+                  ContatInfoRender(
+                    icon: Icons.email,
+                    info: "scientistdrhraval@gmail.com",
+                  ),
+                  MethodHelper.heightBox(height: 2.h),
+                  ContatInfoRender(
+                    icon: Icons.phone,
+                    info: "+91 98247 49263",
+                  ),
+                  ContatInfoRender(
+                    icon: Icons.phone,
+                    info: "+91 88288 88202",
+                  ),
+                  ContatInfoRender(
+                    icon: Icons.phone,
+                    info: "+91 88980 88980 ,",
+                  ),
+                  ContatInfoRender(
+                    icon: Icons.phone,
+                    info: "+91 98259 42366",
+                  ),
+                ],
               ),
               MethodHelper.heightBox(height: 5.h),
               Padding(
@@ -241,6 +214,41 @@ class GetInTouchScreen extends StatelessWidget {
         ))
       ],
     ));
+  }
+}
+
+class LogoWithInfoContainer extends StatelessWidget {
+  const LogoWithInfoContainer({super.key, required this.children});
+  final List<Widget> children;
+  @override
+  Widget build(BuildContext context) {
+    return CustomContainer(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.size10, vertical: AppSizes.size20),
+      backGroundColor: AppColors.backgroundColor,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Expanded(
+              flex: 2,
+              child: CustomContainer(
+                  margin: EdgeInsets.symmetric(horizontal: AppSizes.size20),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 0.24),
+                        blurRadius: 8,
+                        spreadRadius: 0,
+                        offset: Offset(0, 0)),
+                  ],
+                  child: VaidrajLogo())),
+          Expanded(
+              flex: 3,
+              child: CustomContainer(
+                child: Column(children: children),
+              ))
+        ],
+      ),
+    );
   }
 }
 

@@ -3,7 +3,9 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
+import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
+import 'package:vaidraj/screens/patient_screen/medical_history.dart';
 import 'package:vaidraj/screens/patient_screen/patient_home.dart';
 import 'package:vaidraj/screens/patient_screen/products.dart';
 import 'package:vaidraj/screens/patient_screen/specialities.dart';
@@ -12,7 +14,10 @@ import 'package:vaidraj/widgets/custom_container.dart';
 import '../../constants/color.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.isDoctor});
+  const HomeScreen({
+    super.key,
+    required this.isDoctor,
+  });
   final bool isDoctor;
 
   @override
@@ -35,8 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
     PatientHomeScreen(),
     SpecialitiesScreen(),
     ProductsScreen(),
-    Screen(number: "Tab 4"),
-    Screen(number: "Tab 5"),
+    Appointment(),
+    MedicalHistory(),
     AboutUsScreen(),
     GetInTouchScreen(),
   ];
