@@ -13,7 +13,9 @@ class PrimaryBtn extends StatelessWidget {
       this.borderRadius,
       required this.btnText,
       this.textStyle,
-      required this.onTap});
+      required this.onTap,
+      this.borderColor,
+      this.borderWidth});
   final double? width;
   final double? height;
   final Color? backGroundColor;
@@ -21,6 +23,8 @@ class PrimaryBtn extends StatelessWidget {
   final String btnText;
   final TextStyle? textStyle;
   final void Function()? onTap;
+  final Color? borderColor;
+  final double? borderWidth;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -31,6 +35,7 @@ class PrimaryBtn extends StatelessWidget {
         elevation: 0,
         color: backGroundColor ?? AppColors.brownColor,
         shape: RoundedRectangleBorder(
+            side: BorderSide(color: borderColor ?? AppColors.brownColor,width: borderWidth ?? 1),
             borderRadius:
                 borderRadius ?? BorderRadius.circular(AppSizes.size20)),
         child: Text(

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/mobile_verification/mobile_verification.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
-
 import '../../widgets/green_divider.dart';
 
 class WelcomePage extends StatelessWidget with NavigateHelper {
@@ -16,8 +17,9 @@ class WelcomePage extends StatelessWidget with NavigateHelper {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+    return Consumer<LocalizationProvider>(
+      builder: (context, langProvider, child) => Scaffold(
+          body: SafeArea(
         child: SingleChildScrollView(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -37,7 +39,7 @@ class WelcomePage extends StatelessWidget with NavigateHelper {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Welcome",
+                Text(langProvider.translate("welcome"),
                     style: TextSizeHelper.xLargeHeaderStyle
                         .copyWith(color: AppColors.brownColor))
               ],
@@ -52,7 +54,7 @@ class WelcomePage extends StatelessWidget with NavigateHelper {
             CustomContainer(
               padding: EdgeInsets.symmetric(horizontal: 10.w),
               child: Text(
-                AppStrings.welcomeText,
+                langProvider.translate("welcomeLine"),
                 textAlign: TextAlign.center,
                 style: TextSizeHelper.smallTextStyle,
               ),
@@ -62,14 +64,14 @@ class WelcomePage extends StatelessWidget with NavigateHelper {
 
             /// btn to get started
             PrimaryBtn(
-              btnText: "Get Statrted",
+              btnText: langProvider.translate("getStarted"),
               onTap: () {
                 push(context, MobileVerification());
               },
             )
           ],
         )),
-      ),
+      )),
     );
   }
 }

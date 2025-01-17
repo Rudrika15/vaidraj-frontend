@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
@@ -47,30 +49,35 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<Map<String, dynamic>> drawerOptions = [
-    {'icon': Icons.home_rounded, 'text': "Home"},
-    {'icon': Icons.stars_rounded, 'text': "Specialities"},
-    {'icon': Icons.inventory_2_rounded, 'text': "Products"},
-    {'icon': Icons.auto_stories_rounded, 'text': "Appointment"},
-    {'icon': Icons.medical_information_rounded, 'text': "Medical History"},
-    {'icon': Icons.verified_rounded, 'text': "About Us"},
-    {'icon': Icons.contact_phone, 'text': "Get In Touch"},
+    {'icon': Icons.home_rounded, 'text': "home"},
+    {'icon': Icons.stars_rounded, 'text': "specialities"},
+    {'icon': Icons.inventory_2_rounded, 'text': "products"},
+    {'icon': Icons.auto_stories_rounded, 'text': "appointment"},
+    {'icon': Icons.medical_information_rounded, 'text': "medicalHistory"},
+    {'icon': Icons.verified_rounded, 'text': "aboutUs"},
+    {'icon': Icons.contact_phone, 'text': "getInTouch"},
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: AppColors.whiteColor,
-      endDrawer: _buildDrawer(),
-      appBar: _buildAppBar(isDoctor: widget.isDoctor),
-      body: widget.isDoctor
-          ? screensNav[_selectedNavTabIndex]
-          : screensTab[_selectedTabIndex],
-      bottomNavigationBar: widget.isDoctor ? _buildBottomNavigationBar() : null,
+    return Consumer<LocalizationProvider>(
+      builder: (context, langProvider, child) => Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: AppColors.whiteColor,
+        endDrawer: _buildDrawer(langProvider: langProvider),
+        appBar:
+            _buildAppBar(isDoctor: widget.isDoctor, langProvider: langProvider),
+        body: widget.isDoctor
+            ? screensNav[_selectedNavTabIndex]
+            : screensTab[_selectedTabIndex],
+        bottomNavigationBar: widget.isDoctor
+            ? _buildBottomNavigationBar(langProvider: langProvider)
+            : null,
+      ),
     );
   }
 
-  Drawer _buildDrawer() {
+  Drawer _buildDrawer({required LocalizationProvider langProvider}) {
     return Drawer(
       backgroundColor: AppColors.lightBackGroundColor,
       child: SingleChildScrollView(
@@ -82,25 +89,44 @@ class _HomeScreenState extends State<HomeScreen> {
             ...List.generate(drawerOptions.length, (index) {
               return DrawerOptionWidget(
                 icon: drawerOptions[index]['icon'],
-                text: drawerOptions[index]['text'],
+                text: langProvider.translate(drawerOptions[index]['text']),
                 isSelected: _selectedTabIndex == index,
                 onTap: () {
                   setTabIndexAndCloseDrawer(index);
                 },
               );
             }),
+            const Divider(),
+            GestureDetector(
+              onTap: () {
+                langProvider.changeLanguage(
+                    langProvider.currentLocale == "en" ? "hi" : "en");
+              },
+              child: CustomContainer(
+                padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+                backGroundColor: AppColors.backgroundColor,
+                borderRadius: BorderRadius.circular(5.w),
+                child: Text(
+                  "Language :- ${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
+                  style: TextSizeHelper.smallHeaderStyle,
+                ),
+              ),
+            )
           ],
         ),
       ),
     );
   }
 
-  AppBar _buildAppBar({required bool isDoctor}) {
+  AppBar _buildAppBar(
+      {required bool isDoctor, required LocalizationProvider langProvider}) {
     return AppBar(
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: AppColors.whiteColor,
       title: Text(
-        isDoctor ? "Hello Doctor" : drawerOptions[_selectedTabIndex]['text'],
+        isDoctor
+            ? "Hello Doctor"
+            : langProvider.translate(drawerOptions[_selectedTabIndex]['text']),
         style: TextSizeHelper.mediumTextStyle
             .copyWith(color: AppColors.brownColor),
       ),
@@ -160,7 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// will build navbar if logged in user is staff member
-  ClipRRect _buildBottomNavigationBar() {
+  ClipRRect _buildBottomNavigationBar(
+      {required LocalizationProvider langProvider}) {
     return ClipRRect(
       borderRadius: const BorderRadius.only(
           topRight: Radius.circular(20), topLeft: Radius.circular(20)),
@@ -173,28 +200,29 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         indicatorColor: AppColors.lightBackGroundColor,
         backgroundColor: AppColors.backgroundColor,
-        destinations: const [
+        destinations: [
           NavigationDestination(
               selectedIcon:
-                  Icon(Icons.home_rounded, color: AppColors.greenColor),
-              icon: Icon(Icons.home_rounded, color: AppColors.brownColor),
-              label: "Home"),
+                  const Icon(Icons.home_rounded, color: AppColors.greenColor),
+              icon: const Icon(Icons.home_rounded, color: AppColors.brownColor),
+              label: langProvider.translate("home")),
           NavigationDestination(
-              selectedIcon:
-                  Icon(Icons.auto_stories_rounded, color: AppColors.greenColor),
-              icon:
-                  Icon(Icons.auto_stories_rounded, color: AppColors.brownColor),
-              label: "Appointments"),
-          NavigationDestination(
-              selectedIcon: Icon(Icons.personal_injury_rounded,
+              selectedIcon: const Icon(Icons.auto_stories_rounded,
                   color: AppColors.greenColor),
-              icon: Icon(Icons.personal_injury_rounded,
+              icon: const Icon(Icons.auto_stories_rounded,
                   color: AppColors.brownColor),
-              label: "Patients"),
+              label: langProvider.translate("appointment")),
           NavigationDestination(
-              selectedIcon: Icon(Icons.person, color: AppColors.greenColor),
-              icon: Icon(Icons.person, color: AppColors.brownColor),
-              label: "Account"),
+              selectedIcon: const Icon(Icons.personal_injury_rounded,
+                  color: AppColors.greenColor),
+              icon: const Icon(Icons.personal_injury_rounded,
+                  color: AppColors.brownColor),
+              label: langProvider.translate("patients")),
+          NavigationDestination(
+              selectedIcon:
+                  const Icon(Icons.person, color: AppColors.greenColor),
+              icon: const Icon(Icons.person, color: AppColors.brownColor),
+              label: langProvider.translate("account")),
         ],
       ),
     );
