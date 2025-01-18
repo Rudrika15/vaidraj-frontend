@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import '../../widgets/custom_searchbar.dart';
@@ -12,52 +14,55 @@ class PatientHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: AppSizes.size20),
-      child: Column(
-        children: [
-          CustomSearchBar(
-            hintText: "Search Here...",
-            horizontal: 0,
-          ),
-          InScreenHeading(
-            heading: "Our Speciality",
-          ),
-          SpecialitiesRenderWidget(),
-          InScreenHeading(heading: "Appointment"),
-          CustomContainer(
-            margin: EdgeInsets.symmetric(vertical: AppSizes.size10),
-            height: 20.h,
-            backGroundColor: AppColors.lightBackGroundColor,
-            borderColor: AppColors.brownColor,
-            borderRadius: BorderRadius.circular(AppSizes.size10),
-            borderWidth: 1,
-          ),
-          InScreenHeading(heading: "Recommended Videos"),
-          ListView.separated(
-            itemCount: 10,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (context, index) {
-              return SizedBox(
-                height: AppSizes.size10,
-              );
-            },
-            itemBuilder: (context, index) {
-              return CustomContainer(
-                margin: EdgeInsets.symmetric(vertical: AppSizes.size10),
-                height: 20.h,
-                backGroundColor: AppColors.lightBackGroundColor,
-                borderColor: AppColors.brownColor,
-                borderRadius: BorderRadius.circular(AppSizes.size10),
-                borderWidth: 1,
-              );
-            },
-          )
-        ],
-      ),
-    ));
+    return Consumer<LocalizationProvider>(
+      builder: (context, langProvider, child) => SafeArea(
+          child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: AppSizes.size20),
+        child: Column(
+          children: [
+            CustomSearchBar(
+              hintText: langProvider.translate("searchHere"),
+              horizontal: 0,
+            ),
+            InScreenHeading(
+              heading: langProvider.translate("ourSpeciality"),
+            ),
+            SpecialitiesRenderWidget(),
+            InScreenHeading(heading: langProvider.translate("appointment")),
+            CustomContainer(
+              margin: EdgeInsets.symmetric(vertical: AppSizes.size10),
+              height: 20.h,
+              backGroundColor: AppColors.lightBackGroundColor,
+              borderColor: AppColors.brownColor,
+              borderRadius: BorderRadius.circular(AppSizes.size10),
+              borderWidth: 1,
+            ),
+            InScreenHeading(
+                heading: langProvider.translate("recommendedVideos")),
+            ListView.separated(
+              itemCount: 10,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              separatorBuilder: (context, index) {
+                return SizedBox(
+                  height: AppSizes.size10,
+                );
+              },
+              itemBuilder: (context, index) {
+                return CustomContainer(
+                  margin: EdgeInsets.symmetric(vertical: AppSizes.size10),
+                  height: 20.h,
+                  backGroundColor: AppColors.lightBackGroundColor,
+                  borderColor: AppColors.brownColor,
+                  borderRadius: BorderRadius.circular(AppSizes.size10),
+                  borderWidth: 1,
+                );
+              },
+            )
+          ],
+        ),
+      )),
+    );
   }
 }
 

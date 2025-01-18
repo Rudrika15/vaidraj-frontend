@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
@@ -19,64 +21,66 @@ class Appointment extends StatefulWidget {
 class _AppointmentState extends State<Appointment> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: widget.fromPage
-          ? AppBar(
-              backgroundColor: AppColors.whiteColor,
-              title: Text(
-                "Book Appointment",
-                style: TextSizeHelper.mediumTextStyle
-                    .copyWith(color: AppColors.brownColor),
-              ),
-            )
-          : PreferredSize(
-              preferredSize:
-                  Size.fromHeight(0), // This effectively removes the AppBar
-              child: Container(), // Empty container when no AppBar is needed
-            ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            LogoWithInfoContainer(children: [
-              Text(
-                "Maharshi Chronic Disease Clinic & Research Center  (MCDCR VAIDRAJ)",
-                style: TextSizeHelper.xSmallTextStyle,
-              ),
-              MethodHelper.heightBox(height: 3.h),
-              Row(
-                children: [
-                  PrimaryBtn(
-                    btnText: "Send Email",
-                    onTap: () {
-                      // add logic to email
-                    },
-                    height: 3.h,
-                    width: 25.w,
-                    borderRadius: BorderRadius.circular(5),
-                    backGroundColor: AppColors.whiteColor,
-                    borderColor: AppColors.brownColor,
-                    textStyle: TextSizeHelper.xSmallTextStyle
-                        .copyWith(color: AppColors.brownColor),
-                  ),
-                  MethodHelper.widthBox(width: 2.w),
-                  PrimaryBtn(
-                    btnText: "Call",
-                    onTap: () {
-                      // add logic to call
-                    },
-                    height: 3.h,
-                    width: 25.w,
-                    borderRadius: BorderRadius.circular(5),
-                    borderColor: AppColors.brownColor,
-                    textStyle: TextSizeHelper.xSmallTextStyle
-                        .copyWith(color: AppColors.whiteColor),
-                  )
-                ],
+    return Consumer<LocalizationProvider>(
+      builder: (context, langProvider, child) => Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        appBar: widget.fromPage
+            ? AppBar(
+                backgroundColor: AppColors.whiteColor,
+                title: Text(
+                  langProvider.translate("appointment"),
+                  style: TextSizeHelper.mediumTextStyle
+                      .copyWith(color: AppColors.brownColor),
+                ),
               )
-            ]),
-            ToggleBtn(isSelected: false, text: "Btn")
-          ],
+            : PreferredSize(
+                preferredSize:
+                    Size.fromHeight(0), // This effectively removes the AppBar
+                child: Container(), // Empty container when no AppBar is needed
+              ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              LogoWithInfoContainer(children: [
+                Text(
+                  langProvider.translate("maharshi"),
+                  style: TextSizeHelper.xSmallTextStyle,
+                ),
+                MethodHelper.heightBox(height: 3.h),
+                Row(
+                  children: [
+                    PrimaryBtn(
+                      btnText:langProvider.translate("sendEmail"),
+                      onTap: () {
+                        // add logic to email
+                      },
+                      height: 3.h,
+                      width: 25.w,
+                      borderRadius: BorderRadius.circular(5),
+                      backGroundColor: AppColors.whiteColor,
+                      borderColor: AppColors.brownColor,
+                      textStyle: TextSizeHelper.xSmallTextStyle
+                          .copyWith(color: AppColors.brownColor),
+                    ),
+                    MethodHelper.widthBox(width: 2.w),
+                    PrimaryBtn(
+                      btnText: langProvider.translate("call"),
+                      onTap: () {
+                        // add logic to call
+                      },
+                      height: 3.h,
+                      width: 25.w,
+                      borderRadius: BorderRadius.circular(5),
+                      borderColor: AppColors.brownColor,
+                      textStyle: TextSizeHelper.xSmallTextStyle
+                          .copyWith(color: AppColors.whiteColor),
+                    )
+                  ],
+                )
+              ]),
+              ToggleBtn(isSelected: false, text: "Btn")
+            ],
+          ),
         ),
       ),
     );

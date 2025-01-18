@@ -7,7 +7,6 @@ import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import "dart:math" as math;
-
 import '../../constants/strings.dart';
 
 class AboutUsScreen extends StatelessWidget {
@@ -63,37 +62,31 @@ class AboutUsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-                      // _buildBulletPoint(langProvider.translate()),
-
-                      _buildBulletPoint("RHEUMATOID ARTHRITIS"),
-                      _buildBulletPoint("ALLERGY"),
-                      _buildBulletPoint("ASTHMA"),
-                      _buildBulletPoint("PEDIATRIC ASTHMA"),
-                      _buildBulletPoint("MIGRAINE"),
-                      _buildBulletPoint("VERTEBRAE'S AND SPINAL CORD DISEASES"),
-                      _buildBulletPoint("OSTEOARTHRITIS-KNEE JOINT"),
-                      _buildBulletPoint("GASTRO DISEASES"),
-                      _buildBulletPoint("SKIN DISEASES"),
-                      _buildBulletPoint("HAIR & BEAUTY"),
-                      _buildBulletPoint("DIABETES CONTROL"),
-                      _buildBulletPoint("HIGH BLOOD PRESSURE"),
+                      _buildBulletPoint(
+                          langProvider.translate("RHEUMATOIDARTHRITIS")),
+                      _buildBulletPoint(langProvider.translate("ALLERGY")),
+                      _buildBulletPoint(langProvider.translate("ASTHMA")),
+                      _buildBulletPoint(
+                          langProvider.translate("PEDIATRICASTHMA")),
+                      _buildBulletPoint(langProvider.translate("MIGRAINE")),
+                      _buildBulletPoint(langProvider
+                          .translate("VERTEBRAE'SANDSPINALCORDDISEASES")),
+                      _buildBulletPoint(
+                          langProvider.translate("OSTEOARTHRITIS-KNEEJOINT")),
+                      _buildBulletPoint(
+                          langProvider.translate("GASTRODISEASES")),
+                      _buildBulletPoint(langProvider.translate("SKINDISEASES")),
+                      _buildBulletPoint(langProvider.translate("HAIR&BEAUTY")),
+                      _buildBulletPoint(
+                          langProvider.translate("DIABETESCONTROL")),
+                      _buildBulletPoint(
+                          langProvider.translate("HIGHBLOODPRESSURE")),
                     ],
                   ),
                 ),
                 MethodHelper.heightBox(height: 3.h),
                 Text(
-                  "The fundamental goal of MCDCR VAIDRAJ is to treat what are classified as incurable diseases, which are still deemed incurable today. Investigating diseases that, despite various treatments, cannot be cured  and to heal such diseases with side effect-free Ayurvedic treatment, as well as to aid individuals suffering from incurable diseases and to entirely heal them. MCDCR Ayurveda began with this goal in mind and will celebrate its 16th anniversary in 2022. We have been able to heal numerous incurable diseases, as well as thousands of patients suffering from chronic disease.",
+                  langProvider.translate("aboutUsPara3"),
                   style: TextSizeHelper.smallTextStyle,
                 )
               ],

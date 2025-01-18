@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/home/home_screen.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
@@ -23,197 +25,203 @@ class GetInTouchScreen extends StatelessWidget {
   TextEditingController messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Stack(
-      children: [
-        Align(
-          alignment: Alignment.center,
-          child: Opacity(
-            opacity: 0.2,
-            child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationY(math.pi),
-              child: const Image(
-                image: AssetImage(AppStrings.logoHerb),
-                fit: BoxFit.fitHeight,
+    return Consumer<LocalizationProvider>(
+      builder: (context, langProvider, child) => SafeArea(
+          child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Opacity(
+              opacity: 0.2,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationY(math.pi),
+                child: const Image(
+                  image: AssetImage(AppStrings.logoHerb),
+                  fit: BoxFit.fitHeight,
+                ),
               ),
             ),
           ),
-        ),
-        SafeArea(
-            child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: AppSizes.size30),
-          child: Column(
-            children: [
-              LogoWithInfoContainer(
-                children: [
-                  ContatInfoRender(
-                    icon: Icons.email,
-                    info: "drkrishnaravalmcdcr@gmail.com",
-                  ),
-                  ContatInfoRender(
-                    icon: Icons.email,
-                    info: "scientistdrhraval@gmail.com",
-                  ),
-                  MethodHelper.heightBox(height: 2.h),
-                  ContatInfoRender(
-                    icon: Icons.phone,
-                    info: "+91 98247 49263",
-                  ),
-                  ContatInfoRender(
-                    icon: Icons.phone,
-                    info: "+91 88288 88202",
-                  ),
-                  ContatInfoRender(
-                    icon: Icons.phone,
-                    info: "+91 88980 88980 ,",
-                  ),
-                  ContatInfoRender(
-                    icon: Icons.phone,
-                    info: "+91 98259 42366",
-                  ),
-                ],
-              ),
-              MethodHelper.heightBox(height: 5.h),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.size20,
+          SafeArea(
+              child: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: AppSizes.size30),
+            child: Column(
+              children: [
+                LogoWithInfoContainer(
+                  children: [
+                    ContatInfoRender(
+                      icon: Icons.email,
+                      info: "drkrishnaravalmcdcr@gmail.com",
+                    ),
+                    ContatInfoRender(
+                      icon: Icons.email,
+                      info: "scientistdrhraval@gmail.com",
+                    ),
+                    MethodHelper.heightBox(height: 2.h),
+                    ContatInfoRender(
+                      icon: Icons.phone,
+                      info: "+91 98247 49263",
+                    ),
+                    ContatInfoRender(
+                      icon: Icons.phone,
+                      info: "+91 88288 88202",
+                    ),
+                    ContatInfoRender(
+                      icon: Icons.phone,
+                      info: "+91 88980 88980 ,",
+                    ),
+                    ContatInfoRender(
+                      icon: Icons.phone,
+                      info: "+91 98259 42366",
+                    ),
+                  ],
                 ),
-                child: Text(
-                  "MCDCR AYURVEDA was founded in 2006 by Dr. Krishna Rawal (MD) and Dr. Hitendra Rawal (BAMS). Their main aim is to research what are known as chronic and incurable diseases, to cure them from the root through side effect free Ayurvedic treatment.",
-                  style: TextSizeHelper.smallTextStyle,
+                MethodHelper.heightBox(height: 5.h),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.size20,
+                  ),
+                  child: Text(
+                    langProvider.translate("getInTouchPara"),
+                    style: TextSizeHelper.smallTextStyle,
+                  ),
                 ),
-              ),
-              MethodHelper.heightBox(height: 2.h),
-              AddressRender(
-                  text:
-                      "Ahmedabad - MCDCR Ayurveda,A- 501 , 5th floor , Fairdale House ,opp Xavier’s girls House, CG Road, Swastik Char Rasta , Navarangpura Ahmedabad"),
-              AddressRender(
-                  text:
-                      "Surendranagar - MCDCR Ayurveda,2nd  floor , Kailash Chembur , Vadilal Chowk ,  CJ Hospital  Road   , Surendranagar."),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: AppSizes.size20, vertical: AppSizes.size10),
-                child: InScreenHeading(
-                  heading: "Contact",
-                  endIndent: 70.w,
+                MethodHelper.heightBox(height: 2.h),
+                AddressRender(
+                    text:
+                        "Ahmedabad - MCDCR Ayurveda,A- 501 , 5th floor , Fairdale House ,opp Xavier’s girls House, CG Road, Swastik Char Rasta , Navarangpura Ahmedabad"),
+                AddressRender(
+                    text:
+                        "Surendranagar - MCDCR Ayurveda,2nd  floor , Kailash Chembur , Vadilal Chowk ,  CJ Hospital  Road   , Surendranagar."),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: AppSizes.size20, vertical: AppSizes.size10),
+                  child: InScreenHeading(
+                    heading: "Contact",
+                    endIndent: 70.w,
+                  ),
                 ),
-              ),
-              CustomContainer(
-                  padding: EdgeInsets.symmetric(horizontal: AppSizes.size20),
-                  child: Form(
-                    key: contactFormKey,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomTextFieldWidget(
-                                hintText: "First Name",
-                                controller: firstNameController,
-                                keyboardType: TextInputType.text,
-                                maxLength: 30,
-                                validator: (value) {
-                                  if (value?.isEmpty == true) {
-                                    return "First Name Required";
-                                  }
-                                  return null;
-                                },
+                CustomContainer(
+                    padding: EdgeInsets.symmetric(horizontal: AppSizes.size20),
+                    child: Form(
+                      key: contactFormKey,
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextFieldWidget(
+                                  hintText: langProvider.translate('firstName'),
+                                  controller: firstNameController,
+                                  keyboardType: TextInputType.text,
+                                  maxLength: 30,
+                                  validator: (value) {
+                                    if (value?.isEmpty == true) {
+                                      return langProvider
+                                          .translate('firstNameReq');
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                            MethodHelper.widthBox(width: AppSizes.size10),
-                            Expanded(
-                              child: CustomTextFieldWidget(
-                                hintText: "Last Name",
-                                controller: lastNameController,
-                                keyboardType: TextInputType.text,
-                                maxLength: 30,
-                                validator: (value) {
-                                  if (value?.isEmpty == true) {
-                                    return "Last Name Required";
-                                  }
-                                  return null;
-                                },
+                              MethodHelper.widthBox(width: AppSizes.size10),
+                              Expanded(
+                                child: CustomTextFieldWidget(
+                                  hintText: langProvider.translate('lastName'),
+                                  controller: lastNameController,
+                                  keyboardType: TextInputType.text,
+                                  maxLength: 30,
+                                  validator: (value) {
+                                    if (value?.isEmpty == true) {
+                                      return langProvider
+                                          .translate('lastNameReq');
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        MethodHelper.heightBox(height: 1.h),
-                        CustomTextFieldWidget(
-                          hintText: "Email",
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          maxLength: 40,
-                          validator: (value) {
-                            if (value?.isEmpty == true) {
-                              return "Email Required";
-                            } else {
-                              if (!RegExp(
-                                      r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
-                                  .hasMatch(value ?? "")) {
-                                return "Email is not valid";
-                              }
-                              ;
-                            }
-                            return null;
-                          },
-                        ),
-                        MethodHelper.heightBox(height: 1.h),
-                        CustomTextFieldWidget(
-                          hintText: "Contact Number",
-                          controller: contactNumberController,
-                          keyboardType: TextInputType.number,
-                          maxLength: 10,
-                          validator: (value) {
-                            if (value?.isEmpty == true) {
-                              return "Number Required";
-                            }
-                            return null;
-                          },
-                        ),
-                        MethodHelper.heightBox(height: 1.h),
-                        CustomTextFieldWidget(
-                            hintText: "Subject",
-                            maxLines: 2,
+                            ],
+                          ),
+                          MethodHelper.heightBox(height: 1.h),
+                          CustomTextFieldWidget(
+                            hintText: langProvider.translate('email'),
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            maxLength: 40,
                             validator: (value) {
                               if (value?.isEmpty == true) {
-                                return "Subject required";
+                                return langProvider.translate("emailReq");
+                              } else {
+                                if (!RegExp(
+                                        r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
+                                    .hasMatch(value ?? "")) {
+                                  return langProvider
+                                      .translate('emailNotValid');
+                                }
+                                ;
                               }
                               return null;
                             },
+                          ),
+                          MethodHelper.heightBox(height: 1.h),
+                          CustomTextFieldWidget(
+                            hintText: langProvider.translate("contactNumber"),
+                            controller: contactNumberController,
+                            keyboardType: TextInputType.number,
+                            maxLength: 10,
+                            validator: (value) {
+                              if (value?.isEmpty == true) {
+                                return langProvider.translate("numberReq");
+                              }
+                              return null;
+                            },
+                          ),
+                          MethodHelper.heightBox(height: 1.h),
+                          CustomTextFieldWidget(
+                              hintText: langProvider.translate('subject'),
+                              maxLines: 2,
+                              validator: (value) {
+                                if (value?.isEmpty == true) {
+                                  return langProvider.translate('subjectReq');
+                                }
+                                return null;
+                              },
+                              keyboardType: TextInputType.text,
+                              controller: subjectController),
+                          MethodHelper.heightBox(height: 1.h),
+                          CustomTextFieldWidget(
+                            hintText: langProvider.translate("message"),
+                            controller: messageController,
+                            minLines: 2,
                             keyboardType: TextInputType.text,
-                            controller: subjectController),
-                        MethodHelper.heightBox(height: 1.h),
-                        CustomTextFieldWidget(
-                          hintText: "Message",
-                          controller: messageController,
-                          minLines: 2,
-                          keyboardType: TextInputType.text,
-                          validator: (value) {
-                            if (value?.isEmpty == true) {
-                              return "Message required";
-                            }
-                            return null;
-                          },
-                        ),
-                        MethodHelper.heightBox(height: 3.h),
-                        SizedBox(
-                          width: 50.w,
-                          child: PrimaryBtn(
-                              btnText: "Submit",
-                              onTap: () {
-                                if (contactFormKey.currentState!.validate()) {}
-                                ;
-                              }),
-                        )
-                      ],
-                    ),
-                  ))
-            ],
-          ),
-        ))
-      ],
-    ));
+                            validator: (value) {
+                              if (value?.isEmpty == true) {
+                                return langProvider.translate("messageReq");
+                              }
+                              return null;
+                            },
+                          ),
+                          MethodHelper.heightBox(height: 3.h),
+                          SizedBox(
+                            width: 50.w,
+                            child: PrimaryBtn(
+                                btnText: langProvider.translate("submit"),
+                                onTap: () {
+                                  if (contactFormKey.currentState!
+                                      .validate()) {}
+                                  ;
+                                }),
+                          )
+                        ],
+                      ),
+                    ))
+              ],
+            ),
+          ))
+        ],
+      )),
+    );
   }
 }
 
