@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/provider/mobile_verification_provider.dart';
 import 'package:vaidraj/screens/signin_signup/sign_in_sign_up.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -21,8 +23,8 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
   final TextEditingController mobileController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => Scaffold(
+    return Consumer2<LocalizationProvider, MobileVerificationProvider>(
+      builder: (context, langProvider, mobileVerProvider, child) => Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: SafeArea(
             child: Stack(
@@ -69,9 +71,7 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                          langProvider
-                              .translate("mobileVerification"),
+                      Text(langProvider.translate("mobileVerification"),
                           style: TextSizeHelper.xLargeHeaderStyle
                               .copyWith(color: AppColors.brownColor))
                     ],
@@ -83,8 +83,7 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                       child: CustomContainer(
                           padding: EdgeInsets.symmetric(horizontal: 10.w),
                           child: CustomTextFieldWidget(
-                            hintText: langProvider
-                                .translate("mobileNumber"),
+                            hintText: langProvider.translate("mobileNumber"),
                             controller: mobileController,
                             keyboardType: TextInputType.number,
                             maxLength: 10,
@@ -112,14 +111,17 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                   btnText: langProvider.translate("submit"),
                   onTap: () {
                     if (formkey.currentState!.validate()) {
-                      if (mobileController.text == "8866752474") {
-                        push(context, const SignInSignUp(UserStatus: "STAFF"));
-                      } else if (mobileController.text == "1122334455") {
-                        push(
-                            context, const SignInSignUp(UserStatus: "PATIENT"));
-                      } else {
-                        push(context, const SignInSignUp(UserStatus: "NEW"));
-                      }
+                      mobileVerProvider.verifyMobile(
+                          context: context,
+                          mobileNumber: mobileController.text);
+                      // if (mobileController.text == "8866752474") {
+                      //   push(context, const SignInSignUp(UserStatus: "STAFF"));
+                      // } else if (mobileController.text == "1122334455") {
+                      //   push(
+                      //       context, const SignInSignUp(UserStatus: "PATIENT"));
+                      // } else {
+                      //   push(context, const SignInSignUp(UserStatus: "NEW"));
+                      // }
                       return;
                     }
                   })),

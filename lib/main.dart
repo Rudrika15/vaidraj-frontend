@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/provider/mobile_verification_provider.dart';
 import 'package:vaidraj/screens/splash_screen/splash.dart';
 import 'package:sizer/sizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
+  await Hive.initFlutter(); 
   await Hive.openBox("settings");
+  await dotenv.load(fileName: ".env");
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(MultiProvider(
-    providers: [ChangeNotifierProvider(create: (_) => LocalizationProvider())],
+    providers: [
+      ChangeNotifierProvider(create: (_) => LocalizationProvider()),
+      ChangeNotifierProvider(create: (_) => MobileVerificationProvider()),
+    ],
     child: const MyApp(),
   ));
 }
@@ -30,7 +36,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Vaidraj App',
             debugShowCheckedModeBanner: false,
-            locale: Locale(utils.currentLocale ),
+            locale: Locale(utils.currentLocale),
             localizationsDelegates: const [
               DefaultMaterialLocalizations.delegate,
               DefaultWidgetsLocalizations.delegate,
