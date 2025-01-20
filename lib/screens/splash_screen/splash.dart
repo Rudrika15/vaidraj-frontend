@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/strings.dart';
+import 'package:vaidraj/screens/home/home_screen.dart';
 import 'package:vaidraj/screens/welcome_page/welcome_page.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,11 +20,36 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
     // TODO: implement initState
     super.initState();
     Future.delayed(
-      Duration(seconds: 3),
-      () {
-        pushRemoveUntil(context, const WelcomePage());
-      },
+      Duration(seconds: 2),
+      () => guideScreen(),
     );
+  }
+
+  Future<bool> getToken() async {
+    String? token = await SharedPrefs.getToken();
+    print("token from splash => $token");
+    return token.isNotEmpty;
+  }
+
+  Future<String?> getRole() async {
+    String? role = await SharedPrefs.getRole();
+    print("role from splash => $role");
+    return role;
+  }
+
+  Future<void> guideScreen() async {
+    bool token = await getToken();
+    String? role = await getRole();
+
+    if (token == true && role == "patient") {
+      pushRemoveUntil(context, const HomeScreen(isDoctor: false));
+      return;
+    } else if (token == true && role == "admin") {
+      pushRemoveUntil(context, const HomeScreen(isDoctor: true));
+      return;
+    } else {
+      pushRemoveUntil(context, const WelcomePage());
+    }
   }
 
   @override

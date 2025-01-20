@@ -14,7 +14,8 @@ class CustomDropDownWidget extends StatelessWidget {
       this.hintText,
       this.prefixIcon,
       this.suffixIcon,
-      this.validator});
+      this.validator,
+      this.alignment = Alignment.center});
 
   final List<DropdownMenuItem<Object?>>? items;
   final void Function(Object?)? onChanged;
@@ -23,6 +24,7 @@ class CustomDropDownWidget extends StatelessWidget {
   final IconData? prefixIcon;
   final IconData? suffixIcon;
   final String? Function(Object?)? validator;
+  final AlignmentGeometry alignment;
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<Object?>(
@@ -30,7 +32,7 @@ class CustomDropDownWidget extends StatelessWidget {
         value: value,
         items: items,
         iconSize: 0,
-        alignment: Alignment.center,
+        alignment: alignment,
         onChanged: onChanged,
         validator: validator,
         dropdownColor: AppColors.whiteColor,

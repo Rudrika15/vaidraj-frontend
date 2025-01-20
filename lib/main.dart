@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:vaidraj/provider/add_new_patient_provider.dart';
+import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/provider/mobile_verification_provider.dart';
 import 'package:vaidraj/screens/splash_screen/splash.dart';
@@ -10,7 +12,7 @@ import 'package:sizer/sizer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter(); 
+  await Hive.initFlutter();
   await Hive.openBox("settings");
   await dotenv.load(fileName: ".env");
   SystemChrome.setPreferredOrientations(
@@ -19,6 +21,8 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => LocalizationProvider()),
       ChangeNotifierProvider(create: (_) => MobileVerificationProvider()),
+      ChangeNotifierProvider(create: (_) => GetBrachProvider()),
+      ChangeNotifierProvider(create: (_) => AddNewPatientProvider()),
     ],
     child: const MyApp(),
   ));

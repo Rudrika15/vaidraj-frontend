@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefs {
   static const String tokenKey = 'INQYRYLOGINTOKEN';
+  static const String roleKey = 'ROLE';
   static const String registerTokenKey = 'INQYRYREGISTERTOKEN';
   static const String refKey = 'REFKEY';
   static const String userIdKey = 'USER_ID';
@@ -15,16 +16,34 @@ class SharedPrefs {
     await prefs.setString(tokenKey, token);
   }
 
+  // for saving which role is current
+  static Future<void> saveRole(String role) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(roleKey, role);
+  }
+
   // to get token
   static Future<String> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(tokenKey) ?? '';
   }
 
+  // to get which role is current
+  static Future<String> getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(roleKey) ?? '';
+  }
+
   // clear token
   static Future<bool> clearToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return await prefs.remove(tokenKey);
+  }
+
+  // clear token
+  static Future<bool> clearRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.remove(roleKey);
   }
 
   // for clear shared preferences

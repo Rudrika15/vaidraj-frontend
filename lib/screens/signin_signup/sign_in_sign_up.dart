@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:vaidraj/provider/add_new_patient_provider.dart';
+import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/provider/mobile_verification_provider.dart';
 import 'package:vaidraj/screens/home/home_screen.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_dropdown.dart';
 import 'package:vaidraj/widgets/green_divider.dart';
+import 'package:vaidraj/widgets/loader.dart';
 import 'dart:math' as math;
 import '../../constants/color.dart';
 import '../../constants/sizes.dart';
@@ -41,11 +47,23 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
   TextEditingController dobController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   DateTime? dob;
-  String branchSelection = "";
+  int branchSelection = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var getBranch = Provider.of<GetBrachProvider>(context, listen: false);
+    getBranch.getBranch(context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => Scaffold(
+    return Consumer4<LocalizationProvider, GetBrachProvider,
+        AddNewPatientProvider, MobileVerificationProvider>(
+      builder: (context, langProvider, branchProvider, patientProvider,
+              mobileVerProvider, child) =>
+          Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: SafeArea(
             child: Stack(
@@ -92,13 +110,10 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                   children: [
                     Text(
                         widget.UserStatus == "STAFF"
-                            ? langProvider
-                                .translate("welcomeBackDoctor")
+                            ? langProvider.translate("welcomeBackDoctor")
                             : widget.UserStatus == "PATIENT"
-                                ? langProvider
-                                    .translate("welcomeBack")
-                                : langProvider
-                                    .translate("registration"),
+                                ? langProvider.translate("welcomeBack")
+                                : langProvider.translate("registration"),
                         style: TextSizeHelper.xLargeHeaderStyle
                             .copyWith(color: AppColors.brownColor))
                   ],
@@ -123,8 +138,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustomTextFieldWidget(
-                                  hintText: langProvider
-                                      .translate("password"),
+                                  hintText: langProvider.translate("password"),
                                   isGreenBorder: false,
                                   obscureText: showPassword,
                                   controller: passwordController,
@@ -160,8 +174,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                     // add logic for forgot password
                                   },
                                   child: Text(
-                                    langProvider
-                                        .translate("forgotPass"),
+                                    langProvider.translate("forgotPass"),
                                     style: TextSizeHelper.smallTextStyle,
                                   ),
                                 )
@@ -176,8 +189,8 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                             child: CustomContainer(
                               padding: EdgeInsets.symmetric(horizontal: 10.w),
                               child: CustomTextFieldWidget(
-                                  hintText: langProvider
-                                      .translate("dateOfBirth"),
+                                  hintText:
+                                      langProvider.translate("dateOfBirth"),
                                   isGreenBorder: false,
                                   prefixIcon: Icons.cake_outlined,
                                   suffix: IconButton(
@@ -189,7 +202,8 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                                 DateTime.now().year - 18));
                                         if (dob != null) {
                                           dobController.text =
-                                              DateFormat.yMd().format(dob!);
+                                              DateFormat("yyyy-MM-dd")
+                                                  .format(dob!);
                                         }
                                       },
                                       icon: const Icon(
@@ -216,8 +230,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                 child: Column(
                                   children: [
                                     CustomTextFieldWidget(
-                                      hintText: langProvider
-                                          .translate("name"),
+                                      hintText: langProvider.translate("name"),
                                       isGreenBorder: false,
                                       controller: nameController,
                                       keyboardType: TextInputType.text,
@@ -245,13 +258,18 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                           return langProvider
                                               .translate("numberReq");
                                         }
+                                        if (value
+                                                ?.contains(RegExp(r"[ ,-.]")) ??
+                                            true) {
+                                          return langProvider
+                                              .translate("mobileNotValid");
+                                        }
                                         return null;
                                       },
                                     ),
                                     MethodHelper.heightBox(height: 1.h),
                                     CustomTextFieldWidget(
-                                      hintText: langProvider
-                                          .translate("email"),
+                                      hintText: langProvider.translate("email"),
                                       isGreenBorder: false,
                                       controller: emailController,
                                       keyboardType: TextInputType.emailAddress,
@@ -288,7 +306,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                                           18));
                                               if (dob != null) {
                                                 dobController.text =
-                                                    DateFormat.yMd()
+                                                    DateFormat('yyyy-MM-dd')
                                                         .format(dob!);
                                               }
                                             },
@@ -306,39 +324,69 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                         keyboardType: TextInputType.none,
                                         controller: dobController),
                                     MethodHelper.heightBox(height: 1.h),
-                                    CustomDropDownWidget(
-                                      hintText: langProvider
-                                          .translate("selectBranch"),
-                                      prefixIcon: Icons.storefront_outlined,
-                                      items: const [
-                                        DropdownMenuItem(
-                                          value: "data",
-                                          child: Text("data"),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: "data2",
-                                          child: Text("data2"),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: "data3",
-                                          child: Text("data3"),
-                                        ),
-                                      ],
-                                      onChanged: (value) {
-                                        setState(() {
-                                          branchSelection = value as String;
-                                        });
-                                      },
-                                      validator: (value) {
-                                        if (value == null) {
-                                          return langProvider.translate("branchReq");
-                                        }
-                                        return null;
-                                      },
-                                    ),
+                                    branchProvider.isLoading
+                                        ? const Center(child: Loader())
+                                        : CustomDropDownWidget(
+                                            alignment: Alignment.centerLeft,
+                                            hintText: langProvider
+                                                .translate("selectBranch"),
+                                            prefixIcon:
+                                                Icons.storefront_outlined,
+                                            items: branchProvider.getBranchModel
+                                                        ?.data?.isNotEmpty ==
+                                                    true
+                                                ? List<
+                                                    DropdownMenuItem<
+                                                        Object?>>.generate(
+                                                    branchProvider
+                                                            .getBranchModel
+                                                            ?.data
+                                                            ?.length ??
+                                                        0,
+                                                    (index) {
+                                                      return DropdownMenuItem(
+                                                        value: branchProvider
+                                                            .getBranchModel
+                                                            ?.data?[index]
+                                                            .id,
+                                                        child: Text(
+                                                          branchProvider
+                                                                  .getBranchModel
+                                                                  ?.data?[index]
+                                                                  .branchName ??
+                                                              "-",
+                                                          style: TextSizeHelper
+                                                              .smallHeaderStyle,
+                                                        ),
+                                                      );
+                                                    },
+                                                  )
+                                                : [
+                                                    DropdownMenuItem(
+                                                      child: Text(
+                                                        "No Branch Found",
+                                                        style: TextSizeHelper
+                                                            .smallHeaderStyle,
+                                                      ),
+                                                    )
+                                                  ],
+                                            onChanged: (value) {
+                                              setState(() {
+                                                branchSelection = value as int;
+                                              });
+                                            },
+                                            validator: (value) {
+                                              if (value == null) {
+                                                return langProvider
+                                                    .translate("branchReq");
+                                              }
+                                              return null;
+                                            },
+                                          ),
                                     MethodHelper.heightBox(height: 1.h),
                                     CustomTextFieldWidget(
-                                      hintText: langProvider.translate("address"),
+                                      hintText:
+                                          langProvider.translate("address"),
                                       isGreenBorder: false,
                                       controller: addressController,
                                       minLines: 2,
@@ -346,7 +394,8 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                       prefixIcon: Icons.location_on_outlined,
                                       validator: (value) {
                                         if (value?.isEmpty == true) {
-                                          return langProvider.translate("addressReq");
+                                          return langProvider
+                                              .translate("addressReq");
                                         }
                                         return null;
                                       },
@@ -363,30 +412,78 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
           child: CustomContainer(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: PrimaryBtn(
-                  btnText: widget.UserStatus == "STAFF"
-                      ? langProvider.translate("login")
-                      : langProvider.translate("submit"),
-                  onTap: () {
-                    if (widget.UserStatus == "STAFF") {
-                      if (staffForm.currentState!.validate()) {
-                        pushRemoveUntil(context, HomeScreen(isDoctor: true));
-                        print("staff validated");
-                        return;
-                      }
-                    } else if (widget.UserStatus == "PATIENT") {
-                      if (patientForm.currentState!.validate()) {
-                        pushRemoveUntil(context, HomeScreen(isDoctor: false));
-                        print("patient validated");
-                        return;
-                      }
-                    } else {
-                      if (newForm.currentState!.validate()) {
-                        pushRemoveUntil(context, HomeScreen(isDoctor: false));
-                        print("new user validated");
-                      }
-                    }
-                  })),
+              child: patientProvider.isLoading ||
+                      mobileVerProvider.isLoading ||
+                      branchProvider.isLoading
+                  ? const Loader()
+                  : PrimaryBtn(
+                      btnText: widget.UserStatus == "STAFF"
+                          ? langProvider.translate("login")
+                          : langProvider.translate("submit"),
+                      onTap: () async {
+                        if (widget.UserStatus == "STAFF") {
+                          if (staffForm.currentState!.validate()) {
+                            await mobileVerProvider.verifyPassword(
+                                context: context,
+                                mobile: mobileVerProvider
+                                        .verifyMobileNumberModel
+                                        ?.data
+                                        ?.mobileNo ??
+                                    "",
+                                password: passwordController.text);
+                            if (mobileVerProvider.isPasswordVerified) {
+                              pushRemoveUntil(
+                                  context, HomeScreen(isDoctor: true));
+                              WidgetHelper.customSnackBar(
+                                  context: context, title: "Welcome");
+                              print("staff validated");
+                              return;
+                            }
+                          }
+                        } else if (widget.UserStatus == "PATIENT") {
+                          if (patientForm.currentState!.validate()) {
+                            if (dobController.text ==
+                                mobileVerProvider
+                                    .verifyMobileNumberModel?.data?.dob) {
+                              WidgetHelper.customSnackBar(
+                                context: context,
+                                title: "Welcome",
+                              );
+                              pushRemoveUntil(
+                                  context, HomeScreen(isDoctor: false));
+                              print("patient validated");
+                              return;
+                            } else {
+                              WidgetHelper.customSnackBar(
+                                  context: context,
+                                  title: "Incorrect Date !!",
+                                  isError: true);
+                              dobController.text = "";
+                              return;
+                            }
+                          }
+                        } else {
+                          // if new user than do this
+                          if (newForm.currentState!.validate()) {
+                            await patientProvider.addPatient(
+                                context: context,
+                                branchId: branchSelection,
+                                name: nameController.text,
+                                email: emailController.text,
+                                mobile: numberController.text,
+                                password: "123456",
+                                address: addressController.text,
+                                birthDate: dobController.text);
+                            if (patientProvider.patientModel?.success == true) {
+                              WidgetHelper.customSnackBar(
+                                  context: context,
+                                  title: "User Account Created");
+                              pushRemoveUntil(
+                                  context, const HomeScreen(isDoctor: false));
+                            }
+                          }
+                        }
+                      })),
         ),
       ),
     );
