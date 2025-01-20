@@ -26,6 +26,7 @@
   "mobileVerification": "Mobile Verification",
   "mobileNumber": "Mobile Number",
   "mobileNumberReq": "Mobile Number Required",
+  "mobileNotValid" : "Mobile Number Not Valid !!",
   "home": "Home",
   "specialities": "Specialities",
   "products": "Products",
