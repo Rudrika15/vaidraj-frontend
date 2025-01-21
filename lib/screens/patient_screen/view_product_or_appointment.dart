@@ -5,6 +5,7 @@ import 'package:vaidraj/screens/home/home_screen.dart';
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/widgets/Custom_video_player.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/image_or_default_image_widget.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
@@ -79,7 +80,7 @@ class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
             MethodHelper.heightBox(height: 3.h),
             const InScreenHeading(heading: "Videos"),
             SizedBox(
-              height: 20.h,
+              height: 25.h,
               child: ListView.separated(
                 itemCount: 10,
                 shrinkWrap: true,
@@ -97,6 +98,9 @@ class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
                     borderColor: AppColors.brownColor,
                     borderRadius: BorderRadius.circular(AppSizes.size10),
                     borderWidth: 1,
+                    child: CustomVideoPlayer(
+                        videoUrl:
+                            "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"),
                   );
                 },
               ),
@@ -104,7 +108,7 @@ class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
             MethodHelper.heightBox(height: 3.h),
             const InScreenHeading(heading: "Article"),
             SizedBox(
-              height: 20.h,
+              height: 30.h,
               child: ListView.separated(
                 itemCount: 10,
                 shrinkWrap: true,
