@@ -6,6 +6,7 @@ import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
+import 'package:vaidraj/widgets/image_or_default_image_widget.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 
 import '../../constants/color.dart';
@@ -13,8 +14,14 @@ import '../../constants/text_size.dart';
 import '../../widgets/in_app_heading.dart';
 
 class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
-  const ViewProductOrAppointment({super.key, required this.title});
+  const ViewProductOrAppointment(
+      {super.key,
+      required this.title,
+      required this.image,
+      required this.description});
   final String title;
+  final String image;
+  final String description;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,18 +44,18 @@ class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
               borderRadius: BorderRadius.circular(AppSizes.size10),
               borderColor: AppColors.brownColor,
               height: 20.h,
-              image:
-                  DecorationImage(image: AssetImage("assets/images/pain.jpg")),
+              width: 90.w,
+              child: CustomContainer(
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppSizes.size10),
+                    child: ImageOrDefaultImage(
+                      image: image,
+                    )),
+              ),
             ),
             MethodHelper.heightBox(height: 3.h),
             Text(
-              "Due to today's sedentary lifestyle and improper diet, the number of people suffering from Arthritis is constantly increasing in every country of the world.",
-              style: TextSizeHelper.smallTextStyle,
-              textAlign: TextAlign.justify,
-            ),
-            MethodHelper.heightBox(height: 2.h),
-            Text(
-              "Arthritis can occur at any age in any joint of the body (hands, feet, ankles, spine, waist, ankles, knees, feet, shoulders, elbows, etc.). which is an auto immune disorder. At present, modern science does not have any effective treatment for joint pain, which can be cured from the root by regular intake. But until treatment is taken, there is relief. And the side effects of those drugs are also many.",
+              description,
               style: TextSizeHelper.smallTextStyle,
               textAlign: TextAlign.justify,
             ),
