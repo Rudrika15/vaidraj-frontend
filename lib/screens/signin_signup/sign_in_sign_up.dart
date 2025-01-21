@@ -445,6 +445,12 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                             if (dobController.text ==
                                 mobileVerProvider
                                     .verifyMobileNumberModel?.data?.dob) {
+                              SharedPrefs.saveToken(mobileVerProvider
+                                      .verifyMobileNumberModel?.token ??
+                                  "");
+                              SharedPrefs.saveRole(mobileVerProvider
+                                      .verifyMobileNumberModel?.data?.role ??
+                                  "");
                               WidgetHelper.customSnackBar(
                                 context: context,
                                 title: "Welcome",
