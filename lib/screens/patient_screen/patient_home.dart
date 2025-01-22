@@ -39,12 +39,14 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     return Consumer2<LocalizationProvider, AllDiseaseProvider>(
       builder: (context, langProvider, diseaseProvider, child) => SafeArea(
           child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: AppSizes.size20),
         child: Column(
           children: [
-            CustomSearchBar(
-              hintText: langProvider.translate("searchHere"),
-              horizontal: 0,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+              child: CustomSearchBar(
+                hintText: langProvider.translate("searchHere"),
+                horizontal: 0,
+              ),
             ),
             InScreenHeading(
               heading: langProvider.translate("ourSpeciality"),
@@ -54,7 +56,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             ),
             InScreenHeading(heading: langProvider.translate("appointment")),
             CustomContainer(
-              margin: EdgeInsets.symmetric(vertical: AppSizes.size10),
+              margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
+              width: 90.w,
               height: 20.h,
               backGroundColor: AppColors.lightBackGroundColor,
               borderColor: AppColors.brownColor,
@@ -66,15 +69,16 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             ListView.separated(
               itemCount: 10,
               shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
               physics: const NeverScrollableScrollPhysics(),
               separatorBuilder: (context, index) {
-                return SizedBox(
+                return const SizedBox(
                   height: AppSizes.size10,
                 );
               },
               itemBuilder: (context, index) {
                 return CustomContainer(
-                  margin: EdgeInsets.symmetric(vertical: AppSizes.size10),
+                  margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
                   height: 20.h,
                   backGroundColor: AppColors.lightBackGroundColor,
                   borderColor: AppColors.brownColor,
@@ -113,7 +117,8 @@ class SpecialitiesRenderWidget extends StatelessWidget {
                 },
                 itemCount:
                     diseaseProvider.diseaseModel?.data?.data?.length ?? 0,
-                padding: const EdgeInsets.only(left: AppSizes.size10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSizes.size20),
                 itemBuilder: (context, index) {
                   Diseases? diseases =
                       diseaseProvider.diseaseModel?.data?.data?[index];
@@ -122,6 +127,8 @@ class SpecialitiesRenderWidget extends StatelessWidget {
                     image:
                         "${AppStrings.dieasesPhotoUrl}/${diseases?.thumbnail ?? ""}",
                     description: diseases?.displayDescription ?? "",
+                    videos: diseases?.videos ?? [],
+                    articles: diseases?.articles ?? [],
                   );
                 },
               ),
@@ -135,10 +142,14 @@ class SpecialityTempletContainer extends StatelessWidget {
       {super.key,
       required this.title,
       required this.image,
-      required this.description});
+      required this.description,
+      required this.videos,
+      required this.articles});
   final String title;
   final String image;
   final String description;
+  final List<Videos>? videos;
+  final List<Articles>? articles;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -147,6 +158,8 @@ class SpecialityTempletContainer extends StatelessWidget {
                 title: title,
                 image: image,
                 description: description,
+                videos: videos,
+                articles: articles,
               ))),
       child: CustomContainer(
         width: 29.w,

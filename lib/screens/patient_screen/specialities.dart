@@ -61,6 +61,8 @@ class _SpecialitiesScreenState extends State<SpecialitiesScreen> {
                               "${AppStrings.dieasesPhotoUrl}/${diseases?.thumbnail ?? ""}",
                           title: diseases?.displayName ?? "",
                           description: diseases?.displayDescription ?? "",
+                          videos: diseases?.videos ?? [],
+                          articles: diseases?.articles ?? [],
                         );
                       },
                     ),

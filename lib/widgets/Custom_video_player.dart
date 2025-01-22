@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 /// Stateful widget to fetch and then display video content.
 class CustomVideoPlayer extends StatefulWidget {
@@ -22,9 +23,7 @@ class CustomVideoPlayer extends StatefulWidget {
 
 class _VideoAppState extends State<CustomVideoPlayer> {
   late VideoPlayerController _controller;
-  bool _isPlaying = false;
-  bool _isMuted = false;
-  bool _isBuffering = false;
+  late ChewieController chewieController;
   bool _isInitialized = false;
   late ValueNotifier<Duration> videoPositionNotifier;
   @override
@@ -39,7 +38,7 @@ class _VideoAppState extends State<CustomVideoPlayer> {
           videoPositionNotifier = ValueNotifier<Duration>(Duration.zero);
         });
         if (widget.autoPlay) {
-          _play();
+          _controller.play();
         }
       }).catchError((error) {
         setState(() {
@@ -47,42 +46,11 @@ class _VideoAppState extends State<CustomVideoPlayer> {
         });
         print('Error initializing video player: $error');
       });
-    ;
-  }
-
-  /// play video
-  void _play() {
-    if (_controller.value.isInitialized) {
-      _controller.play();
-      setState(() {
-        _isPlaying = true;
-      });
-    }
-  }
-
-  /// pause video
-  void _pause() {
-    if (_controller.value.isInitialized) {
-      _controller.pause();
-      setState(() {
-        _isPlaying = false;
-      });
-    }
-  }
-
-  /// toggle mute volume
-  void _toggleMute() {
-    setState(() {
-      _isMuted = !_isMuted;
-      _controller.setVolume(_isMuted ? 0 : 1);
-    });
-  }
-
-  /// on seeking video
-  void _onSeek(double value) {
-    final position = Duration(
-        seconds: (value * _controller.value.duration.inSeconds).toInt());
-    _controller.seekTo(position);
+    chewieController = ChewieController(
+        videoPlayerController: _controller,
+        autoPlay: widget.autoPlay,
+        looping: widget.loop,
+        aspectRatio: widget.aspectRatio);
   }
 
   @override
@@ -91,104 +59,17 @@ class _VideoAppState extends State<CustomVideoPlayer> {
         ? ClipRRect(
             borderRadius: BorderRadius.circular(AppSizes.size10),
             child: AspectRatio(
-              aspectRatio: widget.aspectRatio,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  VideoPlayer(_controller),
-                  _buildControls(),
-                ],
-              ),
-            ),
+                aspectRatio: widget.aspectRatio,
+                child: Chewie(controller: chewieController)),
           )
-        : Center(child: CircularProgressIndicator());
-  }
-
-  /// building controller
-  Widget _buildControls() {
-    return GestureDetector(
-      onTap: _togglePlayPause,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (_isPlaying) ...[
-            IconButton(
-              icon: Icon(Icons.pause, color: Colors.white),
-              onPressed: _pause,
-            ),
-          ] else ...[
-            IconButton(
-              icon: Icon(Icons.play_arrow, color: Colors.white),
-              onPressed: _play,
-            ),
-          ],
-          SliderTheme(
-            data: const SliderThemeData(
-                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6)),
-            child: ValueListenableBuilder<Duration>(
-              valueListenable: videoPositionNotifier,
-              builder: (context, videoPosition, child) {
-                return Slider(
-                  /// Called when the user stops interacting with the
-                  /// slider.
-                  onChangeEnd: (value) {
-                    _controller.seekTo(Duration(seconds: value.toInt()));
-                    _controller.play();
-                  },
-
-                  /// The position of the video player in seconds.
-                  value: videoPosition.inSeconds.toDouble(),
-
-                  /// The minimum value of the slider.
-                  min: 0.0,
-
-                  /// The maximum value of the slider.
-                  max: _controller.value.duration.inSeconds.toDouble(),
-
-                  /// Called when the user changes the position of the
-                  /// slider.
-                  onChanged: (value) {
-                    setState(() {
-                      _controller.seekTo(Duration(seconds: value.toInt()));
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-          // Slider(
-          //   value: _controller.value.position.inSeconds.toDouble(),
-          //   min: 0,
-          //   max: _controller.value.duration.inSeconds.toDouble(),
-          //   onChanged: _onSeek,
-          //   activeColor: Colors.white,
-          //   inactiveColor: Colors.grey,
-          // ),
-          IconButton(
-            icon: Icon(
-              _isMuted ? Icons.volume_off : Icons.volume_up,
-              color: Colors.white,
-            ),
-            onPressed: _toggleMute,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// toggle play pause video
-  void _togglePlayPause() {
-    if (_isPlaying) {
-      _pause();
-    } else {
-      _play();
-    }
+        : const Center(child: CircularProgressIndicator());
   }
 
   /// dispose video controller
   @override
   void dispose() {
     _controller.dispose();
+    chewieController.dispose();
     super.dispose();
   }
 }

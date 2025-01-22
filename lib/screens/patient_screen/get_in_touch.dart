@@ -94,13 +94,9 @@ class GetInTouchScreen extends StatelessWidget {
                 AddressRender(
                     text:
                         "Surendranagar - MCDCR Ayurveda,2nd  floor , Kailash Chembur , Vadilal Chowk ,  CJ Hospital  Road   , Surendranagar."),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: AppSizes.size20, vertical: AppSizes.size10),
-                  child: InScreenHeading(
-                    heading: "Contact",
-                    endIndent: 70.w,
-                  ),
+                InScreenHeading(
+                  heading: langProvider.translate('contact'),
+                  endIndent: 70.w,
                 ),
                 CustomContainer(
                     padding: EdgeInsets.symmetric(horizontal: AppSizes.size20),

@@ -18,4 +18,12 @@ class AppStrings {
   ///
   static const String dieasesPhotoUrl =
       "https://vedraj.flipcodesolutions.com/images/diseases";
+
+  ///
+  static const String articlePhotoUrl =
+      "https://vedraj.flipcodesolutions.com/images/articles";
+
+  ///
+  static const String productPhotoUrl =
+      "https://vedraj.flipcodesolutions.com/images/products";
 }

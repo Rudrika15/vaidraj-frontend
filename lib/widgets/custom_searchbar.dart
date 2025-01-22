@@ -21,11 +21,12 @@ class CustomSearchBar extends StatelessWidget {
     return CustomContainer(
       padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical),
       child: SearchBar(
-        backgroundColor: WidgetStatePropertyAll(AppColors.lightBackGroundColor),
+        backgroundColor:
+            const WidgetStatePropertyAll(AppColors.lightBackGroundColor),
         hintText: hintText,
         leading: leading,
         trailing: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.search_outlined))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search_outlined))
         ],
       ),
     );

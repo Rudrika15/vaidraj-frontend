@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/widgets/green_divider.dart';
 import '../constants/color.dart';
 import '../constants/text_size.dart';
@@ -14,6 +15,7 @@ class InScreenHeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
