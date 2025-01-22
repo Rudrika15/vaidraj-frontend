@@ -44,6 +44,7 @@ dependencies:
   flutter_dotenv: ^5.1.0
   video_player: ^2.9.2
   chewie: ^1.9.2
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:

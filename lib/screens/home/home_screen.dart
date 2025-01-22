@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
@@ -13,6 +14,7 @@ import 'package:vaidraj/screens/patient_screen/products.dart';
 import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
+import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -60,11 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => Scaffold(
+    return Consumer2<LocalizationProvider, AllDiseaseProvider>(
+      builder: (context, langProvider, diseaseProvider, child) => Scaffold(
         key: _scaffoldKey,
         backgroundColor: AppColors.whiteColor,
-        endDrawer: _buildDrawer(langProvider: langProvider),
+        endDrawer: _buildDrawer(
+            langProvider: langProvider, diseaseProvider: diseaseProvider),
         appBar:
             _buildAppBar(isDoctor: widget.isDoctor, langProvider: langProvider),
         body: widget.isDoctor
@@ -77,7 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Drawer _buildDrawer({required LocalizationProvider langProvider}) {
+  Drawer _buildDrawer(
+      {required LocalizationProvider langProvider,
+      required AllDiseaseProvider diseaseProvider}) {
     return Drawer(
       backgroundColor: AppColors.lightBackGroundColor,
       child: SingleChildScrollView(
@@ -98,19 +103,28 @@ class _HomeScreenState extends State<HomeScreen> {
             }),
             const Divider(),
             GestureDetector(
-              onTap: () {
-                langProvider.changeLanguage(
-                    langProvider.currentLocale == "en" ? "hi" : "en");
+              onTap: () async {
+                bool isSuccess = await langProvider.changeLanguage(
+                    context: context,
+                    locale: langProvider.currentLocale == "en" ? "hi" : "en");
+                if (isSuccess) {
+                  diseaseProvider.getAllDisease(context: context);
+                }
               },
-              child: CustomContainer(
-                padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
-                backGroundColor: AppColors.backgroundColor,
-                borderRadius: BorderRadius.circular(5.w),
-                child: Text(
-                  "Language :- ${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
-                  style: TextSizeHelper.smallHeaderStyle,
-                ),
-              ),
+              child: langProvider.isLoading
+                  ? const Center(
+                      child: Loader(),
+                    )
+                  : CustomContainer(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+                      backGroundColor: AppColors.backgroundColor,
+                      borderRadius: BorderRadius.circular(5.w),
+                      child: Text(
+                        "Language :- ${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
+                        style: TextSizeHelper.smallHeaderStyle,
+                      ),
+                    ),
             )
           ],
         ),

@@ -5,14 +5,16 @@ import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
-import 'package:vaidraj/screens/home/home_screen.dart';
+
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
+
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/Custom_video_player.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/image_or_default_image_widget.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
+import 'package:vaidraj/widgets/webview_widget.dart';
 
 import '../../constants/color.dart';
 import '../../constants/text_size.dart';
@@ -150,19 +152,26 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                         },
                         itemBuilder: (context, index) {
                           Articles? articles = widget.articles?[index];
-                          return CustomContainer(
-                            width: 90.w,
-                            margin: const EdgeInsets.symmetric(
-                                vertical: AppSizes.size10),
-                            backGroundColor: AppColors.lightBackGroundColor,
-                            borderColor: AppColors.brownColor,
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.size10),
-                            borderWidth: 1,
-                            image: MethodHelper.imageOrNoImage(
-                                image:
-                                    "${AppStrings.articlePhotoUrl}/${articles?.thumbnail ?? ""}"),
-                            // child: ,
+                          return GestureDetector(
+                            onTap: () => push(
+                                context,
+                                WebViewScreen(
+                                  uri: articles?.url ?? "",
+                                )),
+                            child: CustomContainer(
+                              width: 90.w,
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: AppSizes.size10),
+                              backGroundColor: AppColors.lightBackGroundColor,
+                              borderColor: AppColors.brownColor,
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.size10),
+                              borderWidth: 1,
+                              image: MethodHelper.imageOrNoImage(
+                                  image:
+                                      "${AppStrings.articlePhotoUrl}/${articles?.thumbnail ?? ""}"),
+                              // child: ,
+                            ),
                           );
                         },
                       ),

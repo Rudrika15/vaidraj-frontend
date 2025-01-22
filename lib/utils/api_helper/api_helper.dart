@@ -7,4 +7,5 @@ class ApiHelper {
   static String getBranch = "$baseUrl/branches";
   static String verifyPassword = "$baseUrl/checkPassword";
   static String allDiseases = "$baseUrl/diseases";
+  static String updateLang = "$baseUrl/updateLang";
 }

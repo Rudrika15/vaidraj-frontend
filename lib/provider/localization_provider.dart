@@ -2,8 +2,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vaidraj/models/update_lang_model.dart';
+import 'package:vaidraj/services/update_lang_service/update_lang_service.dart';
 
 class LocalizationProvider extends ChangeNotifier {
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  UpdateLangService updateLangService = UpdateLangService();
+  UpdateLangModel? updateLangModel;
   static const String _boxName = 'settings';
   static const String _key = "language";
 
@@ -31,16 +38,29 @@ class LocalizationProvider extends ChangeNotifier {
     }
   }
 
-  void changeLanguage(String locale) async {
+  Future<bool> changeLanguage(
+      {required BuildContext context, required String locale}) async {
     try {
-      var box = await Hive.openBox(_boxName);
-      await box.put(_key, locale);
-      _localizedStrings = {};
-      _currentLocal = locale; // Update current locale before loading
-      await load(_currentLocal);
+      _isLoading = true;
       notifyListeners();
+      updateLangModel = await updateLangService.updateCurrentlang(
+          context: context, lang: locale);
+      if (updateLangModel?.success == true) {
+        var box = await Hive.openBox(_boxName);
+        await box.put(_key, locale);
+        _localizedStrings = {};
+        _currentLocal = locale; // Update current locale before loading
+        await load(_currentLocal);
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+      _isLoading = false;
+      notifyListeners();
+      return false;
     } catch (e) {
       print("Error changing language: $e");
+      return false;
     }
   }
 
