@@ -9,14 +9,14 @@ class ImageOrDefaultImage extends StatelessWidget {
   final double? widthAndHeight;
   @override
   Widget build(BuildContext context) {
-    return Image(
+    return Image.network(
+      image,
       errorBuilder: (context, error, stackTrace) => Image.asset(
         "assets/images/no-image-found.png",
         width: widthAndHeight ?? 10.w,
         height: widthAndHeight ?? 10.w,
         fit: BoxFit.contain,
       ),
-      image: NetworkImage(image),
       fit: BoxFit.cover,
     );
   }

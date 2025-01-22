@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/models/all_disease_model.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/screens/patient_screen/patient_home.dart';
@@ -56,7 +57,8 @@ class _SpecialitiesScreenState extends State<SpecialitiesScreen> {
                         Diseases? diseases =
                             diseaseProvider.diseaseModel?.data?.data?[index];
                         return SpecialityTempletContainer(
-                          image: diseases?.thumbnail ?? "",
+                          image:
+                              "${AppStrings.dieasesPhotoUrl}/${diseases?.thumbnail ?? ""}",
                           title: diseases?.displayName ?? "",
                           description: diseases?.displayDescription ?? "",
                         );

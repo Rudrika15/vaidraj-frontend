@@ -14,7 +14,7 @@ import '../../constants/color.dart';
 import '../../constants/text_size.dart';
 import '../../widgets/in_app_heading.dart';
 
-class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
+class ViewProductOrAppointment extends StatefulWidget {
   const ViewProductOrAppointment(
       {super.key,
       required this.title,
@@ -23,6 +23,14 @@ class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
   final String title;
   final String image;
   final String description;
+
+  @override
+  State<ViewProductOrAppointment> createState() =>
+      _ViewProductOrAppointmentState();
+}
+
+class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
+    with NavigateHelper {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +39,7 @@ class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
         backgroundColor: AppColors.whiteColor,
         surfaceTintColor: AppColors.whiteColor,
         title: Text(
-          title,
+          widget.title,
           style: TextSizeHelper.mediumTextStyle
               .copyWith(color: AppColors.brownColor),
         ),
@@ -50,13 +58,13 @@ class ViewProductOrAppointment extends StatelessWidget with NavigateHelper {
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppSizes.size10),
                     child: ImageOrDefaultImage(
-                      image: image,
+                      image: widget.image,
                     )),
               ),
             ),
             MethodHelper.heightBox(height: 3.h),
             Text(
-              description,
+              widget.description,
               style: TextSizeHelper.smallTextStyle,
               textAlign: TextAlign.justify,
             ),

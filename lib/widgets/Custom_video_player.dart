@@ -26,7 +26,7 @@ class _VideoAppState extends State<CustomVideoPlayer> {
   bool _isMuted = false;
   bool _isBuffering = false;
   bool _isInitialized = false;
-
+  late ValueNotifier<Duration> videoPositionNotifier;
   @override
   void initState() {
     super.initState();
@@ -36,6 +36,7 @@ class _VideoAppState extends State<CustomVideoPlayer> {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {
           _isInitialized = true;
+          videoPositionNotifier = ValueNotifier<Duration>(Duration.zero);
         });
         if (widget.autoPlay) {
           _play();
@@ -121,14 +122,48 @@ class _VideoAppState extends State<CustomVideoPlayer> {
               onPressed: _play,
             ),
           ],
-          Slider(
-            value: _controller.value.position.inSeconds.toDouble(),
-            min: 0,
-            max: _controller.value.duration.inSeconds.toDouble(),
-            onChanged: _onSeek,
-            activeColor: Colors.white,
-            inactiveColor: Colors.grey,
+          SliderTheme(
+            data: const SliderThemeData(
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6)),
+            child: ValueListenableBuilder<Duration>(
+              valueListenable: videoPositionNotifier,
+              builder: (context, videoPosition, child) {
+                return Slider(
+                  /// Called when the user stops interacting with the
+                  /// slider.
+                  onChangeEnd: (value) {
+                    _controller.seekTo(Duration(seconds: value.toInt()));
+                    _controller.play();
+                  },
+
+                  /// The position of the video player in seconds.
+                  value: videoPosition.inSeconds.toDouble(),
+
+                  /// The minimum value of the slider.
+                  min: 0.0,
+
+                  /// The maximum value of the slider.
+                  max: _controller.value.duration.inSeconds.toDouble(),
+
+                  /// Called when the user changes the position of the
+                  /// slider.
+                  onChanged: (value) {
+                    setState(() {
+                      _controller.seekTo(Duration(seconds: value.toInt()));
+                    });
+                  },
+                );
+              },
+            ),
           ),
+          // Slider(
+          //   value: _controller.value.position.inSeconds.toDouble(),
+          //   min: 0,
+          //   max: _controller.value.duration.inSeconds.toDouble(),
+          //   onChanged: _onSeek,
+          //   activeColor: Colors.white,
+          //   inactiveColor: Colors.grey,
+          // ),
           IconButton(
             icon: Icon(
               _isMuted ? Icons.volume_off : Icons.volume_up,

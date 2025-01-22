@@ -14,4 +14,8 @@ class AppStrings {
 
   ///
   static const String image3 = "assets/images/image3.png";
+
+  ///
+  static const String dieasesPhotoUrl =
+      "https://vedraj.flipcodesolutions.com/images/diseases";
 }

@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/models/all_disease_model.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart';
+import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../widgets/custom_searchbar.dart';
@@ -117,7 +119,8 @@ class SpecialitiesRenderWidget extends StatelessWidget {
                       diseaseProvider.diseaseModel?.data?.data?[index];
                   return SpecialityTempletContainer(
                     title: diseases?.displayName ?? "",
-                    image: diseases?.thumbnail ?? "",
+                    image:
+                        "${AppStrings.dieasesPhotoUrl}/${diseases?.thumbnail ?? ""}",
                     description: diseases?.displayDescription ?? "",
                   );
                 },
@@ -146,7 +149,7 @@ class SpecialityTempletContainer extends StatelessWidget {
                 description: description,
               ))),
       child: CustomContainer(
-        width: 30.w,
+        width: 29.w,
         borderColor: AppColors.brownColor,
         borderWidth: 1,
         borderRadius: BorderRadius.circular(AppSizes.size10),
@@ -155,11 +158,11 @@ class SpecialityTempletContainer extends StatelessWidget {
             Expanded(
               flex: 8,
               child: CustomContainer(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppSizes.size10),
-                    topRight: Radius.circular(AppSizes.size10)),
-                child: ImageOrDefaultImage(image: image),
-              ),
+                  padding: const EdgeInsets.all(0),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(AppSizes.size10),
+                      topRight: Radius.circular(AppSizes.size10)),
+                  image: MethodHelper.imageOrNoImage(image: image)),
             ),
             Expanded(
               flex: 2,
