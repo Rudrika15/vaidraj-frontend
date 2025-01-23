@@ -108,7 +108,9 @@ class GetInTouchScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: CustomTextFieldWidget(
-                                  hintText: langProvider.translate('firstName'),
+                                  decoration: MethodHelper.greenUnderLineBorder(
+                                      hintText:
+                                          langProvider.translate('firstName')),
                                   controller: firstNameController,
                                   keyboardType: TextInputType.text,
                                   maxLength: 30,
@@ -124,7 +126,9 @@ class GetInTouchScreen extends StatelessWidget {
                               MethodHelper.widthBox(width: AppSizes.size10),
                               Expanded(
                                 child: CustomTextFieldWidget(
-                                  hintText: langProvider.translate('lastName'),
+                                  decoration: MethodHelper.greenUnderLineBorder(
+                                      hintText:
+                                          langProvider.translate('lastName')),
                                   controller: lastNameController,
                                   keyboardType: TextInputType.text,
                                   maxLength: 30,
@@ -141,7 +145,8 @@ class GetInTouchScreen extends StatelessWidget {
                           ),
                           MethodHelper.heightBox(height: 1.h),
                           CustomTextFieldWidget(
-                            hintText: langProvider.translate('email'),
+                            decoration: MethodHelper.greenUnderLineBorder(
+                                hintText: langProvider.translate('email')),
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
                             maxLength: 40,
@@ -162,7 +167,9 @@ class GetInTouchScreen extends StatelessWidget {
                           ),
                           MethodHelper.heightBox(height: 1.h),
                           CustomTextFieldWidget(
-                            hintText: langProvider.translate("contactNumber"),
+                            decoration: MethodHelper.greenUnderLineBorder(
+                                hintText:
+                                    langProvider.translate("contactNumber")),
                             controller: contactNumberController,
                             keyboardType: TextInputType.number,
                             maxLength: 10,
@@ -175,7 +182,8 @@ class GetInTouchScreen extends StatelessWidget {
                           ),
                           MethodHelper.heightBox(height: 1.h),
                           CustomTextFieldWidget(
-                              hintText: langProvider.translate('subject'),
+                              decoration: MethodHelper.greenUnderLineBorder(
+                                  hintText: langProvider.translate('subject')),
                               maxLines: 2,
                               validator: (value) {
                                 if (value?.isEmpty == true) {
@@ -187,7 +195,8 @@ class GetInTouchScreen extends StatelessWidget {
                               controller: subjectController),
                           MethodHelper.heightBox(height: 1.h),
                           CustomTextFieldWidget(
-                            hintText: langProvider.translate("message"),
+                            decoration: MethodHelper.greenUnderLineBorder(
+                                hintText: langProvider.translate("message")),
                             controller: messageController,
                             minLines: 2,
                             keyboardType: TextInputType.text,

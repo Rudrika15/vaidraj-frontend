@@ -5,6 +5,8 @@ class BorderHelper {
   static InputDecoration inputBorder = const InputDecoration(
     border: UnderlineInputBorder(
         borderSide: BorderSide(color: AppColors.brownColor)),
+    disabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.brownColor)),
     errorBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: AppColors.errorColor)),
     enabledBorder: UnderlineInputBorder(
@@ -17,6 +19,8 @@ class BorderHelper {
 
   static InputDecoration greenInputBorder = const InputDecoration(
     border: UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.greenColor)),
+    disabledBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: AppColors.greenColor)),
     errorBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: AppColors.errorColor)),

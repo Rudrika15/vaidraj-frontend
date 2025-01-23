@@ -138,14 +138,14 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CustomTextFieldWidget(
-                                  hintText: langProvider.translate("password"),
-                                  isGreenBorder: false,
                                   obscureText: showPassword,
                                   controller: passwordController,
+                                  decoration: MethodHelper.brownUnderLineBorder(
+                                      hintText:
+                                          langProvider.translate("password"),
+                                      prefixIcon: Icons.password),
                                   maxLines: 1,
                                   keyboardType: TextInputType.text,
-                                  prefixIcon: Icons.password,
-                                  suffixIcon: null,
                                   suffix: IconButton(
                                       onPressed: () {
                                         setState(() {
@@ -189,10 +189,10 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                             child: CustomContainer(
                               padding: EdgeInsets.symmetric(horizontal: 10.w),
                               child: CustomTextFieldWidget(
-                                  hintText:
-                                      langProvider.translate("dateOfBirth"),
-                                  isGreenBorder: false,
-                                  prefixIcon: Icons.cake_outlined,
+                                  decoration: MethodHelper.brownUnderLineBorder(
+                                      hintText:
+                                          langProvider.translate("dateOfBirth"),
+                                      prefixIcon: Icons.cake_outlined),
                                   suffix: IconButton(
                                       onPressed: () async {
                                         dob = await showDatePicker(
@@ -230,12 +230,15 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                 child: Column(
                                   children: [
                                     CustomTextFieldWidget(
-                                      hintText: langProvider.translate("name"),
-                                      isGreenBorder: false,
+                                      decoration:
+                                          MethodHelper.brownUnderLineBorder(
+                                              hintText: langProvider
+                                                  .translate("name"),
+                                              prefixIcon:
+                                                  Icons.person_outline_sharp),
                                       controller: nameController,
                                       keyboardType: TextInputType.text,
                                       maxLength: 30,
-                                      prefixIcon: Icons.person_outline_sharp,
                                       validator: (value) {
                                         if (value?.isEmpty == true) {
                                           return langProvider
@@ -246,13 +249,14 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                     ),
                                     MethodHelper.heightBox(height: 1.h),
                                     CustomTextFieldWidget(
-                                      hintText: langProvider
-                                          .translate("contactNumber"),
-                                      isGreenBorder: false,
+                                      decoration:
+                                          MethodHelper.brownUnderLineBorder(
+                                              hintText: langProvider
+                                                  .translate("contactNumber"),
+                                              prefixIcon: Icons.phone),
                                       controller: numberController,
                                       keyboardType: TextInputType.number,
                                       maxLength: 10,
-                                      prefixIcon: Icons.phone,
                                       validator: (value) {
                                         if (value?.isEmpty == true) {
                                           return langProvider
@@ -269,12 +273,14 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                     ),
                                     MethodHelper.heightBox(height: 1.h),
                                     CustomTextFieldWidget(
-                                      hintText: langProvider.translate("email"),
-                                      isGreenBorder: false,
+                                      decoration:
+                                          MethodHelper.brownUnderLineBorder(
+                                              hintText: langProvider
+                                                  .translate("email"),
+                                              prefixIcon: Icons.email_outlined),
                                       controller: emailController,
                                       keyboardType: TextInputType.emailAddress,
                                       maxLength: 40,
-                                      prefixIcon: Icons.email_outlined,
                                       validator: (value) {
                                         if (value?.isEmpty == true) {
                                           return langProvider
@@ -291,38 +297,41 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                         return null;
                                       },
                                     ),
-                                    CustomTextFieldWidget(
-                                        hintText: langProvider
-                                            .translate("dateOfBirth"),
-                                        isGreenBorder: false,
-                                        prefixIcon: Icons.cake_outlined,
-                                        suffix: IconButton(
-                                            onPressed: () async {
-                                              dob = await showDatePicker(
-                                                  context: context,
-                                                  firstDate: DateTime(1950),
-                                                  lastDate: DateTime(
-                                                      DateTime.now().year -
-                                                          18));
-                                              if (dob != null) {
-                                                dobController.text =
-                                                    DateFormat('yyyy-MM-dd')
-                                                        .format(dob!);
-                                              }
-                                            },
-                                            icon: const Icon(
-                                              Icons.date_range_outlined,
-                                              color: AppColors.greenColor,
-                                            )),
-                                        validator: (value) {
-                                          if (value?.isEmpty == true) {
-                                            return langProvider
-                                                .translate("dateOfBirthReq");
-                                          }
-                                          return null;
-                                        },
-                                        keyboardType: TextInputType.none,
-                                        controller: dobController),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        dob = await showDatePicker(
+                                            context: context,
+                                            firstDate: DateTime(1950),
+                                            lastDate: DateTime(
+                                                DateTime.now().year - 18));
+                                        if (dob != null) {
+                                          dobController.text =
+                                              DateFormat('yyyy-MM-dd')
+                                                  .format(dob!);
+                                        }
+                                      },
+                                      child: CustomTextFieldWidget(
+                                          enabled: false,
+                                          decoration:
+                                              MethodHelper.brownUnderLineBorder(
+                                                  hintText: langProvider
+                                                      .translate("dateOfBirth"),
+                                                  prefixIcon:
+                                                      Icons.cake_outlined),
+                                          suffix: const Icon(
+                                            Icons.date_range_outlined,
+                                            color: AppColors.greenColor,
+                                          ),
+                                          validator: (value) {
+                                            if (value?.isEmpty == true) {
+                                              return langProvider
+                                                  .translate("dateOfBirthReq");
+                                            }
+                                            return null;
+                                          },
+                                          keyboardType: TextInputType.none,
+                                          controller: dobController),
+                                    ),
                                     MethodHelper.heightBox(height: 1.h),
                                     branchProvider.isLoading
                                         ? const Center(child: Loader())
@@ -385,13 +394,15 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                           ),
                                     MethodHelper.heightBox(height: 1.h),
                                     CustomTextFieldWidget(
-                                      hintText:
-                                          langProvider.translate("address"),
-                                      isGreenBorder: false,
+                                      decoration:
+                                          MethodHelper.brownUnderLineBorder(
+                                              hintText: langProvider
+                                                  .translate("address"),
+                                              prefixIcon:
+                                                  Icons.location_on_outlined),
                                       controller: addressController,
                                       minLines: 2,
                                       keyboardType: TextInputType.text,
-                                      prefixIcon: Icons.location_on_outlined,
                                       validator: (value) {
                                         if (value?.isEmpty == true) {
                                           return langProvider

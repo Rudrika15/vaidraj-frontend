@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
@@ -84,11 +83,13 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                       child: CustomContainer(
                           padding: EdgeInsets.symmetric(horizontal: 10.w),
                           child: CustomTextFieldWidget(
-                            hintText: langProvider.translate("mobileNumber"),
+                            decoration: MethodHelper.brownUnderLineBorder(
+                                hintText:
+                                    langProvider.translate("mobileNumber"),
+                                prefixIcon: Icons.phone_android_outlined),
                             controller: mobileController,
                             keyboardType: TextInputType.number,
                             maxLength: 10,
-                            prefixIcon: Icons.phone_android_outlined,
                             validator: (value) {
                               if (value?.isEmpty ?? true) {
                                 return langProvider
