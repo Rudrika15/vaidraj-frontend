@@ -5,6 +5,7 @@ import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/screens/notification/notifications_screen.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
@@ -13,6 +14,7 @@ import 'package:vaidraj/screens/patient_screen/patient_home.dart';
 import 'package:vaidraj/screens/patient_screen/products.dart';
 import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
@@ -28,7 +30,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedTabIndex = 0;
   int _selectedNavTabIndex = 0;
@@ -172,7 +174,9 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Widget> actions = [];
     widget.isDoctor
         ? actions.add(IconButton.filledTonal(
-            onPressed: () {},
+            onPressed: () {
+              push(context, NotificationsScreen());
+            },
             style: const ButtonStyle(
                 backgroundColor:
                     WidgetStatePropertyAll(AppColors.backgroundColor)),
@@ -181,7 +185,9 @@ class _HomeScreenState extends State<HomeScreen> {
         : _selectedTabIndex != 0
             ? null
             : actions.add(IconButton.filledTonal(
-                onPressed: () {},
+                onPressed: () {
+                  push(context, NotificationsScreen());
+                },
                 style: const ButtonStyle(
                     backgroundColor:
                         WidgetStatePropertyAll(AppColors.backgroundColor)),

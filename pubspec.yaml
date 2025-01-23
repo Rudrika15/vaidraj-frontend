@@ -45,6 +45,7 @@ dependencies:
   video_player: ^2.9.2
   chewie: ^1.9.2
   webview_flutter: ^4.10.0
+  youtube_player_flutter: ^9.1.1
 
 dev_dependencies:
   flutter_test:
