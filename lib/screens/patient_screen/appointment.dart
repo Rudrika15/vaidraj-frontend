@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
@@ -19,6 +20,14 @@ class Appointment extends StatefulWidget {
 }
 
 class _AppointmentState extends State<Appointment> {
+  // variables
+  String selectedDate = DateFormat('EEE, dd MMM yyyy').format(DateTime.now());
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LocalizationProvider>(
@@ -50,7 +59,7 @@ class _AppointmentState extends State<Appointment> {
                 Row(
                   children: [
                     PrimaryBtn(
-                      btnText:langProvider.translate("sendEmail"),
+                      btnText: langProvider.translate("sendEmail"),
                       onTap: () {
                         // add logic to email
                       },
@@ -78,7 +87,30 @@ class _AppointmentState extends State<Appointment> {
                   ],
                 )
               ]),
-              ToggleBtn(isSelected: false, text: "Btn")
+              MethodHelper.heightBox(height: AppSizes.size10),
+              CustomContainer(
+                height: 5.h,
+                child: ListView.separated(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSizes.size10),
+                  separatorBuilder: (context, index) =>
+                      MethodHelper.widthBox(width: 2.w),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 365,
+                  itemBuilder: (context, index) {
+                    String date = DateFormat('EEE, dd MMM yyy')
+                        .format(DateTime.now().add(Duration(days: index)));
+                    return ToggleBtn(
+                      isSelected: date == selectedDate,
+                      text: date,
+                      onTap: () => setState(() {
+                        selectedDate = date;
+                      }),
+                    );
+                  },
+                ),
+              )
             ],
           ),
         ),
@@ -88,16 +120,18 @@ class _AppointmentState extends State<Appointment> {
 }
 
 class ToggleBtn extends StatefulWidget {
-  const ToggleBtn(
+  ToggleBtn(
       {super.key,
       required this.isSelected,
       this.height,
       this.width,
-      required this.text});
-  final bool isSelected;
+      required this.text,
+      required this.onTap});
+  bool isSelected;
   final double? height;
   final double? width;
   final String text;
+  final VoidCallback onTap;
   @override
   State<ToggleBtn> createState() => _ToggleBtnState();
 }
@@ -106,11 +140,10 @@ class _ToggleBtnState extends State<ToggleBtn> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: widget.onTap,
       child: CustomContainer(
-        backGroundColor: widget.isSelected
-            ? AppColors.backgroundColor
-            : AppColors.whiteColor,
+        backGroundColor:
+            widget.isSelected ? AppColors.brownColor : AppColors.whiteColor,
         borderColor: AppColors.brownColor,
         borderRadius: BorderRadius.circular(5),
         height: widget.height ?? 4.h,
@@ -118,7 +151,10 @@ class _ToggleBtnState extends State<ToggleBtn> {
         padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
         child: Text(
           widget.text,
-          style: TextSizeHelper.xSmallTextStyle,
+          style: TextSizeHelper.xSmallTextStyle.copyWith(
+              color: widget.isSelected
+                  ? AppColors.whiteColor
+                  : AppColors.brownColor),
           overflow: TextOverflow.ellipsis,
         ),
       ),

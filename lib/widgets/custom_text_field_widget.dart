@@ -13,7 +13,8 @@ class CustomTextFieldWidget extends StatelessWidget {
       this.obscureText = false,
       this.enabled = true,
       this.suffix,
-      required this.decoration});
+      required this.decoration,
+      this.style});
   final String? Function(String?)? validator;
   final int? maxLength;
   final TextInputType? keyboardType;
@@ -24,6 +25,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final bool enabled;
   final Widget? suffix;
   final InputDecoration? decoration;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,8 @@ class CustomTextFieldWidget extends StatelessWidget {
         keyboardType: keyboardType,
         obscureText: obscureText,
         enabled: enabled,
-        style: TextSizeHelper.smallHeaderStyle.copyWith(color: Colors.black),
+        style: style ??
+            TextSizeHelper.smallHeaderStyle.copyWith(color: Colors.black),
         minLines: minLines,
         maxLines: maxLines,
         decoration: decoration);

@@ -15,7 +15,9 @@ class CustomDropDownWidget extends StatelessWidget {
       this.prefixIcon,
       this.suffixIcon,
       this.validator,
-      this.alignment = Alignment.center});
+      this.alignment = Alignment.center,
+      this.decoration,
+      this.dropdownColor});
 
   final List<DropdownMenuItem<Object?>>? items;
   final void Function(Object?)? onChanged;
@@ -25,6 +27,8 @@ class CustomDropDownWidget extends StatelessWidget {
   final IconData? suffixIcon;
   final String? Function(Object?)? validator;
   final AlignmentGeometry alignment;
+  final InputDecoration? decoration;
+  final Color? dropdownColor;
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<Object?>(
@@ -35,19 +39,20 @@ class CustomDropDownWidget extends StatelessWidget {
         alignment: alignment,
         onChanged: onChanged,
         validator: validator,
-        dropdownColor: AppColors.whiteColor,
+        dropdownColor: dropdownColor ?? AppColors.whiteColor,
         style: TextSizeHelper.smallTextStyle.copyWith(color: Colors.black),
-        decoration: BorderHelper.inputBorder.copyWith(
-            hintText: hintText,
-            hintStyle:
-                TextSizeHelper.smallTextStyle.copyWith(color: Colors.black),
-            prefixIcon: Icon(
-              prefixIcon,
-              color: AppColors.greenColor,
-            ),
-            suffixIcon: Icon(
-              suffixIcon,
-              color: AppColors.greenColor,
-            )));
+        decoration: decoration ??
+            BorderHelper.inputBorder.copyWith(
+                hintText: hintText,
+                hintStyle:
+                    TextSizeHelper.smallTextStyle.copyWith(color: Colors.black),
+                prefixIcon: Icon(
+                  prefixIcon,
+                  color: AppColors.greenColor,
+                ),
+                suffixIcon: Icon(
+                  suffixIcon,
+                  color: AppColors.greenColor,
+                )));
   }
 }

@@ -5,9 +5,7 @@ import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
-
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
-
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/Custom_video_player.dart';
@@ -101,39 +99,39 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
               ),
               MethodHelper.heightBox(height: 3.h),
               InScreenHeading(heading: langProvider.translate("videos")),
-              SizedBox(
-                height: 25.h,
-                child: widget.videos?.isEmpty ?? true
-                    ? const ContainerForNoDataFound(
-                        title: "No Videos To Show",
-                      )
-                    : ListView.separated(
-                        itemCount: widget.videos?.length ?? 0,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.only(left: AppSizes.size10),
-                        scrollDirection: Axis.horizontal,
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            width: AppSizes.size10,
-                          );
-                        },
-                        itemBuilder: (context, index) {
-                          Videos? video = widget.videos?[index];
-                          return CustomContainer(
-                            width: 90.w,
-                            margin: const EdgeInsets.symmetric(
-                                vertical: AppSizes.size10),
-                            backGroundColor: AppColors.lightBackGroundColor,
-                            borderColor: AppColors.brownColor,
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.size10),
-                            borderWidth: 1,
-                            child: CustomVideoPlayer(
-                                videoUrl: video?.youtubeLink ?? ""),
-                          );
-                        },
-                      ),
-              ),
+              // SizedBox(
+              //   height: 25.h,
+              //   child: widget.videos?.isEmpty ?? true
+              //       ? const ContainerForNoDataFound(
+              //           title: "No Videos To Show",
+              //         )
+              //       : ListView.separated(
+              //           itemCount: widget.videos?.length ?? 0,
+              //           shrinkWrap: true,
+              //           padding: const EdgeInsets.only(left: AppSizes.size10),
+              //           scrollDirection: Axis.horizontal,
+              //           separatorBuilder: (context, index) {
+              //             return const SizedBox(
+              //               width: AppSizes.size10,
+              //             );
+              //           },
+              //           itemBuilder: (context, index) {
+              //             Videos? video = widget.videos?[index];
+              //             return CustomContainer(
+              //               width: 90.w,
+              //               margin: const EdgeInsets.symmetric(
+              //                   vertical: AppSizes.size10),
+              //               backGroundColor: AppColors.lightBackGroundColor,
+              //               borderColor: AppColors.brownColor,
+              //               borderRadius:
+              //                   BorderRadius.circular(AppSizes.size10),
+              //               borderWidth: 1,
+              //               child: CustomVideoPlayer(
+              //                   videoUrl: video?.youtubeLink ?? ""),
+              //             );
+              //           },
+              //         ),
+              // ),
               MethodHelper.heightBox(height: 3.h),
               InScreenHeading(heading: langProvider.translate("article")),
               SizedBox(
@@ -175,7 +173,13 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                           );
                         },
                       ),
-              )
+              ),
+              MethodHelper.heightBox(height: 3.h),
+              CustomContainer(
+                  width: 90.w,
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppSizes.size10),
+                      child: CustomVideoPlayer()))
             ],
           ),
         ),
