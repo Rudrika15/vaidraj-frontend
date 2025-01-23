@@ -11,7 +11,6 @@ import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/green_divider.dart';
-import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import 'dart:math' as math;
 import '../../constants/text_size.dart';
@@ -98,6 +97,11 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                               if (value?.contains(RegExp(r"[ ,-.]")) ?? true) {
                                 return langProvider.translate("mobileNotValid");
                               }
+                              if (value?.contains(
+                                      RegExp(r'^\D*(\d\D*){0,9}$')) ??
+                                  true) {
+                                return langProvider.translate("mobileNotValid");
+                              }
                               return null;
                             },
                           ))),
@@ -109,44 +113,39 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.symmetric(
               horizontal: AppSizes.size20, vertical: AppSizes.size10),
-          child: mobileVerProvider.isLoading
-              ? CustomContainer(
-                  width: 10.w, height: 10.w, child: const Loader())
-              : CustomContainer(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: PrimaryBtn(
-                      btnText: langProvider.translate("submit"),
-                      onTap: () async {
-                        if (formkey.currentState!.validate()) {
-                          await mobileVerProvider.verifyMobile(
-                              context: context,
-                              mobileNumber: mobileController.text);
-                          if (mobileVerProvider
-                                  .verifyMobileNumberModel?.success ==
-                              true) {
-                            if (mobileVerProvider
-                                    .verifyMobileNumberModel?.data?.role ==
-                                "admin") {
-                              push(context,
-                                  const SignInSignUp(UserStatus: "STAFF"));
-                              return;
-                            }
-                            if (mobileVerProvider
-                                    .verifyMobileNumberModel?.data?.role ==
-                                "patient") {
-                              push(context,
-                                  const SignInSignUp(UserStatus: "PATIENT"));
-                              return;
-                            }
-                          } else {
-                            push(
-                                context, const SignInSignUp(UserStatus: "NEW"));
-                            return;
-                          }
+          child: CustomContainer(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: PrimaryBtn(
+                  btnText: langProvider.translate("submit"),
+                  onTap: () async {
+                    if (formkey.currentState!.validate()) {
+                      await mobileVerProvider.verifyMobile(
+                          context: context,
+                          mobileNumber: mobileController.text);
+                      if (mobileVerProvider.verifyMobileNumberModel?.success ==
+                          true) {
+                        if (mobileVerProvider
+                                .verifyMobileNumberModel?.data?.role ==
+                            "admin") {
+                          push(
+                              context, const SignInSignUp(UserStatus: "STAFF"));
                           return;
                         }
-                      })),
+                        if (mobileVerProvider
+                                .verifyMobileNumberModel?.data?.role ==
+                            "patient") {
+                          push(context,
+                              const SignInSignUp(UserStatus: "PATIENT"));
+                          return;
+                        }
+                      } else {
+                        push(context, const SignInSignUp(UserStatus: "NEW"));
+                        return;
+                      }
+                      return;
+                    }
+                  })),
         ),
       ),
     );

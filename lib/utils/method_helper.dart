@@ -53,12 +53,9 @@ class MethodHelper {
       hintText: hintText,
       counterText: "",
       hintStyle: TextSizeHelper.smallTextStyle.copyWith(color: Colors.black),
-      prefix: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Icon(
-          prefixIcon,
-          color: prefixColor ?? AppColors.greenColor,
-        ),
+      prefixIcon: Icon(
+        prefixIcon,
+        color: prefixColor ?? AppColors.greenColor,
       ),
       suffix: suffix,
     );

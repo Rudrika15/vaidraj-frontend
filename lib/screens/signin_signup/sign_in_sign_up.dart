@@ -188,37 +188,52 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                             key: patientForm,
                             child: CustomContainer(
                               padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              child: CustomTextFieldWidget(
-                                  decoration: MethodHelper.brownUnderLineBorder(
-                                      hintText:
-                                          langProvider.translate("dateOfBirth"),
-                                      prefixIcon: Icons.cake_outlined),
-                                  suffix: IconButton(
-                                      onPressed: () async {
-                                        dob = await showDatePicker(
-                                            context: context,
-                                            firstDate: DateTime(1950),
-                                            lastDate: DateTime(
-                                                DateTime.now().year - 18));
-                                        if (dob != null) {
-                                          dobController.text =
-                                              DateFormat("yyyy-MM-dd")
-                                                  .format(dob!);
-                                        }
-                                      },
-                                      icon: const Icon(
-                                        Icons.date_range_outlined,
-                                        color: AppColors.greenColor,
-                                      )),
-                                  validator: (value) {
-                                    if (value?.isEmpty == true) {
-                                      return langProvider
-                                          .translate("dateOfBirthReq");
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.none,
-                                  controller: dobController),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  dob = await showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(1950),
+                                      lastDate:
+                                          DateTime(DateTime.now().year - 18));
+                                  if (dob != null) {
+                                    dobController.text =
+                                        DateFormat('yyyy-MM-dd').format(dob!);
+                                  }
+                                },
+                                child: CustomTextFieldWidget(
+                                    enabled: false,
+                                    decoration:
+                                        MethodHelper.brownUnderLineBorder(
+                                            hintText: langProvider
+                                                .translate("dateOfBirth"),
+                                            prefixIcon: Icons.cake_outlined),
+                                    suffix: IconButton(
+                                        onPressed: () async {
+                                          dob = await showDatePicker(
+                                              context: context,
+                                              firstDate: DateTime(1950),
+                                              lastDate: DateTime(
+                                                  DateTime.now().year - 18));
+                                          if (dob != null) {
+                                            dobController.text =
+                                                DateFormat("yyyy-MM-dd")
+                                                    .format(dob!);
+                                          }
+                                        },
+                                        icon: const Icon(
+                                          Icons.date_range_outlined,
+                                          color: AppColors.greenColor,
+                                        )),
+                                    validator: (value) {
+                                      if (value?.isEmpty == true) {
+                                        return langProvider
+                                            .translate("dateOfBirthReq");
+                                      }
+                                      return null;
+                                    },
+                                    keyboardType: TextInputType.none,
+                                    controller: dobController),
+                              ),
                             ))
                         :
 
@@ -426,7 +441,9 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
               child: patientProvider.isLoading ||
                       mobileVerProvider.isLoading ||
                       branchProvider.isLoading
-                  ? const Loader()
+                  ? CustomContainer(
+                      child: Center(child: Loader()),
+                    )
                   : PrimaryBtn(
                       btnText: widget.UserStatus == "STAFF"
                           ? langProvider.translate("login")

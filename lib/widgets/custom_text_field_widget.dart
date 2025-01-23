@@ -34,7 +34,7 @@ class CustomTextFieldWidget extends StatelessWidget {
         keyboardType: keyboardType,
         obscureText: obscureText,
         enabled: enabled,
-        style: TextSizeHelper.smallHeaderStyle,
+        style: TextSizeHelper.smallHeaderStyle.copyWith(color: Colors.black),
         minLines: minLines,
         maxLines: maxLines,
         decoration: decoration);
