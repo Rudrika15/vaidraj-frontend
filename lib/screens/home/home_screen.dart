@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/models/all_disease_model.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/notification/notifications_screen.dart';
@@ -69,7 +70,9 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
         key: _scaffoldKey,
         backgroundColor: AppColors.whiteColor,
         endDrawer: _buildDrawer(
-            langProvider: langProvider, diseaseProvider: diseaseProvider),
+            langProvider: langProvider,
+            diseaseProvider: diseaseProvider,
+            context: context),
         appBar:
             _buildAppBar(isDoctor: widget.isDoctor, langProvider: langProvider),
         body: widget.isDoctor
@@ -84,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
 
   Drawer _buildDrawer(
       {required LocalizationProvider langProvider,
-      required AllDiseaseProvider diseaseProvider}) {
+      required AllDiseaseProvider diseaseProvider,
+      required BuildContext context}) {
     return Drawer(
       backgroundColor: AppColors.lightBackGroundColor,
       child: SingleChildScrollView(
@@ -106,12 +110,16 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
             const Divider(),
             GestureDetector(
               onTap: () async {
-                bool isSuccess = await langProvider.changeLanguage(
-                    context: context,
-                    locale: langProvider.currentLocale == "en" ? "hi" : "en");
-                if (isSuccess) {
-                  diseaseProvider.getAllDisease(context: context);
-                }
+                await langProvider
+                    .changeLanguage(
+                        context: context,
+                        locale:
+                            langProvider.currentLocale == "en" ? "hi" : "en")
+                    .then((isSuccess) {
+                  if (isSuccess) {
+                    diseaseProvider.pagingController.refresh();
+                  }
+                });
               },
               child: langProvider.isLoading
                   ? const Center(

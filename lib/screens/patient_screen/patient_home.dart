@@ -12,9 +12,7 @@ import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart'
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
-import '../../services/all_disease_service/all_disease_service.dart';
 import '../../widgets/custom_searchbar.dart';
-import '../../widgets/image_or_default_image_widget.dart';
 import '../../widgets/in_app_heading.dart';
 
 class PatientHomeScreen extends StatefulWidget {
@@ -31,8 +29,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     super.initState();
     var diseaseProvider =
         Provider.of<AllDiseaseProvider>(context, listen: false);
-    if (diseaseProvider.diseaseModel == null) {
-      diseaseProvider.getAllDisease(context: context);
+    if (diseaseProvider.diseasesModel == null) {
+      diseaseProvider.getAllDisease(context: context, currentPage: 0);
     }
   }
 
@@ -53,9 +51,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             InScreenHeading(
               heading: langProvider.translate("ourSpeciality"),
             ),
-            SpecialitiesRenderWidget(
-              diseaseProvider: diseaseProvider,
-            ),
+            diseaseProvider.isLoading
+                ? Loader()
+                : SpecialitiesRenderWidget(
+                    diseaseProvider: diseaseProvider,
+                  ),
             InScreenHeading(heading: langProvider.translate("appointment")),
             CustomContainer(
               margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
@@ -107,39 +107,15 @@ class SpecialitiesRenderWidget extends StatefulWidget {
 
 class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
   /// variable
-  static const _pageSize = 5;
-  AllDiseaseService diseaseService = AllDiseaseService();
-  final PagingController<int, Diseases> _pagingController =
-      PagingController(firstPageKey: 1);
+  // final PagingController<int, Diseases> _pagingController =
+  //     PagingController(firstPageKey: 1);
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(
-        pageKey: pageKey,
-      );
+    widget.diseaseProvider.pagingController.addPageRequestListener((pageKey) {
+      widget.diseaseProvider.fetchPage(pageKey: pageKey, context: context);
     });
-  }
-
-  Future<void> _fetchPage({
-    required int pageKey,
-  }) async {
-    try {
-      final newItems = await diseaseService.getDiseaseByPage(
-        context: context,
-        currentPage: pageKey,
-      );
-      final isLastPage = newItems.length < _pageSize;
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems, nextPageKey);
-      }
-    } catch (error) {
-      _pagingController.error = error;
-    }
   }
 
   @override
@@ -147,12 +123,12 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSizes.size10),
         child: SizedBox(
-          height: 15.h,
+          height: 16.h,
           child: PagedListView.separated(
               shrinkWrap: true,
               padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
               scrollDirection: Axis.horizontal,
-              pagingController: _pagingController,
+              pagingController: widget.diseaseProvider.pagingController,
               builderDelegate: PagedChildBuilderDelegate<Diseases>(
                 itemBuilder: (context, diseases, index) =>
                     SpecialityTempletContainer(
@@ -174,7 +150,7 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _pagingController.dispose();
+    // _pagingController.dispose();
   }
 }
 

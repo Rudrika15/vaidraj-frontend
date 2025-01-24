@@ -22,6 +22,7 @@ class Appointment extends StatefulWidget {
 class _AppointmentState extends State<Appointment> {
   // variables
   String selectedDate = DateFormat('EEE, dd MMM yyyy').format(DateTime.now());
+  bool isForOther = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -110,7 +111,17 @@ class _AppointmentState extends State<Appointment> {
                     );
                   },
                 ),
-              )
+              ),
+              MethodHelper.heightBox(height: 2.h),
+              Row(
+                children: [
+                  Checkbox(
+                    value: isForOther,
+                    onChanged: (value) => isForOther = !isForOther,
+                  ),
+                  Text("For Other?")
+                ],
+              ),
             ],
           ),
         ),
