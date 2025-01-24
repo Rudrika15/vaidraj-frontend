@@ -6,6 +6,7 @@ class ApiHelper {
   static String newPatient = "$baseUrl/newPatient";
   static String getBranch = "$baseUrl/branches";
   static String verifyPassword = "$baseUrl/checkPassword";
-  static String allDiseases = "$baseUrl/diseases";
+  static String allDiseases({required int currentPage, int? perPage}) =>
+      "$baseUrl/diseases?current_page=$currentPage&per_page=$perPage";
   static String updateLang = "$baseUrl/updateLang";
 }
