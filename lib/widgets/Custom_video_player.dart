@@ -75,6 +75,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -83,8 +84,8 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 /// Stateful widget to fetch and then display video content.
 class CustomVideoPlayer extends StatefulWidget {
-  CustomVideoPlayer({super.key});
-
+  CustomVideoPlayer({super.key, required this.videoLink});
+  final String videoLink;
   @override
   _VideoAppState createState() => _VideoAppState();
 }
@@ -98,9 +99,22 @@ class _VideoAppState extends State<CustomVideoPlayer> with NavigateHelper {
   }
 
   Future<void> loadController() async {
+    print("video player is initing with this video Id => ${widget.videoLink}");
     _controller = YoutubePlayerController(
-        initialVideoId: "hpPhdC43hEY",
+        initialVideoId: widget.videoLink,
         flags: YoutubePlayerFlags(autoPlay: false, mute: false));
+    _controller.addListener(() {
+      ///=========================================== do jot remove
+      // Check for fullscreen state changes
+      if (_controller.value.isFullScreen) {
+        // When fullscreen is entered, hide the system UI (status bar, etc.)
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+      } else {
+        // When exiting fullscreen, restore the system UI
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+            overlays: SystemUiOverlay.values);
+      }
+    });
   }
 
   @override
@@ -115,17 +129,26 @@ class _VideoAppState extends State<CustomVideoPlayer> with NavigateHelper {
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
-          return YoutubePlayer(
-            controller: _controller,
-            showVideoProgressIndicator: true,
-            bottomActions: [
-              const CurrentPosition(),
-              MethodHelper.widthBox(width: 2.w),
-              const ProgressBar(
-                isExpanded: true,
+          return Scaffold(
+            body: SafeArea(
+              child: YoutubePlayerBuilder(
+                player: YoutubePlayer(
+                  controller: _controller,
+                  showVideoProgressIndicator: true,
+                  bottomActions: [
+                    const CurrentPosition(),
+                    MethodHelper.widthBox(width: 2.w),
+                    const ProgressBar(
+                      isExpanded: true,
+                    ),
+                    const RemainingDuration(),
+                    MethodHelper.widthBox(width: 2.w),
+                    const FullScreenButton()
+                  ],
+                ),
+                builder: (context, player) => player,
               ),
-              const RemainingDuration(),
-            ],
+            ),
           );
         }
         // If there's an error, you can handle it here

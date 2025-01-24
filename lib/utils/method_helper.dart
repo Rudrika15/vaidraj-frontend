@@ -60,4 +60,14 @@ class MethodHelper {
       suffix: suffix,
     );
   }
+
+  static String extractVideoId({required String iframeEmbedUrl}) {
+    final regex = RegExp(r'\/embed\/([a-zA-Z0-9_-]+)');
+    final match = regex.firstMatch(iframeEmbedUrl);
+    if (match != null && match.groupCount > 0) {
+      return match.group(1)!;
+    } else {
+      throw ArgumentError('Invalid YouTube embed URL');
+    }
+  }
 }

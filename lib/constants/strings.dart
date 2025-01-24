@@ -26,4 +26,7 @@ class AppStrings {
   ///
   static const String productPhotoUrl =
       "https://vedraj.flipcodesolutions.com/images/products";
+  ///
+  static const String thumbnailPhotoUrl =
+      "https://vedraj.flipcodesolutions.com/images/videos";
 }

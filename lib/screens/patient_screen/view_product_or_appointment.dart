@@ -13,6 +13,7 @@ import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/image_or_default_image_widget.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import 'package:vaidraj/widgets/webview_widget.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../constants/color.dart';
 import '../../constants/text_size.dart';
@@ -60,7 +61,7 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
               CustomContainer(
                 borderRadius: BorderRadius.circular(AppSizes.size10),
                 borderColor: AppColors.brownColor,
-                height: 20.h,
+                height: 25.h,
                 width: 90.w,
                 child: CustomContainer(
                   child: ClipRRect(
@@ -99,39 +100,68 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
               ),
               MethodHelper.heightBox(height: 3.h),
               InScreenHeading(heading: langProvider.translate("videos")),
-              // SizedBox(
-              //   height: 25.h,
-              //   child: widget.videos?.isEmpty ?? true
-              //       ? const ContainerForNoDataFound(
-              //           title: "No Videos To Show",
-              //         )
-              //       : ListView.separated(
-              //           itemCount: widget.videos?.length ?? 0,
-              //           shrinkWrap: true,
-              //           padding: const EdgeInsets.only(left: AppSizes.size10),
-              //           scrollDirection: Axis.horizontal,
-              //           separatorBuilder: (context, index) {
-              //             return const SizedBox(
-              //               width: AppSizes.size10,
-              //             );
-              //           },
-              //           itemBuilder: (context, index) {
-              //             Videos? video = widget.videos?[index];
-              //             return CustomContainer(
-              //               width: 90.w,
-              //               margin: const EdgeInsets.symmetric(
-              //                   vertical: AppSizes.size10),
-              //               backGroundColor: AppColors.lightBackGroundColor,
-              //               borderColor: AppColors.brownColor,
-              //               borderRadius:
-              //                   BorderRadius.circular(AppSizes.size10),
-              //               borderWidth: 1,
-              //               child: CustomVideoPlayer(
-              //                   videoUrl: video?.youtubeLink ?? ""),
-              //             );
-              //           },
-              //         ),
-              // ),
+              SizedBox(
+                height: 25.h,
+                child: widget.videos?.isEmpty ?? true
+                    ? const ContainerForNoDataFound(
+                        title: "No Videos To Show",
+                      )
+                    : ListView.separated(
+                        itemCount: widget.videos?.length ?? 0,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(left: AppSizes.size10),
+                        scrollDirection: Axis.horizontal,
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            width: AppSizes.size10,
+                          );
+                        },
+                        itemBuilder: (context, index) {
+                          Videos? video = widget.videos?[index];
+                          print(video?.thumbnail);
+                          print(video?.youtubeLink);
+                          return CustomContainer(
+                              width: 90.w,
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: AppSizes.size10),
+                              backGroundColor: AppColors.lightBackGroundColor,
+                              borderColor: AppColors.brownColor,
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.size10),
+                              borderWidth: 1,
+                              child: GestureDetector(
+                                  onTap: () {
+                                    if (video?.thumbnail?.contains("<iframe") ??
+                                        false) {
+                                      push(
+                                          context,
+                                          CustomVideoPlayer(
+                                              videoLink:
+                                                  MethodHelper.extractVideoId(
+                                            iframeEmbedUrl:
+                                                '<iframe width="342" height="607" src="https://www.youtube.com/embed/Ez5Bx39cIe4" title="🌿 Breathe Easy with Ayurveda | Vaidraj Ayurvedic Hospital 🌿" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+                                          )));
+                                    } else {
+                                      push(
+                                          context,
+                                          CustomVideoPlayer(
+                                              videoLink:
+                                                  YoutubePlayer.convertUrlToId(
+                                                          video?.youtubeLink ??
+                                                              "") ??
+                                                      ""));
+                                    }
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.circular(AppSizes.size10),
+                                    child: ImageOrDefaultImage(
+                                        image:
+                                            "${AppStrings.thumbnailPhotoUrl}/${video?.thumbnail ?? ""}"),
+                                  )));
+                        },
+                      ),
+              ),
               MethodHelper.heightBox(height: 3.h),
               InScreenHeading(heading: langProvider.translate("article")),
               SizedBox(
@@ -175,11 +205,6 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                       ),
               ),
               MethodHelper.heightBox(height: 3.h),
-              CustomContainer(
-                  width: 90.w,
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(AppSizes.size10),
-                      child: CustomVideoPlayer()))
             ],
           ),
         ),
