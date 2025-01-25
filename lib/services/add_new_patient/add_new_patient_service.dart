@@ -40,6 +40,12 @@ class AddNewPatientService {
           AddPatientModel model = AddPatientModel.fromJson(data);
           SharedPrefs.saveToken(model.token ?? "");
           SharedPrefs.saveRole("patient");
+          SharedPrefs.saveName(model.data?.name ?? "");
+          SharedPrefs.saveMobileNumber(model.data?.mobileNo ?? "");
+          SharedPrefs.saveBranchId(model.data?.branchId.toString() ?? "");
+          SharedPrefs.saveId(model.data?.id.toString() ?? "");
+          SharedPrefs.saveAddress(model.data?.address ?? "");
+          SharedPrefs.saveEmail(model.data?.email ?? "");
           return model;
         }
       }

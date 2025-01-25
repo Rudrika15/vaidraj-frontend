@@ -23,6 +23,13 @@ class MobileVerificationService {
         if (data['success'] == true) {
           VerifyMobileNumberModel model =
               VerifyMobileNumberModel.fromJson(data);
+          SharedPrefs.saveName(model.data?.name ?? "");
+          SharedPrefs.saveMobileNumber(model.data?.mobileNo ?? "");
+          SharedPrefs.saveBranchId(model.data?.branchId.toString() ?? "");
+          SharedPrefs.saveId(model.data?.id.toString() ?? "");
+          SharedPrefs.saveAddress(model.data?.address ?? "");
+          SharedPrefs.saveEmail(model.data?.email ?? "");
+          SharedPrefs.saveFormToken(model.data?.formToken ?? "");
           return model;
         }
       }
