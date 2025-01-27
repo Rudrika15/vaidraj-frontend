@@ -125,6 +125,14 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                           mobileNumber: mobileController.text);
                       if (mobileVerProvider.verifyMobileNumberModel?.success ==
                           true) {
+                        //here this will change the language of app to previous or to defualt english
+                        langProvider.setCurrentLocal(
+                            langToSet: mobileVerProvider
+                                    .verifyMobileNumberModel?.data?.language ??
+                                "en");
+                        await langProvider.load(mobileVerProvider
+                                .verifyMobileNumberModel?.data?.language ??
+                            "en");
                         if (mobileVerProvider
                                 .verifyMobileNumberModel?.data?.role ==
                             "admin") {

@@ -38,7 +38,7 @@ class Data {
   String? role;
   String? createdAt;
   String? updatedAt;
-
+  String? language;
   Data(
       {this.id,
       this.branchId,
@@ -51,7 +51,8 @@ class Data {
       this.formToken,
       this.role,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.language});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -66,6 +67,7 @@ class Data {
     role = json['role'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    language = json['language'];
   }
 
   Map<String, dynamic> toJson() {
@@ -82,6 +84,7 @@ class Data {
     data['role'] = this.role;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['language'] = this.language;
     return data;
   }
 }

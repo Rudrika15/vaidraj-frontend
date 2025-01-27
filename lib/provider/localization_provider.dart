@@ -23,6 +23,11 @@ class LocalizationProvider extends ChangeNotifier {
 
   String get currentLocale => _currentLocal;
 
+  void setCurrentLocal({required String langToSet}) {
+    _currentLocal = langToSet;
+    notifyListeners();
+  }
+
   void _loadLanguage() async {
     try {
       var box = await Hive.openBox(_boxName);
