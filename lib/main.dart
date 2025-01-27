@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:vaidraj/provider/add_new_patient_provider.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
+import 'package:vaidraj/provider/appointment_provider.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/provider/mobile_verification_provider.dart';
@@ -25,6 +26,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => GetBrachProvider()),
       ChangeNotifierProvider(create: (_) => AddNewPatientProvider()),
       ChangeNotifierProvider(create: (_) => AllDiseaseProvider()),
+      ChangeNotifierProvider(create: (_) => AppointmentProvider()),
     ],
     child: const MyApp(),
   ));

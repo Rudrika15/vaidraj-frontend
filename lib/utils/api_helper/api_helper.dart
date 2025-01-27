@@ -10,4 +10,5 @@ class ApiHelper {
       "$baseUrl/diseases?current_page=$currentPage&per_page=$perPage";
   static String getDiseases = "$baseUrl/diseases";
   static String updateLang = "$baseUrl/updateLang";
+  static String createAppointment = "$baseUrl/appointment/store";
 }
