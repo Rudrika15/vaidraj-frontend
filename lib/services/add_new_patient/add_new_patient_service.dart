@@ -46,6 +46,7 @@ class AddNewPatientService {
           SharedPrefs.saveId(model.data?.id.toString() ?? "");
           SharedPrefs.saveAddress(model.data?.address ?? "");
           SharedPrefs.saveEmail(model.data?.email ?? "");
+          SharedPrefs.saveDOB(model.data?.dob ?? "");
           return model;
         }
       }

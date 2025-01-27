@@ -30,6 +30,7 @@ class MobileVerificationService {
           SharedPrefs.saveAddress(model.data?.address ?? "");
           SharedPrefs.saveEmail(model.data?.email ?? "");
           SharedPrefs.saveFormToken(model.data?.formToken ?? "");
+          SharedPrefs.saveDOB(model.data?.dob ?? "");
           return model;
         }
       }
