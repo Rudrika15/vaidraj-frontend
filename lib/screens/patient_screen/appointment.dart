@@ -3,17 +3,18 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
-import 'package:vaidraj/provider/mobile_verification_provider.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_text_field_widget.dart';
+import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
-
 import '../../constants/color.dart';
 import '../../constants/text_size.dart';
 import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
+import '../../widgets/custom_dropdown.dart';
 
 class Appointment extends StatefulWidget {
   const Appointment({super.key, this.fromPage = false});
@@ -47,6 +48,11 @@ class _AppointmentState extends State<Appointment> {
         DateFormat('yyyy-MM-dd').format(DateTime.now());
     slotToBook = slots[0];
     initControllers();
+    var diseaseProvider =
+        Provider.of<AllDiseaseProvider>(context, listen: false);
+    if (diseaseProvider.diseasesModelForAppointment == null) {
+      diseaseProvider.getAllDiseaseWithoutPagination(context: context);
+    }
   }
 
   Future<void> initControllers() async {
@@ -59,8 +65,8 @@ class _AppointmentState extends State<Appointment> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LocalizationProvider, MobileVerificationProvider>(
-      builder: (context, langProvider, mobileVerProvider, child) => Scaffold(
+    return Consumer2<LocalizationProvider, AllDiseaseProvider>(
+      builder: (context, langProvider, diseasesProvider, child) => Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: widget.fromPage
             ? AppBar(
@@ -77,6 +83,7 @@ class _AppointmentState extends State<Appointment> {
                 child: Container(), // Empty container when no AppBar is needed
               ),
         body: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: AppSizes.size20),
           child: Column(
             children: [
               LogoWithInfoContainer(children: [
@@ -335,6 +342,64 @@ class _AppointmentState extends State<Appointment> {
                   },
                 ),
               ),
+              MethodHelper.heightBox(height: 2.h),
+              paddingMethod(
+                diseasesProvider.isLoading
+                    ? const Center(
+                        child: Loader(),
+                      )
+                    : CustomDropDownWidget(
+                        alignment: Alignment.centerLeft,
+                        hintText: langProvider.translate("disease"),
+                        prefixIcon: Icons.storefront_outlined,
+                        items: diseasesProvider.diseasesModelForAppointment
+                                    ?.data?.data?.isNotEmpty ==
+                                true
+                            ? List<DropdownMenuItem<Object?>>.generate(
+                                diseasesProvider.diseasesModelForAppointment
+                                        ?.data?.data?.length ??
+                                    0,
+                                (index) {
+                                  return DropdownMenuItem(
+                                    value: diseasesProvider
+                                        .diseasesModelForAppointment
+                                        ?.data
+                                        ?.data?[index]
+                                        .id,
+                                    child: Text(
+                                      diseasesProvider
+                                              .diseasesModelForAppointment
+                                              ?.data
+                                              ?.data?[index]
+                                              .displayName ??
+                                          "-",
+                                      style: TextSizeHelper.smallHeaderStyle,
+                                    ),
+                                  );
+                                },
+                              )
+                            : [
+                                DropdownMenuItem(
+                                  value: 0,
+                                  child: Text(
+                                    "No Diseases Found",
+                                    style: TextSizeHelper.smallHeaderStyle,
+                                  ),
+                                )
+                              ],
+                        onChanged: (value) {
+                          setState(() {
+                            diseaseId = value as int;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return langProvider.translate("branchReq");
+                          }
+                          return null;
+                        },
+                      ),
+              )
             ],
           ),
         ),

@@ -11,7 +11,9 @@ class AllDiseaseProvider extends ChangeNotifier {
       PagingController(firstPageKey: 1);
   AllDieseasesModel? _diseaseModel;
   AllDieseasesModel? get diseasesModel => _diseaseModel;
-
+  AllDieseasesModel? _dieseasesModelForAppointment;
+  AllDieseasesModel? get diseasesModelForAppointment =>
+      _dieseasesModelForAppointment;
   AllDiseaseService service = AllDiseaseService();
   Future<void> fetchPage(
       {required int pageKey, required BuildContext context}) async {
@@ -32,7 +34,7 @@ class AllDiseaseProvider extends ChangeNotifier {
     }
   }
 
-  /// this will get all diseases with artical,video,products
+  /// this will get all diseases with artical,video,products with pagination
   Future<AllDieseasesModel?> getAllDisease(
       {required BuildContext context, required int currentPage}) async {
     _isLoading = true;
@@ -43,6 +45,15 @@ class AllDiseaseProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
     return _diseaseModel;
+  }
+
+  Future<void> getAllDiseaseWithoutPagination(
+      {required BuildContext context}) async {
+    _isLoading = true;
+    _dieseasesModelForAppointment =
+        await service.getDieasesWithoutPaginiation(context: context);
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<void> setModelNull(AllDieseasesModel model) async {
