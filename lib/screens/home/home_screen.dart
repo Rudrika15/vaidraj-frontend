@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     SpecialitiesScreen(),
     ProductsScreen(),
     Appointment(),
-    MedicalHistory(),
+    MedicalHistoryScreen(),
     AboutUsScreen(),
     GetInTouchScreen(),
   ];

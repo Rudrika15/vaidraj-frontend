@@ -1,11 +1,11 @@
-class MedicalHistoryModel {
+class MedicalHistoryListModel {
   bool? success;
   String? message;
   Data? data;
 
-  MedicalHistoryModel({this.success, this.message, this.data});
+  MedicalHistoryListModel({this.success, this.message, this.data});
 
-  MedicalHistoryModel.fromJson(Map<String, dynamic> json) {
+  MedicalHistoryListModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -23,6 +23,41 @@ class MedicalHistoryModel {
 }
 
 class Data {
+  List<MedicalHistory>? data;
+  int? currentPage;
+  int? lastPage;
+  int? perPage;
+  int? total;
+
+  Data({this.data, this.currentPage, this.lastPage, this.perPage, this.total});
+
+  Data.fromJson(Map<String, dynamic> json) {
+    if (json['data'] != null) {
+      data = <MedicalHistory>[];
+      json['data'].forEach((v) {
+        data!.add(new MedicalHistory.fromJson(v));
+      });
+    }
+    currentPage = json['current_page'];
+    lastPage = json['last_page'];
+    perPage = json['per_page'];
+    total = json['total'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    data['current_page'] = this.currentPage;
+    data['last_page'] = this.lastPage;
+    data['per_page'] = this.perPage;
+    data['total'] = this.total;
+    return data;
+  }
+}
+
+class MedicalHistory {
   int? id;
   int? branchId;
   String? name;
@@ -38,7 +73,7 @@ class Data {
   String? updatedAt;
   List<Appointments>? appointments;
 
-  Data(
+  MedicalHistory(
       {this.id,
       this.branchId,
       this.name,
@@ -54,7 +89,7 @@ class Data {
       this.updatedAt,
       this.appointments});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  MedicalHistory.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     branchId = json['branch_id'];
     name = json['name'];
@@ -102,7 +137,7 @@ class Appointments {
   int? id;
   String? name;
   String? email;
-  int? contact;
+  String? contact;
   String? dob;
   String? address;
   int? diseaseId;

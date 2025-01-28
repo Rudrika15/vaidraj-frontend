@@ -11,4 +11,5 @@ class ApiHelper {
   static String getDiseases = "$baseUrl/diseases";
   static String updateLang = "$baseUrl/updateLang";
   static String createAppointment = "$baseUrl/appointment/store";
+  static String getMedicalHistory({required int currentPage,int? perPage = 5}) => "$baseUrl/medicalHistory?current_page=$currentPage&per_page=$perPage";
 }

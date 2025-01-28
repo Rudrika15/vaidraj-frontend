@@ -38,7 +38,7 @@ class _AppointmentState extends State<Appointment> {
   TextEditingController dobController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController appointmentDateController = TextEditingController();
-  String? slotToBook;
+  String slotToBook = "morning";
   int? diseaseId;
   TextEditingController subjectController = TextEditingController();
   TextEditingController messageController = TextEditingController();
@@ -358,7 +358,8 @@ class _AppointmentState extends State<Appointment> {
                     itemCount: slots.length,
                     itemBuilder: (context, index) {
                       return ToggleBtn(
-                        isSelected: slots[index] == slotToBook,
+                        isSelected: slotToBook.toLowerCase() ==
+                            slots[index].toLowerCase(),
                         text: slots[index] + " Slot",
                         onTap: () => setState(() {
                           slotToBook = slots[index].toLowerCase();
@@ -468,7 +469,8 @@ class _AppointmentState extends State<Appointment> {
                       : PrimaryBtn(
                           btnText: langProvider.translate('submit'),
                           onTap: () async {
-                            if (formKey.currentState!.validate()) {
+                            if (formKey.currentState!.validate() &&
+                                slotToBook != "") {
                               await appointmentProvider
                                   .createAppointment(
                                       userId:
