@@ -12,6 +12,7 @@ import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart'
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
+import 'package:vaidraj/widgets/primary_btn.dart';
 import '../../widgets/custom_searchbar.dart';
 import '../../widgets/in_app_heading.dart';
 
@@ -35,7 +36,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext pContext) {
     return Consumer2<LocalizationProvider, AllDiseaseProvider>(
       builder: (context, langProvider, diseaseProvider, child) => SafeArea(
           child: SingleChildScrollView(
@@ -55,6 +56,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 ? Loader()
                 : SpecialitiesRenderWidget(
                     diseaseProvider: diseaseProvider,
+                    pContext: context,
                   ),
             InScreenHeading(heading: langProvider.translate("appointment")),
             CustomContainer(
@@ -97,9 +99,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 }
 
 class SpecialitiesRenderWidget extends StatefulWidget {
-  const SpecialitiesRenderWidget({super.key, required this.diseaseProvider});
+  const SpecialitiesRenderWidget(
+      {super.key, required this.diseaseProvider, required this.pContext});
   final AllDiseaseProvider diseaseProvider;
-
+  final BuildContext pContext;
   @override
   State<SpecialitiesRenderWidget> createState() =>
       _SpecialitiesRenderWidgetState();
@@ -113,9 +116,14 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    widget.diseaseProvider.pagingController.addPageRequestListener((pageKey) {
-      widget.diseaseProvider.fetchPage(pageKey: pageKey, context: context);
-    });
+    if (mounted) {
+      widget.diseaseProvider.pagingController.addPageRequestListener((pageKey) {
+        widget.diseaseProvider
+            .fetchPage(pageKey: pageKey, context: widget.pContext);
+      });
+    } else {
+      print('nope');
+    }
   }
 
   @override
@@ -130,6 +138,22 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
               scrollDirection: Axis.horizontal,
               pagingController: widget.diseaseProvider.pagingController,
               builderDelegate: PagedChildBuilderDelegate<Diseases>(
+                firstPageErrorIndicatorBuilder: (context) =>
+                    PrimaryBtn(btnText: "Reload", onTap: () {}),
+                noItemsFoundIndicatorBuilder: (context) => CustomContainer(
+                    alignment: Alignment.center,
+                    //// will show to let user start controller again
+                    child: GestureDetector(
+                      onTap: () => widget.diseaseProvider.setModelNull,
+                      child: CustomContainer(
+                        shape: BoxShape.circle,
+                        child: Icon(
+                          Icons.refresh_outlined,
+                          color: AppColors.brownColor,
+                          size: AppSizes.size40,
+                        ),
+                      ),
+                    )),
                 itemBuilder: (context, diseases, index) =>
                     SpecialityTempletContainer(
                   title: diseases.displayName ?? "",

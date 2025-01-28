@@ -18,6 +18,7 @@ class AllDiseaseProvider extends ChangeNotifier {
   Future<void> fetchPage(
       {required int pageKey, required BuildContext context}) async {
     try {
+      print(pageKey);
       AllDieseasesModel? newItems = await getAllDisease(
         context: context,
         currentPage: pageKey,
@@ -56,11 +57,25 @@ class AllDiseaseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setModelNull(AllDieseasesModel model) async {
+  void setModelNull() async {
     _isLoading = true;
     notifyListeners();
-    _diseaseModel = model;
+    _diseaseModel = null;
+    pagingController.error = null;
+    pagingController.refresh();
     _isLoading = false;
     notifyListeners();
+  }
+
+  // Method to empty or reset the provider state
+  void resetState({required BuildContext context}) {
+    _isLoading = false; // Reset loading flag
+    _diseaseModel = null; // Clear disease model
+    _dieseasesModelForAppointment = null; // Clear appointment model
+    pagingController
+        .refresh(); // Reset the paging controller // Clear the pages
+    pagingController.error = null;
+    getAllDiseaseWithoutPagination(context: context); // Clear any error state
+    notifyListeners(); // Notify listeners of changes
   }
 }

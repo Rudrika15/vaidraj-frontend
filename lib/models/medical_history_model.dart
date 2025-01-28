@@ -23,7 +23,7 @@ class MedicalHistoryListModel {
 }
 
 class Data {
-  List<MedicalHistory>? data;
+  MedicalHistory? data;
   int? currentPage;
   int? lastPage;
   int? perPage;
@@ -32,12 +32,7 @@ class Data {
   Data({this.data, this.currentPage, this.lastPage, this.perPage, this.total});
 
   Data.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
-      data = <MedicalHistory>[];
-      json['data'].forEach((v) {
-        data!.add(new MedicalHistory.fromJson(v));
-      });
-    }
+    data = json['data'] != null ? new MedicalHistory.fromJson(json['data']) : null;
     currentPage = json['current_page'];
     lastPage = json['last_page'];
     perPage = json['per_page'];
@@ -47,7 +42,7 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     data['current_page'] = this.currentPage;
     data['last_page'] = this.lastPage;

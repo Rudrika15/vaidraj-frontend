@@ -117,7 +117,9 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
                             langProvider.currentLocale == "en" ? "hi" : "en")
                     .then((isSuccess) {
                   if (isSuccess) {
-                    diseaseProvider.pagingController.refresh();
+                    diseaseProvider.resetState(context: context);
+                  } else {
+                    print("pagination not refreshed");
                   }
                 });
               },

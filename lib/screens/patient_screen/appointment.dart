@@ -262,8 +262,8 @@ class _AppointmentState extends State<Appointment> {
                     onTap: () async {
                       dob = await showDatePicker(
                           context: context,
-                          firstDate: DateTime(DateTime.now().year),
-                          lastDate: DateTime(DateTime.now().year + 1));
+                          firstDate: DateTime(1960),
+                          lastDate: DateTime(DateTime.now().year - 18));
                       if (dob != null) {
                         dobController.text =
                             DateFormat('yyyy-MM-dd').format(dob!);

@@ -63,12 +63,15 @@ class Diseases {
   String? description;
   String? diseaseNameHindi;
   String? descriptionHindi;
+  String? foodPlan;
+  String? foodPlanHindi;
   String? url;
   String? thumbnail;
   String? createdAt;
   String? updatedAt;
   String? displayName;
   String? displayDescription;
+  String? displayFoodPlan;
   List<Products>? products;
   List<Videos>? videos;
   List<Articles>? articles;
@@ -79,12 +82,15 @@ class Diseases {
       this.description,
       this.diseaseNameHindi,
       this.descriptionHindi,
+      this.foodPlan,
+      this.foodPlanHindi,
       this.url,
       this.thumbnail,
       this.createdAt,
       this.updatedAt,
       this.displayName,
       this.displayDescription,
+      this.displayFoodPlan,
       this.products,
       this.videos,
       this.articles});
@@ -95,12 +101,15 @@ class Diseases {
     description = json['description'];
     diseaseNameHindi = json['disease_name_hindi'];
     descriptionHindi = json['description_hindi'];
+    foodPlan = json['food_plan'];
+    foodPlanHindi = json['food_plan_hindi'];
     url = json['url'];
     thumbnail = json['thumbnail'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     displayName = json['display_name'];
     displayDescription = json['display_description'];
+    displayFoodPlan = json['display_food_plan'];
     if (json['products'] != null) {
       products = <Products>[];
       json['products'].forEach((v) {
@@ -128,12 +137,15 @@ class Diseases {
     data['description'] = this.description;
     data['disease_name_hindi'] = this.diseaseNameHindi;
     data['description_hindi'] = this.descriptionHindi;
+    data['food_plan'] = this.foodPlan;
+    data['food_plan_hindi'] = this.foodPlanHindi;
     data['url'] = this.url;
     data['thumbnail'] = this.thumbnail;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['display_name'] = this.displayName;
     data['display_description'] = this.displayDescription;
+    data['display_food_plan'] = this.displayFoodPlan;
     if (this.products != null) {
       data['products'] = this.products!.map((v) => v.toJson()).toList();
     }
@@ -154,10 +166,10 @@ class Products {
   String? description;
   String? productNameHindi;
   String? descriptionHindi;
-  String? amazonLink;
   String? thumbnail;
   String? createdAt;
   String? updatedAt;
+  String? amazonLink;
 
   Products(
       {this.id,
@@ -166,10 +178,10 @@ class Products {
       this.description,
       this.productNameHindi,
       this.descriptionHindi,
-      this.amazonLink,
       this.thumbnail,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.amazonLink});
 
   Products.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -178,10 +190,10 @@ class Products {
     description = json['description'];
     productNameHindi = json['product_name_hindi'];
     descriptionHindi = json['description_hindi'];
-    amazonLink = json['amazon_link'];
     thumbnail = json['thumbnail'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    amazonLink = json['amazon_link'];
   }
 
   Map<String, dynamic> toJson() {
@@ -192,10 +204,10 @@ class Products {
     data['description'] = this.description;
     data['product_name_hindi'] = this.productNameHindi;
     data['description_hindi'] = this.descriptionHindi;
-    data['amazon_link'] = this.amazonLink;
     data['thumbnail'] = this.thumbnail;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['amazon_link'] = this.amazonLink;
     return data;
   }
 }

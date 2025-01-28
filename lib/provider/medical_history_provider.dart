@@ -22,14 +22,15 @@ class MedicalHistoryProvider extends ChangeNotifier {
         context: context,
         currentPage: pageKey,
       );
-      final isLastPage = ((newItems?.data?.data?.length ?? 0) < _pageSize);
+      final isLastPage =
+          ((newItems?.data?.data?.appointments?.length ?? 0) < _pageSize);
       if (isLastPage) {
         pagingController
-            .appendLastPage(newItems?.data?.data?[0].appointments ?? []);
+            .appendLastPage(newItems?.data?.data?.appointments ?? []);
       } else {
         final nextPageKey = pageKey + 1;
         pagingController.appendPage(
-            newItems?.data?.data?[0].appointments ?? [], nextPageKey);
+            newItems?.data?.data?.appointments ?? [], nextPageKey);
       }
     } catch (error) {
       pagingController.error = error;
