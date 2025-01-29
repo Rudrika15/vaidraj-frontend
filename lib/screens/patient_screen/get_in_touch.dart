@@ -6,7 +6,9 @@ import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/home/home_screen.dart';
+import 'package:vaidraj/services/contact_service/contact_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/in_app_heading.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
@@ -23,6 +25,8 @@ class GetInTouchScreen extends StatelessWidget {
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController subjectController = TextEditingController();
   TextEditingController messageController = TextEditingController();
+  // service
+  ContactService service = ContactService();
   @override
   Widget build(BuildContext context) {
     return Consumer<LocalizationProvider>(
@@ -212,9 +216,22 @@ class GetInTouchScreen extends StatelessWidget {
                             width: 50.w,
                             child: PrimaryBtn(
                                 btnText: langProvider.translate("submit"),
-                                onTap: () {
-                                  if (contactFormKey.currentState!
-                                      .validate()) {}
+                                onTap: () async {
+                                  if (contactFormKey.currentState!.validate()) {
+                                    bool success = await service.ContactVaidraj(
+                                        context: context,
+                                        firstName: firstNameController.text,
+                                        lastName: lastNameController.text,
+                                        email: emailController.text,
+                                        mobile: contactNumberController.text,
+                                        subject: subjectController.text,
+                                        message: messageController.text);
+                                    if (success) {
+                                      WidgetHelper.customSnackBar(
+                                          context: context,
+                                          title: "Sent Successfully");
+                                    }
+                                  }
                                   ;
                                 }),
                           )

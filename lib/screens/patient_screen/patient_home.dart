@@ -9,6 +9,7 @@ import 'package:vaidraj/models/all_disease_model.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart';
+import 'package:vaidraj/services/all_disease_service/all_disease_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
@@ -25,20 +26,9 @@ class PatientHomeScreen extends StatefulWidget {
 
 class _PatientHomeScreenState extends State<PatientHomeScreen> {
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    var diseaseProvider =
-        Provider.of<AllDiseaseProvider>(context, listen: false);
-    if (diseaseProvider.diseasesModel == null) {
-      diseaseProvider.getAllDisease(context: context, currentPage: 0);
-    }
-  }
-
-  @override
   Widget build(BuildContext pContext) {
-    return Consumer2<LocalizationProvider, AllDiseaseProvider>(
-      builder: (context, langProvider, diseaseProvider, child) => SafeArea(
+    return Consumer<LocalizationProvider>(
+      builder: (context, langProvider, child) => SafeArea(
           child: SingleChildScrollView(
         child: Column(
           children: [
@@ -52,12 +42,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             InScreenHeading(
               heading: langProvider.translate("ourSpeciality"),
             ),
-            diseaseProvider.isLoading
-                ? Loader()
-                : SpecialitiesRenderWidget(
-                    diseaseProvider: diseaseProvider,
-                    pContext: context,
-                  ),
+            //// on lang change will discard the current speciality widget and use a new one
+            StreamBuilder(
+              stream: langProvider.localeStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: Loader());
+                } else {
+                  bool isEnglish = snapshot.data == "en";
+                  return isEnglish
+                      ? SpecialitiesRenderWidget()
+                      : SpecialitiesRenderWidget();
+                }
+              },
+            ),
             InScreenHeading(heading: langProvider.translate("appointment")),
             CustomContainer(
               margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
@@ -99,10 +97,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 }
 
 class SpecialitiesRenderWidget extends StatefulWidget {
-  const SpecialitiesRenderWidget(
-      {super.key, required this.diseaseProvider, required this.pContext});
-  final AllDiseaseProvider diseaseProvider;
-  final BuildContext pContext;
+  const SpecialitiesRenderWidget({super.key});
+
   @override
   State<SpecialitiesRenderWidget> createState() =>
       _SpecialitiesRenderWidgetState();
@@ -110,19 +106,39 @@ class SpecialitiesRenderWidget extends StatefulWidget {
 
 class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
   /// variable
-  // final PagingController<int, Diseases> _pagingController =
-  //     PagingController(firstPageKey: 1);
+  final PagingController<int, Diseases> _pagingController =
+      PagingController(firstPageKey: 1);
+  final AllDiseaseService service = AllDiseaseService();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     if (mounted) {
-      widget.diseaseProvider.pagingController.addPageRequestListener((pageKey) {
-        widget.diseaseProvider
-            .fetchPage(pageKey: pageKey, context: widget.pContext);
+      _pagingController.addPageRequestListener((pageKey) {
+        fetchPage(pageKey: pageKey, context: context);
       });
     } else {
       print('nope');
+    }
+  }
+
+  Future<void> fetchPage(
+      {required int pageKey, required BuildContext context}) async {
+    try {
+      print(pageKey);
+      AllDieseasesModel? newItems = await service.getDieases(
+        context: context,
+        currentPage: pageKey,
+      );
+      final isLastPage = ((newItems?.data?.data?.length ?? 0) < 5);
+      if (isLastPage) {
+        _pagingController.appendLastPage(newItems?.data?.data ?? []);
+      } else {
+        final nextPageKey = pageKey + 1;
+        _pagingController.appendPage(newItems?.data?.data ?? [], nextPageKey);
+      }
+    } catch (error) {
+      _pagingController.error = error;
     }
   }
 
@@ -131,50 +147,52 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSizes.size10),
         child: SizedBox(
-          height: 16.h,
-          child: PagedListView.separated(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
-              scrollDirection: Axis.horizontal,
-              pagingController: widget.diseaseProvider.pagingController,
-              builderDelegate: PagedChildBuilderDelegate<Diseases>(
-                firstPageErrorIndicatorBuilder: (context) =>
-                    PrimaryBtn(btnText: "Reload", onTap: () {}),
-                noItemsFoundIndicatorBuilder: (context) => CustomContainer(
-                    alignment: Alignment.center,
-                    //// will show to let user start controller again
-                    child: GestureDetector(
-                      onTap: () => widget.diseaseProvider.setModelNull,
-                      child: CustomContainer(
-                        shape: BoxShape.circle,
-                        child: Icon(
-                          Icons.refresh_outlined,
-                          color: AppColors.brownColor,
-                          size: AppSizes.size40,
+            height: 16.h,
+            child: PagedListView.separated(
+                shrinkWrap: true,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+                scrollDirection: Axis.horizontal,
+                pagingController: _pagingController,
+                builderDelegate: PagedChildBuilderDelegate<Diseases>(
+                  firstPageErrorIndicatorBuilder: (context) =>
+                      PrimaryBtn(btnText: "Reload", onTap: () {}),
+                  noItemsFoundIndicatorBuilder: (context) => CustomContainer(
+                      alignment: Alignment.center,
+                      //// will show to let user start controller again
+                      child: GestureDetector(
+                        onTap: () async {
+                          _pagingController.refresh();
+                        },
+                        child: CustomContainer(
+                          shape: BoxShape.circle,
+                          child: Icon(
+                            Icons.refresh_outlined,
+                            color: AppColors.brownColor,
+                            size: AppSizes.size40,
+                          ),
                         ),
-                      ),
-                    )),
-                itemBuilder: (context, diseases, index) =>
-                    SpecialityTempletContainer(
-                  title: diseases.displayName ?? "",
-                  image:
-                      "${AppStrings.dieasesPhotoUrl}/${diseases.thumbnail ?? ""}",
-                  description: diseases.displayDescription ?? "",
-                  videos: diseases.videos ?? [],
-                  articles: diseases.articles ?? [],
+                      )),
+                  itemBuilder: (context, diseases, index) =>
+                      SpecialityTempletContainer(
+                    title: diseases.displayName ?? "",
+                    image:
+                        "${AppStrings.dieasesPhotoUrl}/${diseases.thumbnail ?? ""}",
+                    description: diseases.displayDescription ?? "",
+                    videos: diseases.videos ?? [],
+                    articles: diseases.articles ?? [],
+                  ),
                 ),
-              ),
-              separatorBuilder: (context, index) => MethodHelper.widthBox(
-                    width: AppSizes.size10,
-                  )),
-        ));
+                separatorBuilder: (context, index) => MethodHelper.widthBox(
+                      width: AppSizes.size10,
+                    ))));
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    // _pagingController.dispose();
+    _pagingController.dispose();
   }
 }
 

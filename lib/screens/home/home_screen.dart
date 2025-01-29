@@ -117,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
                             langProvider.currentLocale == "en" ? "hi" : "en")
                     .then((isSuccess) {
                   if (isSuccess) {
+                    /// this is useing for update data in appointment page to update disease id
                     diseaseProvider.resetState(context: context);
                   } else {
                     print("pagination not refreshed");

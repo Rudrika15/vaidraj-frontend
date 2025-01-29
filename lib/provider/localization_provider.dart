@@ -28,6 +28,9 @@ class LocalizationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// this will emit a signal to all lister and will help to change lang automatically
+  Stream<String> get localeStream =>
+      Stream.periodic(Duration(seconds: 2), (_) => _currentLocal);
   void _loadLanguage() async {
     try {
       var box = await Hive.openBox(_boxName);

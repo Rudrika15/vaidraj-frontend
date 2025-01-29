@@ -6,7 +6,7 @@ import 'package:vaidraj/services/medical_history/medical_history_service.dart';
 class MedicalHistoryProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-  late final PagingController<int, Appointments> pagingController;
+  late PagingController<int, Appointments> pagingController;
   MedicalHistoryProvider() {
     pagingController = PagingController(firstPageKey: 1);
   }
@@ -29,6 +29,7 @@ class MedicalHistoryProvider extends ChangeNotifier {
             .appendLastPage(newItems?.data?.data?.appointments ?? []);
       } else {
         final nextPageKey = pageKey + 1;
+
         pagingController.appendPage(
             newItems?.data?.data?.appointments ?? [], nextPageKey);
       }
@@ -49,5 +50,16 @@ class MedicalHistoryProvider extends ChangeNotifier {
     notifyListeners();
 
     return _medicalHistoryModel;
+  }
+
+  void resetState({required BuildContext context}) {
+    _isLoading = false; // Reset loading flag
+    _medicalHistoryModel = null; // Clear disease model
+    pagingController.dispose();
+    pagingController = PagingController(firstPageKey: 1);
+    pagingController.addPageRequestListener((pageKey) {
+      fetchPage(pageKey: pageKey, context: context);
+    });
+    notifyListeners(); // Notify listeners of changes
   }
 }
