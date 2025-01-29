@@ -141,6 +141,7 @@ class _RenderSpecialityState extends State<RenderSpeciality> {
               description: item.displayDescription ?? "",
               videos: item.videos ?? [],
               articles: item.articles ?? [],
+              foodPlan: item.displayFoodPlan ?? "",
             ),
           )),
     );

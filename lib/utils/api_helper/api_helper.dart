@@ -11,5 +11,10 @@ class ApiHelper {
   static String getDiseases = "$baseUrl/diseases";
   static String updateLang = "$baseUrl/updateLang";
   static String createAppointment = "$baseUrl/appointment/store";
-  static String getMedicalHistory({required int currentPage,int? perPage = 5}) => "$baseUrl/medicalHistory?current_page=$currentPage&per_page=$perPage";
+  static String getMedicalHistory(
+          {required int currentPage, int? perPage = 5}) =>
+      "$baseUrl/medicalHistory?current_page=$currentPage&per_page=$perPage";
+  static String contact = "$baseUrl/contact";
+  static String getProductsWithPagination({required int currentPage, int? perPage = 5}) =>
+      "$baseUrl/products?current_page=$currentPage&per_page=$perPage";
 }

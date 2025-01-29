@@ -230,6 +230,14 @@ class GetInTouchScreen extends StatelessWidget {
                                       WidgetHelper.customSnackBar(
                                           context: context,
                                           title: "Sent Successfully");
+
+                                      /// clean controllers after success
+                                      firstNameController.clear();
+                                      lastNameController.clear();
+                                      emailController.clear();
+                                      contactNumberController.clear();
+                                      subjectController.clear();
+                                      messageController.clear();
                                     }
                                   }
                                   ;

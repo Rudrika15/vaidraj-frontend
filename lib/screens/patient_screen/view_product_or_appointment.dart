@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
-import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/utils/method_helper.dart';
@@ -14,7 +13,6 @@ import 'package:vaidraj/widgets/image_or_default_image_widget.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import 'package:vaidraj/widgets/webview_widget.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 import '../../constants/color.dart';
 import '../../constants/text_size.dart';
 import '../../models/all_disease_model.dart';
@@ -26,11 +24,13 @@ class ViewProductOrAppointment extends StatefulWidget {
       required this.title,
       required this.image,
       required this.description,
+      required this.foolPlan,
       required this.videos,
       required this.articles});
   final String title;
   final String image;
   final String description;
+  final String foolPlan;
   final List<Videos>? videos;
   final List<Articles>? articles;
   @override
@@ -42,8 +42,8 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
     with NavigateHelper {
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LocalizationProvider, AllDiseaseProvider>(
-      builder: (context, langProvider, diseaseProvider, child) => Scaffold(
+    return Consumer<LocalizationProvider>(
+      builder: (context, langProvider, child) => Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
@@ -77,6 +77,17 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                     const EdgeInsets.symmetric(horizontal: AppSizes.size20),
                 child: Text(
                   widget.description,
+                  style: TextSizeHelper.smallTextStyle,
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+              MethodHelper.heightBox(height: 3.h),
+              InScreenHeading(heading: langProvider.translate('foodPlan')),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+                child: Text(
+                  widget.foolPlan,
                   style: TextSizeHelper.smallTextStyle,
                   textAlign: TextAlign.justify,
                 ),
@@ -139,7 +150,7 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                                               videoLink:
                                                   MethodHelper.extractVideoId(
                                             iframeEmbedUrl:
-                                                '<iframe width="342" height="607" src="https://www.youtube.com/embed/Ez5Bx39cIe4" title="🌿 Breathe Easy with Ayurveda | Vaidraj Ayurvedic Hospital 🌿" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+                                                video?.youtubeLink ?? "",
                                           )));
                                     } else {
                                       push(

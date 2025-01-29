@@ -181,6 +181,7 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
                     description: diseases.displayDescription ?? "",
                     videos: diseases.videos ?? [],
                     articles: diseases.articles ?? [],
+                    foodPlan: diseases.displayFoodPlan ?? "",
                   ),
                 ),
                 separatorBuilder: (context, index) => MethodHelper.widthBox(
@@ -203,12 +204,14 @@ class SpecialityTempletContainer extends StatelessWidget {
       required this.image,
       required this.description,
       required this.videos,
-      required this.articles});
+      required this.articles,
+      required this.foodPlan});
   final String title;
   final String image;
   final String description;
   final List<Videos>? videos;
   final List<Articles>? articles;
+  final String foodPlan;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -219,6 +222,7 @@ class SpecialityTempletContainer extends StatelessWidget {
                 description: description,
                 videos: videos,
                 articles: articles,
+                foolPlan: foodPlan,
               ))),
       child: CustomContainer(
         width: 29.w,
