@@ -4,6 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/home/home_screen.dart';
 import 'package:vaidraj/services/contact_service/contact_service.dart';
@@ -11,26 +12,55 @@ import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/in_app_heading.dart';
+import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import "dart:math" as math;
 import '../../constants/strings.dart';
+import '../../models/branch_address_model.dart';
 import '../../widgets/custom_text_field_widget.dart';
 
-class GetInTouchScreen extends StatelessWidget {
+class GetInTouchScreen extends StatefulWidget {
   GetInTouchScreen({super.key});
+
+  @override
+  State<GetInTouchScreen> createState() => _GetInTouchScreenState();
+}
+
+class _GetInTouchScreenState extends State<GetInTouchScreen> {
   GlobalKey<FormState> contactFormKey = GlobalKey<FormState>();
+
   TextEditingController firstNameController = TextEditingController();
+
   TextEditingController lastNameController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
+
   TextEditingController contactNumberController = TextEditingController();
+
   TextEditingController subjectController = TextEditingController();
+
   TextEditingController messageController = TextEditingController();
+
   // service
   ContactService service = ContactService();
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    var provider = Provider.of<GetBrachProvider>(context, listen: false);
+    if (mounted) {
+      if (provider.addressModel == null) {
+        provider.getBrachAddress(context: context);
+      } else {
+        print("Branch address is here already");
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => SafeArea(
+    return Consumer2<LocalizationProvider, GetBrachProvider>(
+      builder: (context, langProvider, branchProvider, child) => SafeArea(
           child: Stack(
         children: [
           Align(
@@ -54,28 +84,28 @@ class GetInTouchScreen extends StatelessWidget {
               children: [
                 LogoWithInfoContainer(
                   children: [
-                    ContatInfoRender(
+                    const ContatInfoRender(
                       icon: Icons.email,
                       info: "drkrishnaravalmcdcr@gmail.com",
                     ),
-                    ContatInfoRender(
+                    const ContatInfoRender(
                       icon: Icons.email,
                       info: "scientistdrhraval@gmail.com",
                     ),
                     MethodHelper.heightBox(height: 2.h),
-                    ContatInfoRender(
+                    const ContatInfoRender(
                       icon: Icons.phone,
                       info: "+91 98247 49263",
                     ),
-                    ContatInfoRender(
+                    const ContatInfoRender(
                       icon: Icons.phone,
                       info: "+91 88288 88202",
                     ),
-                    ContatInfoRender(
+                    const ContatInfoRender(
                       icon: Icons.phone,
                       info: "+91 88980 88980 ,",
                     ),
-                    ContatInfoRender(
+                    const ContatInfoRender(
                       icon: Icons.phone,
                       info: "+91 98259 42366",
                     ),
@@ -92,12 +122,26 @@ class GetInTouchScreen extends StatelessWidget {
                   ),
                 ),
                 MethodHelper.heightBox(height: 2.h),
-                AddressRender(
-                    text:
-                        "Ahmedabad - MCDCR Ayurveda,A- 501 , 5th floor , Fairdale House ,opp Xavier’s girls House, CG Road, Swastik Char Rasta , Navarangpura Ahmedabad"),
-                AddressRender(
-                    text:
-                        "Surendranagar - MCDCR Ayurveda,2nd  floor , Kailash Chembur , Vadilal Chowk ,  CJ Hospital  Road   , Surendranagar."),
+                ///// render branch address fetching from server
+                branchProvider.isLoading
+                    ? const Center(
+                        child: Loader(),
+                      )
+                    : branchProvider.addressModel?.data?.isEmpty == true
+                        ? Text(langProvider.translate('noDataFound'))
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              for (BranchAddress address
+                                  in branchProvider.addressModel?.data ??
+                                      []) ...[
+                                AddressRender(
+                                    text:
+                                        address.displayAddress ?? "Coming Soon")
+                              ]
+                            ],
+                          ),
                 InScreenHeading(
                   heading: langProvider.translate('contact'),
                   endIndent: 70.w,

@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
-import 'package:vaidraj/models/all_disease_model.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
+import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/notification/notifications_screen.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
@@ -108,36 +108,39 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
               );
             }),
             const Divider(),
-            GestureDetector(
-              onTap: () async {
-                await langProvider
-                    .changeLanguage(
-                        context: context,
-                        locale:
-                            langProvider.currentLocale == "en" ? "hi" : "en")
-                    .then((isSuccess) {
-                  if (isSuccess) {
-                    /// this is useing for update data in appointment page to update disease id
-                    diseaseProvider.resetState(context: context);
-                  } else {
-                    print("pagination not refreshed");
-                  }
-                });
-              },
-              child: langProvider.isLoading
-                  ? const Center(
-                      child: Loader(),
-                    )
-                  : CustomContainer(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
-                      backGroundColor: AppColors.backgroundColor,
-                      borderRadius: BorderRadius.circular(5.w),
-                      child: Text(
-                        "Language :- ${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
-                        style: TextSizeHelper.smallHeaderStyle,
+            Consumer<GetBrachProvider>(
+              builder: (context, branchProvider, child) => GestureDetector(
+                onTap: () async {
+                  await langProvider
+                      .changeLanguage(
+                          context: context,
+                          locale:
+                              langProvider.currentLocale == "en" ? "hi" : "en")
+                      .then((isSuccess) {
+                    if (isSuccess) {
+                      /// this is useing for update data in appointment page to update disease id
+                      diseaseProvider.resetState(context: context);
+                      branchProvider.resetBranchAddressModel(context: context);
+                    } else {
+                      print("pagination not refreshed");
+                    }
+                  });
+                },
+                child: langProvider.isLoading
+                    ? const Center(
+                        child: Loader(),
+                      )
+                    : CustomContainer(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.w, vertical: 1.h),
+                        backGroundColor: AppColors.backgroundColor,
+                        borderRadius: BorderRadius.circular(5.w),
+                        child: Text(
+                          "Language :- ${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
+                          style: TextSizeHelper.smallHeaderStyle,
+                        ),
                       ),
-                    ),
+              ),
             )
           ],
         ),
