@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/appointment_model.dart';
-import 'package:vaidraj/services/create_new_appointment/create_new_appointment.dart';
+import 'package:vaidraj/services/appointment/create_new_appointment.dart';
 import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 
 class AppointmentProvider extends ChangeNotifier {

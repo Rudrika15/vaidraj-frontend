@@ -5,11 +5,13 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
+import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/models/all_disease_model.dart';
-import 'package:vaidraj/provider/all_disease_provider.dart';
+import 'package:vaidraj/models/upcoming_appointment_model.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart';
 import 'package:vaidraj/services/all_disease_service/all_disease_service.dart';
+import 'package:vaidraj/services/appointment/upcoming_appointment.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
@@ -57,15 +59,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               },
             ),
             InScreenHeading(heading: langProvider.translate("appointment")),
-            CustomContainer(
-              margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
-              width: 90.w,
-              height: 20.h,
-              backGroundColor: AppColors.lightBackGroundColor,
-              borderColor: AppColors.brownColor,
-              borderRadius: BorderRadius.circular(AppSizes.size10),
-              borderWidth: 1,
-            ),
+
+            /// render appointment
+            RenderUpcomingAppointment(),
             InScreenHeading(
                 heading: langProvider.translate("recommendedVideos")),
             ListView.separated(
@@ -92,6 +88,102 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           ],
         ),
       )),
+    );
+  }
+}
+
+class RenderUpcomingAppointment extends StatelessWidget {
+  final UpcomingAppointmentService upcomingAppointmentService =
+      UpcomingAppointmentService();
+
+  RenderUpcomingAppointment({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<UpcomingAppointmentModel?>(
+      future: upcomingAppointmentService.upcomingAppointment(context: context),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+              child: CircularProgressIndicator()); // Show loading spinner
+        }
+
+        if (snapshot.hasError ||
+            !snapshot.hasData ||
+            snapshot.data?.data == null) {
+          return Center(child: Text('Failed to load appointments'));
+        }
+
+        List<UpcomingAppointment> appointments = snapshot.data!.data!;
+
+        return SizedBox(
+          height: 20.h,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+            itemBuilder: (context, index) {
+              UpcomingAppointment appointment = appointments[index];
+              return CustomContainer(
+                margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
+                padding: const EdgeInsets.all(AppSizes.size10),
+                width: 80.w,
+                height: 20.h,
+                backGroundColor: AppColors.lightBackGroundColor,
+                borderColor: AppColors.brownColor,
+                borderRadius: BorderRadius.circular(AppSizes.size10),
+                borderWidth: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            appointment.name ?? 'Unknown',
+                            style: TextSizeHelper.smallHeaderStyle,
+                          ),
+                        ),
+                        Text(
+                          appointment.date ?? 'No date',
+                          style: TextSizeHelper.smallTextStyle,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "${appointment.status}".toUpperCase(),
+                          style: TextSizeHelper.xSmallHeaderStyle
+                              .copyWith(color: AppColors.errorColor),
+                        ),
+                      ],
+                    ),
+                    MethodHelper.heightBox(height: 1.h),
+                    Text(
+                      "Appointment Slot : ${appointment.slot}",
+                      style: TextSizeHelper.xSmallTextStyle,
+                    ),
+                    Text(
+                      "Subject  : ${appointment.subject}",
+                      style: TextSizeHelper.xSmallTextStyle,
+                    ),
+                    Text(
+                      "Message : ${appointment.message}",
+                      style: TextSizeHelper.xSmallTextStyle,
+                    ),
+                  ],
+                ),
+              );
+            },
+            separatorBuilder: (context, index) =>
+                MethodHelper.widthBox(width: 2.w),
+            itemCount: appointments.length,
+          ),
+        );
+      },
     );
   }
 }

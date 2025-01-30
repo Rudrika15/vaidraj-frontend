@@ -16,6 +16,8 @@ class ApiHelper {
       "$baseUrl/medicalHistory?current_page=$currentPage&per_page=$perPage";
   static String contact = "$baseUrl/contact";
   static String feedback = "$baseUrl/feedback";
-  static String getProductsWithPagination({required int currentPage, int? perPage = 5}) =>
+  static String appointments = "$baseUrl/appointments";
+  static String getProductsWithPagination(
+          {required int currentPage, int? perPage = 5}) =>
       "$baseUrl/products?current_page=$currentPage&per_page=$perPage";
 }
