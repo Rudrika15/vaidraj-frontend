@@ -48,6 +48,7 @@ dependencies:
   youtube_player_flutter: ^9.1.1
   infinite_scroll_pagination: ^4.1.0
   url_launcher: ^6.3.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

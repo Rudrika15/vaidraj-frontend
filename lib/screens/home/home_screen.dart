@@ -6,6 +6,9 @@ import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/screens/admin_screens/account_screen.dart';
+import 'package:vaidraj/screens/admin_screens/home_screen.dart';
+import 'package:vaidraj/screens/admin_screens/patients_screen.dart';
 import 'package:vaidraj/screens/notification/notifications_screen.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
@@ -20,6 +23,7 @@ import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart'
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
+import '../admin_screens/appointment_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -38,10 +42,10 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   int _selectedNavTabIndex = 0;
   String userName = "";
   final List<Widget> screensNav = const [
-    Screen(number: "Nav 1"),
-    Screen(number: "Nav 2"),
-    Screen(number: "Nav 3"),
-    Screen(number: "Nav 4"),
+    AdminHomeScreen(),
+    PrescriptionPage(),
+    AdminPatientsScreen(),
+    AdminProfilePage()
   ];
 
   final List<Widget> screensTab = [
