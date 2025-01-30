@@ -229,7 +229,8 @@ class GetInTouchScreen extends StatelessWidget {
                                     if (success) {
                                       WidgetHelper.customSnackBar(
                                           context: context,
-                                          title: "Sent Successfully");
+                                          title: langProvider
+                                              .translate('messageSent'));
 
                                       /// clean controllers after success
                                       firstNameController.clear();

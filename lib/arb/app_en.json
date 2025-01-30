@@ -80,5 +80,7 @@
   "subject": "Subject",
   "subjectReq": "Subject Required !!",
   "message": "Message",
-  "messageReq": "Message Required"
+  "messageReq": "Message Required",
+  "provideAction" : "Provide Atleast one Reaction",
+  "messageSent" : "Message Sent successfully"
 }

@@ -3,11 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/services/contact_service/feedback_service.dart';
 import 'package:vaidraj/utils/border_helper/border_helper.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_dropdown.dart';
 import 'package:vaidraj/widgets/custom_text_field_widget.dart';
+import 'package:vaidraj/widgets/primary_btn.dart';
 import '../../constants/color.dart';
 import '../../constants/text_size.dart';
 
@@ -23,6 +26,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   TextEditingController reasonController = TextEditingController();
   String selectedValue = "";
   bool isDropdownOpen = false;
+  FeedbackService service = FeedbackService();
   // Function to handle the selection of a sentiment
   void _selectSentiment(int index) {
     setState(() {
@@ -195,6 +199,40 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               )
                             ],
                           ),
+                        ),
+                        MethodHelper.heightBox(height: 10.h),
+                        CustomContainer(
+                          width: 40.w,
+                          child: PrimaryBtn(
+                              btnText: langProvider.translate('submit'),
+                              onTap: () async {
+                                if (_selectedSentimentIndex == -1 &&
+                                    selectedValue == "" &&
+                                    reasonController.text.isEmpty) {
+                                  WidgetHelper.customSnackBar(
+                                      context: context,
+                                      isError: true,
+                                      title: langProvider
+                                          .translate('provideAction'));
+                                } else {
+                                  await service
+                                      .feedback(
+                                          context: context,
+                                          title: selectedValue,
+                                          description: reasonController.text,
+                                          rating: (_selectedSentimentIndex + 1)
+                                              .toString())
+                                      .then((success) => success
+                                          ? WidgetHelper.customSnackBar(
+                                              context: context,
+                                              title: langProvider
+                                                  .translate('messageSent'))
+                                          : WidgetHelper.customSnackBar(
+                                              context: context,
+                                              title: "Somthing Went Wrong",
+                                              isError: true));
+                                }
+                              }),
                         )
                       ],
                     )),
