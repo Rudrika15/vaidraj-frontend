@@ -16,6 +16,7 @@ import 'package:vaidraj/screens/patient_screen/products.dart';
 import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedTabIndex = 0;
   int _selectedNavTabIndex = 0;
-
+  String userName = "";
   final List<Widget> screensNav = const [
     Screen(number: "Nav 1"),
     Screen(number: "Nav 2"),
@@ -64,6 +65,22 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   ];
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserName();
+  }
+
+  Future<String> getUserName() async {
+    String u = await SharedPrefs.getName();
+    setState(() {
+      userName = u;
+    });
+    print(u);
+    return u;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer2<LocalizationProvider, AllDiseaseProvider>(
       builder: (context, langProvider, diseaseProvider, child) => Scaffold(
@@ -72,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
         endDrawer: _buildDrawer(
             langProvider: langProvider,
             diseaseProvider: diseaseProvider,
+            userName: userName,
             context: context),
         appBar:
             _buildAppBar(isDoctor: widget.isDoctor, langProvider: langProvider),
@@ -88,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   Drawer _buildDrawer(
       {required LocalizationProvider langProvider,
       required AllDiseaseProvider diseaseProvider,
+      required String userName,
       required BuildContext context}) {
     return Drawer(
       backgroundColor: AppColors.lightBackGroundColor,
@@ -95,7 +114,9 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const DrawerHeaderWidget(),
+            DrawerHeaderWidget(
+              userName: userName,
+            ),
             const Divider(),
             ...List.generate(drawerOptions.length, (index) {
               return DrawerOptionWidget(
@@ -334,9 +355,15 @@ class DrawerOptionWidget extends StatelessWidget {
 }
 
 /// have used this to render header in drawer
-class DrawerHeaderWidget extends StatelessWidget {
-  const DrawerHeaderWidget({super.key});
+class DrawerHeaderWidget extends StatefulWidget {
+  const DrawerHeaderWidget({super.key, required this.userName});
+  final String userName;
 
+  @override
+  State<DrawerHeaderWidget> createState() => _DrawerHeaderWidgetState();
+}
+
+class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
@@ -353,14 +380,15 @@ class DrawerHeaderWidget extends StatelessWidget {
               child: CircleAvatar(
                 backgroundColor: AppColors.backgroundColor,
                 radius: 10.w,
-                child: Text("P",
+                child: Text(
+                    widget.userName.isNotEmpty ? widget.userName[0] : "",
                     overflow: TextOverflow.ellipsis,
                     style: TextSizeHelper.mediumHeaderStyle),
               ),
             ),
             MethodHelper.heightBox(height: 2.h),
             Text(
-              "Pruthviraj Sinh",
+              widget.userName,
               overflow: TextOverflow.ellipsis,
               style: TextSizeHelper.mediumHeaderStyle
                   .copyWith(color: AppColors.brownColor),
