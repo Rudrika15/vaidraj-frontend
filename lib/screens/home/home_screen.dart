@@ -197,10 +197,12 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
             .copyWith(color: AppColors.brownColor),
       ),
       leading: isDoctor
-          ? Padding(
-              padding: EdgeInsets.only(left: 3.w),
-              child: const VaidrajLogo(),
-            )
+          ? _selectedNavTabIndex != 0
+              ? null
+              : Padding(
+                  padding: EdgeInsets.only(left: 3.w),
+                  child: const VaidrajLogo(),
+                )
           : _selectedTabIndex != 0
               ? IconButton(
                   onPressed: () {
@@ -223,15 +225,18 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   List<Widget>? _buildAppBarActions() {
     List<Widget> actions = [];
     widget.isDoctor
-        ? actions.add(IconButton.filledTonal(
-            onPressed: () {
-              push(context, NotificationsScreen());
-            },
-            style: const ButtonStyle(
-                backgroundColor:
-                    WidgetStatePropertyAll(AppColors.backgroundColor)),
-            icon: const Icon(Icons.notifications, color: AppColors.brownColor),
-          ))
+        ? _selectedNavTabIndex != 0
+            ? null
+            : actions.add(IconButton.filledTonal(
+                onPressed: () {
+                  push(context, NotificationsScreen());
+                },
+                style: const ButtonStyle(
+                    backgroundColor:
+                        WidgetStatePropertyAll(AppColors.backgroundColor)),
+                icon: const Icon(Icons.notifications,
+                    color: AppColors.brownColor),
+              ))
         : _selectedTabIndex != 0
             ? null
             : actions.add(IconButton.filledTonal(
