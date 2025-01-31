@@ -1,10 +1,21 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
+import 'package:vaidraj/models/prescription_model.dart';
+import 'package:vaidraj/provider/all_disease_provider.dart';
+import 'package:vaidraj/services/product_service/product_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
+import 'package:vaidraj/widgets/custom_searchbar.dart';
+import 'package:vaidraj/widgets/custom_text_field_widget.dart';
+import '../../models/product_model.dart';
+import '../../widgets/custom_dropdown.dart';
+import '../../widgets/loader.dart';
 
 class PrescriptionPage extends StatefulWidget {
   const PrescriptionPage({super.key});
@@ -14,29 +25,205 @@ class PrescriptionPage extends StatefulWidget {
 }
 
 class _PrescriptionPageState extends State<PrescriptionPage> {
-  // List of products (for illustration)
-  final List<Product> products = [
-    Product(id: 1, name: 'Product 1'),
-    Product(id: 2, name: 'Product 2'),
-    Product(id: 3, name: 'Product 3'),
-  ];
+  /// variables
+  PrescriptionModel prescriptionModel = PrescriptionModel();
+  TextEditingController patientNameController = TextEditingController();
+  String disease = "";
+  // List<String> selectedDisease = [];
+  int diseaseId = 0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    disease = "Depression";
+    // selectedDisease.add("Depression");
+    prescriptionModel =
+        PrescriptionModel(diseases: [Diseases(diseaseName: disease)]);
+    print(prescriptionModel.diseases?.first.diseaseName);
+    ///// get all diseases
+    var diseaseProvider =
+        Provider.of<AllDiseaseProvider>(context, listen: false);
+    if (diseaseProvider.diseasesModelForAppointment == null) {
+      diseaseProvider.getAllDiseaseWithoutPagination(context: context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return PrescriptionPageWidget(
-            productId: product.id,
-            productName: product.name,
-            onChanged: (isChecked) {
-              // Handle checkbox change if needed
-              print(
-                  '${product.name} is ${isChecked ? 'checked' : 'unchecked'}');
-            },
-          );
-        });
+    return Consumer<AllDiseaseProvider>(
+      builder: (context, diseasesProvider, child) => SingleChildScrollView(
+        child: Column(
+          children: [
+            paddingMethod(CustomTextFieldWidget(
+                validator: (value) {},
+                keyboardType: TextInputType.text,
+                controller: patientNameController,
+                decoration: MethodHelper.greenUnderLineBorder(
+                    hintText: "Patient Name"))),
+            paddingMethod(
+              diseasesProvider.isLoading
+                  ? const Center(
+                      child: Loader(),
+                    )
+                  : CustomDropDownWidget(
+                      value: disease,
+                      alignment: Alignment.centerLeft,
+                      prefixIcon: Icons.storefront_outlined,
+                      decoration: MethodHelper.greenUnderLineBorder(
+                          hintText: "Disease"),
+                      items: diseasesProvider.diseasesModelForAppointment?.data
+                                  ?.data?.isNotEmpty ==
+                              true
+                          ? List<DropdownMenuItem<Object?>>.generate(
+                              diseasesProvider.diseasesModelForAppointment?.data
+                                      ?.data?.length ??
+                                  0,
+                              (index) {
+                                return DropdownMenuItem(
+                                  value: diseasesProvider
+                                          .diseasesModelForAppointment
+                                          ?.data
+                                          ?.data?[index]
+                                          .displayName ??
+                                      "-",
+                                  child: Text(
+                                    diseasesProvider.diseasesModelForAppointment
+                                            ?.data?.data?[index].displayName ??
+                                        "-",
+                                    style: TextSizeHelper.smallHeaderStyle,
+                                  ),
+                                );
+                              },
+                            )
+                          : [
+                              DropdownMenuItem(
+                                value: 0,
+                                child: Text(
+                                  "No Diseases Found",
+                                  style: TextSizeHelper.smallHeaderStyle,
+                                ),
+                              )
+                            ],
+                      onChanged: (value) {
+                        /// only add disease if not already selected
+                        setState(() {
+                          if (!prescriptionModel.diseases!
+                              .any((e) => e.diseaseName == value)) {
+                            // selectedDisease.add(value as String);
+                            prescriptionModel.diseases
+                                ?.add(Diseases(diseaseName: value as String));
+                            disease = value as String;
+                            diseaseId = diseasesProvider
+                                    .diseasesModelForAppointment?.data?.data
+                                    ?.firstWhere((element) =>
+                                        element.displayName == value)
+                                    .id ??
+                                0;
+                          }
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return "Please select Disease !!";
+                        }
+                        return null;
+                      },
+                    ),
+            ),
+            PrescriptionWidget(
+                diseaseId: diseaseId,
+                diseases: prescriptionModel.diseases![prescriptionModel.diseases
+                        ?.indexWhere((e) => e.diseaseName == disease) ??
+                    0]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding paddingMethod(Widget child) => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0.5.h),
+        child: child,
+      );
+}
+
+class PrescriptionWidget extends StatefulWidget {
+  PrescriptionWidget(
+      {super.key, required this.diseaseId, required this.diseases});
+  final int diseaseId;
+  final Diseases diseases;
+  @override
+  State<PrescriptionWidget> createState() => _PrescriptionWidgetState();
+}
+
+class _PrescriptionWidgetState extends State<PrescriptionWidget> {
+  /// variable
+  // final List<Product> products = [];
+  final ProductService service = ProductService();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  /// fectch and add product list
+  Future<List<Products>?> getProductList() async {
+    ProductModel? product = await service.getProductDiseaseWise(
+        context: context, diseaseId: widget.diseaseId);
+    print(product?.data?.data?.length);
+    widget.diseases.products = List.generate(
+        product?.data?.data?.length ?? 0,
+        (index) => Products(
+            id: product?.data?.data?[index].id ?? 0,
+            name: product?.data?.data?[index].displayName ?? "-"));
+    return widget.diseases.products;
+  }
+
+// List of products (for illustration)
+  @override
+  Widget build(BuildContext context) {
+    return CustomContainer(
+      // backGroundColor: AppColors.errorColor,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const CustomSearchBar(),
+            FutureBuilder<List<Products>?>(
+              future: getProductList(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: Loader(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error while Fetching',
+                      style: TextSizeHelper.smallTextStyle,
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: widget.diseases.products?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final product = widget.diseases.products?[index];
+                        return PrescriptionPageWidget(
+                          productId: product?.id ?? 0,
+                          productName: product?.name ?? "-",
+                          onChanged: (isChecked) {
+                            // Handle checkbox change if needed
+                          },
+                        );
+                      });
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -45,7 +232,6 @@ class PrescriptionPageWidget extends StatefulWidget {
   final int productId;
   final String productName;
   final ValueChanged<bool> onChanged;
-
   PrescriptionPageWidget({
     required this.productId,
     required this.productName,
@@ -69,23 +255,28 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
       child: Column(
         children: [
           // Checkbox for product selection
-          Row(
-            children: [
-              Checkbox(
-                activeColor: AppColors.greenColor,
-                value: isChecked,
-                onChanged: (bool? value) {
-                  setState(() {
-                    isChecked = value ?? false;
-                    widget.onChanged(isChecked);
-                  });
-                },
-              ),
-              Text(
-                widget.productName,
-                style: TextSizeHelper.smallHeaderStyle,
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSizes.size10),
+            child: Row(
+              children: [
+                Checkbox(
+                  activeColor: AppColors.greenColor,
+                  value: isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isChecked = value ?? false;
+                      widget.onChanged(isChecked);
+                    });
+                  },
+                ),
+                Expanded(
+                  child: Text(
+                    widget.productName,
+                    style: TextSizeHelper.smallHeaderStyle,
+                  ),
+                ),
+              ],
+            ),
           ),
 
           // Show additional information if the product is selected
@@ -213,25 +404,6 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
                       ),
                     ),
                   ),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Row(
-                  //     children: ['before meal', 'after meal'].map((when) {
-                  //       return Padding(
-                  //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  //         child: ChoiceChip(
-                  //           label: Text(when),
-                  //           selected: selectedWhenToTake == when,
-                  //           onSelected: (selected) {
-                  //             setState(() {
-                  //               selectedWhenToTake = selected ? when : '';
-                  //             });
-                  //           },
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -242,9 +414,9 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
   }
 }
 
-class Product {
-  final int id;
-  final String name;
+// class Product {
+//   final int id;
+//   final String name;
 
-  Product({required this.id, required this.name});
-}
+//   Product({required this.id, required this.name});
+// }

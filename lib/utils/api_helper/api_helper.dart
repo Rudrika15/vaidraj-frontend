@@ -22,4 +22,6 @@ class ApiHelper {
   static String getProductsWithPagination(
           {required int currentPage, int? perPage = 5}) =>
       "$baseUrl/products?current_page=$currentPage&per_page=$perPage";
+  static String getProductsDiseaseWise({required int diseaseId}) =>
+      "$baseUrl/products/$diseaseId";
 }
