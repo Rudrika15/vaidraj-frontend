@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     AdminPatientsScreen(),
     AdminProfilePage()
   ];
+  final List<String> navTabNames = const ["Appointment", "Patients", "Account"];
 
   final List<Widget> screensTab = [
     PatientHomeScreen(),
@@ -95,8 +96,10 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
             diseaseProvider: diseaseProvider,
             userName: userName,
             context: context),
-        appBar:
-            _buildAppBar(isDoctor: widget.isDoctor, langProvider: langProvider),
+        appBar: _buildAppBar(
+            isDoctor: widget.isDoctor,
+            langProvider: langProvider,
+            userName: userName),
         body: widget.isDoctor
             ? screensNav[_selectedNavTabIndex]
             : screensTab[_selectedTabIndex],
@@ -174,13 +177,21 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   }
 
   AppBar _buildAppBar(
-      {required bool isDoctor, required LocalizationProvider langProvider}) {
+      {required bool isDoctor,
+      required LocalizationProvider langProvider,
+      required String userName}) {
     return AppBar(
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: AppColors.whiteColor,
       title: Text(
         isDoctor
-            ? "Hello Doctor"
+            ? _selectedNavTabIndex == 0
+                ? "Hello $userName"
+                : _selectedNavTabIndex == 1
+                    ? navTabNames[0]
+                    : _selectedNavTabIndex == 2
+                        ? navTabNames[1]
+                        : navTabNames[2]
             : langProvider.translate(drawerOptions[_selectedTabIndex]['text']),
         style: TextSizeHelper.mediumTextStyle
             .copyWith(color: AppColors.brownColor),
