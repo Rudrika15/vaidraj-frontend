@@ -24,4 +24,5 @@ class ApiHelper {
       "$baseUrl/products?current_page=$currentPage&per_page=$perPage";
   static String getProductsDiseaseWise({required int diseaseId}) =>
       "$baseUrl/products/$diseaseId";
+  static String getAllProducts = "$baseUrl/products";
 }
