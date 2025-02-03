@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -8,7 +6,7 @@ import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/models/prescription_model.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
-import 'package:vaidraj/services/product_service/product_service.dart';
+import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_searchbar.dart';
@@ -18,40 +16,46 @@ import '../../widgets/custom_dropdown.dart';
 import '../../widgets/loader.dart';
 
 class PrescriptionPage extends StatefulWidget {
-  const PrescriptionPage({super.key});
-
+  const PrescriptionPage({
+    super.key,
+  });
   @override
   State<PrescriptionPage> createState() => _PrescriptionPageState();
 }
 
 class _PrescriptionPageState extends State<PrescriptionPage> {
   /// variables
-  PrescriptionModel prescriptionModel = PrescriptionModel();
   TextEditingController patientNameController = TextEditingController();
-  String disease = "";
-  // List<String> selectedDisease = [];
-  int diseaseId = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    disease = "Depression";
-    // selectedDisease.add("Depression");
-    prescriptionModel =
-        PrescriptionModel(diseases: [Diseases(diseaseName: disease)]);
-    print(prescriptionModel.diseases?.first.diseaseName);
-    ///// get all diseases
     var diseaseProvider =
         Provider.of<AllDiseaseProvider>(context, listen: false);
     if (diseaseProvider.diseasesModelForAppointment == null) {
       diseaseProvider.getAllDiseaseWithoutPagination(context: context);
     }
+    var prescriptionProvider =
+        Provider.of<PrescriptionStateProvider>(context, listen: false);
+    prescriptionProvider.setSelectedDisease = "Depression";
+    prescriptionProvider.setSelectedDiseaseId = 16;
+    if (prescriptionProvider.productModel == null) {
+      prescriptionProvider.getAllProducts(context: context);
+    } else {
+      print('product model has data');
+    }
+    if (prescriptionProvider.prescriptionModel.diseases?.isEmpty == true) {
+      prescriptionProvider.prescriptionModel.diseases?.add(Diseases(
+        diseaseName: prescriptionProvider.selectedDisease,
+      ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AllDiseaseProvider>(
-      builder: (context, diseasesProvider, child) => SingleChildScrollView(
+    return Consumer2<AllDiseaseProvider, PrescriptionStateProvider>(
+      builder: (context, diseasesProvider, prescriptionProvider, child) =>
+          SingleChildScrollView(
         child: Column(
           children: [
             paddingMethod(CustomTextFieldWidget(
@@ -66,7 +70,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                       child: Loader(),
                     )
                   : CustomDropDownWidget(
-                      value: disease,
+                      value: prescriptionProvider.selectedDisease,
                       alignment: Alignment.centerLeft,
                       prefixIcon: Icons.storefront_outlined,
                       decoration: MethodHelper.greenUnderLineBorder(
@@ -105,22 +109,14 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                               )
                             ],
                       onChanged: (value) {
-                        /// only add disease if not already selected
-                        setState(() {
-                          if (!prescriptionModel.diseases!
-                              .any((e) => e.diseaseName == value)) {
-                            // selectedDisease.add(value as String);
-                            prescriptionModel.diseases
-                                ?.add(Diseases(diseaseName: value as String));
-                            disease = value as String;
-                            diseaseId = diseasesProvider
+                        prescriptionProvider.updateDisease(
+                            disease: value as String,
+                            diseaseId: diseasesProvider
                                     .diseasesModelForAppointment?.data?.data
-                                    ?.firstWhere((element) =>
-                                        element.displayName == value)
+                                    ?.where((e) => e.displayName == value)
+                                    .first
                                     .id ??
-                                0;
-                          }
-                        });
+                                0);
                       },
                       validator: (value) {
                         if (value == null) {
@@ -130,11 +126,9 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                       },
                     ),
             ),
-            PrescriptionWidget(
-                diseaseId: diseaseId,
-                diseases: prescriptionModel.diseases![prescriptionModel.diseases
-                        ?.indexWhere((e) => e.diseaseName == disease) ??
-                    0]),
+            if (!prescriptionProvider.isLoading ||
+                prescriptionProvider.selectedDiseaseId != 0)
+              PrescriptionWidget(),
           ],
         ),
       ),
@@ -148,79 +142,71 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
 }
 
 class PrescriptionWidget extends StatefulWidget {
-  PrescriptionWidget(
-      {super.key, required this.diseaseId, required this.diseases});
-  final int diseaseId;
-  final Diseases diseases;
+  PrescriptionWidget({
+    super.key,
+  });
+
   @override
   State<PrescriptionWidget> createState() => _PrescriptionWidgetState();
 }
 
 class _PrescriptionWidgetState extends State<PrescriptionWidget> {
   /// variable
-  // final List<Product> products = [];
-  final ProductService service = ProductService();
+  // Diseases? diseases;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
   }
 
-  /// fectch and add product list
-  Future<List<Products>?> getProductList() async {
-    ProductModel? product = await service.getProductDiseaseWise(
-        context: context, diseaseId: widget.diseaseId);
-    print(product?.data?.data?.length);
-    widget.diseases.products = List.generate(
-        product?.data?.data?.length ?? 0,
-        (index) => Products(
-            id: product?.data?.data?[index].id ?? 0,
-            name: product?.data?.data?[index].displayName ?? "-"));
-    return widget.diseases.products;
-  }
-
 // List of products (for illustration)
   @override
   Widget build(BuildContext context) {
-    return CustomContainer(
-      // backGroundColor: AppColors.errorColor,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const CustomSearchBar(),
-            FutureBuilder<List<Products>?>(
-              future: getProductList(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: Loader(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error while Fetching',
-                      style: TextSizeHelper.smallTextStyle,
-                    ),
-                  );
-                } else {
-                  return ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: widget.diseases.products?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        final product = widget.diseases.products?[index];
-                        return PrescriptionPageWidget(
-                          productId: product?.id ?? 0,
-                          productName: product?.name ?? "-",
-                          onChanged: (isChecked) {
-                            // Handle checkbox change if needed
-                          },
-                        );
-                      });
-                }
-              },
-            ),
-          ],
+    return Consumer<PrescriptionStateProvider>(
+      builder: (context, prescriptionProvider, child) => CustomContainer(
+        // backGroundColor: AppColors.errorColor,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // const CustomSearchBar(),
+              if (prescriptionProvider.productModel?.data?.data?.isNotEmpty ==
+                  true)
+                ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount:
+                        prescriptionProvider.productModel?.data?.data?.length ??
+                            0,
+                    itemBuilder: (context, index) {
+                      Product? product =
+                          prescriptionProvider.productModel?.data?.data?[index];
+                      final medicine = prescriptionProvider
+                          .prescriptionModel.diseases
+                          ?.firstWhere((e) =>
+                              e.diseaseName ==
+                              prescriptionProvider.selectedDisease)
+                          .medicine
+                          ?.firstWhere((e) => e.productId == product?.id,
+                              orElse: () => Medicine(
+                                  isSelected: false,
+                                  productId: product?.id,
+                                  time: [],
+                                  toBeTaken: "Before Meal"));
+                      return prescriptionProvider.selectedDiseaseId ==
+                              product?.diseaseId
+                          ? PrescriptionPageWidget(
+                              productId: product?.id ?? 0,
+                              productName: product?.displayName ?? "-",
+                              medicine: medicine,
+                              onChanged: (value) {
+                                prescriptionProvider.updateMedicineSelection(
+                                    isSelected: value ?? false,
+                                    productId: product?.id ?? 0);
+                              })
+                          : SizedBox.shrink();
+                    })
+            ],
+          ),
         ),
       ),
     );
@@ -231,10 +217,12 @@ class _PrescriptionWidgetState extends State<PrescriptionWidget> {
 class PrescriptionPageWidget extends StatefulWidget {
   final int productId;
   final String productName;
-  final ValueChanged<bool> onChanged;
+  final Medicine? medicine;
+  final void Function(bool?)? onChanged;
   PrescriptionPageWidget({
     required this.productId,
     required this.productName,
+    required this.medicine,
     required this.onChanged,
     Key? key,
   }) : super(key: key);
@@ -245,178 +233,148 @@ class PrescriptionPageWidget extends StatefulWidget {
 
 class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
   // Default selections for time of day and when to take
-  String selectedWhenToTake = 'before meal';
-  List<String> selectedTimeOfDay = []; // Store multiple time selections
-  bool isChecked = false;
-
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
       child: Column(
         children: [
-          // Checkbox for product selection
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSizes.size10),
-            child: Row(
-              children: [
-                Checkbox(
-                  activeColor: AppColors.greenColor,
-                  value: isChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isChecked = value ?? false;
-                      widget.onChanged(isChecked);
-                    });
-                  },
-                ),
-                Expanded(
-                  child: Text(
-                    widget.productName,
-                    style: TextSizeHelper.smallHeaderStyle,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Show additional information if the product is selected
-          if (isChecked) ...[
-            // Time of the Day
-            CustomContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: AppSizes.size40),
-                    child: Row(
-                      children: [
-                        Text('Time of the Day',
-                            style: TextSizeHelper.smallTextStyle),
-                      ],
-                    ),
-                  ),
-                  MethodHelper.heightBox(height: 2.h),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: AppSizes.size40),
-                      child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.start,
-                        children:
-                            ['morning', 'noon', 'evening', 'night'].map((time) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (!selectedTimeOfDay.contains(time)) {
-                                  selectedTimeOfDay
-                                      .add(time); // Add the selected time
-                                } else {
-                                  selectedTimeOfDay.remove(
-                                      time); // Remove the deselected time
-                                }
-                              });
-                            },
-                            child: CustomContainer(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.size20),
-                              borderWidth: 1,
-                              backGroundColor: selectedTimeOfDay.contains(time)
-                                  ? AppColors.whiteColor
-                                  : Colors.grey.shade300,
-                              borderColor: selectedTimeOfDay.contains(time)
-                                  ? AppColors.greenColor
-                                  : Colors.grey.shade300,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSizes.size20 - 5,
-                                  vertical: AppSizes.size10 - 5),
-                              child: Text(
-                                time,
-                                style: TextSizeHelper.xSmallHeaderStyle
-                                    .copyWith(
-                                        color: selectedTimeOfDay.contains(time)
-                                            ? AppColors.greenColor
-                                            : Colors.black),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // When to Take
+          _buildCheckboxRow(),
+          if (widget.medicine?.isSelected ?? true) ...[
+            _buildTimeOfDaySelector(),
             MethodHelper.heightBox(height: 1.h),
-            CustomContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: AppSizes.size40),
-                    child: Row(
-                      children: [
-                        Text('When to Take',
-                            style: TextSizeHelper.smallTextStyle),
-                      ],
-                    ),
-                  ),
-                  MethodHelper.heightBox(height: 2.h),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: AppSizes.size40),
-                      child: Row(
-                        children: ['before meal', 'after meal'].map((when) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedWhenToTake = when;
-                              });
-                            },
-                            child: CustomContainer(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.size20),
-                              borderWidth: 1,
-                              backGroundColor: selectedWhenToTake == when
-                                  ? AppColors.whiteColor
-                                  : Colors.grey.shade300,
-                              borderColor: selectedWhenToTake == when
-                                  ? AppColors.greenColor
-                                  : Colors.grey.shade300,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSizes.size20 - 5,
-                                  vertical: AppSizes.size10 - 5),
-                              child: Text(
-                                when,
-                                style: TextSizeHelper.xSmallHeaderStyle
-                                    .copyWith(
-                                        color: selectedWhenToTake == when
-                                            ? AppColors.greenColor
-                                            : Colors.black),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildWhenToTakeSelector(medicine: widget.medicine),
           ]
         ],
       ),
     );
   }
+
+  Widget _buildCheckboxRow() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSizes.size10),
+      child: Row(
+        children: [
+          Checkbox(
+              activeColor: AppColors.greenColor,
+              value: widget.medicine?.isSelected ?? false,
+              onChanged: widget.onChanged),
+          Expanded(
+            child: Text(
+              widget.productName,
+              style: TextSizeHelper.smallHeaderStyle,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeOfDaySelector() {
+    return CustomContainer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Time of the Day'),
+          MethodHelper.heightBox(height: 2.h),
+          _buildTimeOfDayButtons(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeOfDayButtons() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.only(left: AppSizes.size40),
+        child: Row(
+          children: ['morning', 'noon', 'evening', 'night'].map((time) {
+            return _buildSelectableButton(
+              label: time,
+              isSelected: widget.medicine?.time?.contains(time) ?? true,
+              onTap: () {
+                widget.medicine?.time?.contains(time) == false
+                    ? widget.medicine?.time?.remove(time)
+                    : widget.medicine?.time?.add(time);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWhenToTakeSelector({required Medicine? medicine}) {
+    return CustomContainer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('When to Take'),
+          MethodHelper.heightBox(height: 2.h),
+          _buildWhenToTakeButtons(medicine: medicine),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWhenToTakeButtons({required Medicine? medicine}) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.only(left: AppSizes.size40),
+        child: Row(
+          children: ['before meal', 'after meal'].map((when) {
+            return _buildSelectableButton(
+              label: when,
+              isSelected: medicine?.toBeTaken == when,
+              onTap: () {
+                setState(() {
+                  medicine?.toBeTaken = when;
+                });
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.only(left: AppSizes.size40),
+      child: Row(
+        children: [
+          Text(title, style: TextSizeHelper.smallTextStyle),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectableButton({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: CustomContainer(
+        margin: const EdgeInsets.symmetric(horizontal: 5),
+        borderRadius: BorderRadius.circular(AppSizes.size20),
+        borderWidth: 1,
+        backGroundColor:
+            isSelected ? AppColors.whiteColor : Colors.grey.shade300,
+        borderColor: isSelected ? AppColors.greenColor : Colors.grey.shade300,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.size20,
+          vertical: AppSizes.size10,
+        ),
+        child: Text(
+          label,
+          style: TextSizeHelper.xSmallHeaderStyle.copyWith(
+            color: isSelected ? AppColors.greenColor : Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
 }
-
-// class Product {
-//   final int id;
-//   final String name;
-
-//   Product({required this.id, required this.name});
-// }

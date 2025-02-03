@@ -48,4 +48,24 @@ class ProductService {
       return null;
     }
   }
+
+  Future<ProductModel?> getAllProduct({
+    required BuildContext context,
+  }) async {
+    try {
+      Response response =
+          await HttpHelper.get(context: context, uri: ApiHelper.getAllProducts);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          ProductModel model = ProductModel.fromJson(data);
+          return model;
+        } else {}
+      }
+      return null;
+    } catch (e) {
+      print("error while getting all products => $e");
+      return null;
+    }
+  }
 }

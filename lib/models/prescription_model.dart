@@ -22,23 +22,21 @@ class PrescriptionModel {
     }
     return data;
   }
+
+  @override
+  String toString() {
+    return 'PrescriptionModel(patientName: $patientName, diseases: $diseases)';
+  }
 }
 
 class Diseases {
   String? diseaseName;
-  List<Products>? products;
   List<Medicine>? medicine;
 
-  Diseases({this.diseaseName, this.products, this.medicine});
+  Diseases({this.diseaseName, this.medicine});
 
   Diseases.fromJson(Map<String, dynamic> json) {
     diseaseName = json['diseaseName'];
-    if (json['products'] != null) {
-      products = <Products>[];
-      json['products'].forEach((v) {
-        products!.add(new Products.fromJson(v));
-      });
-    }
     if (json['medicine'] != null) {
       medicine = <Medicine>[];
       json['medicine'].forEach((v) {
@@ -50,13 +48,24 @@ class Diseases {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['diseaseName'] = this.diseaseName;
-    if (this.products != null) {
-      data['products'] = this.products!.map((v) => v.toJson()).toList();
-    }
     if (this.medicine != null) {
       data['medicine'] = this.medicine!.map((v) => v.toJson()).toList();
     }
     return data;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Diseases && other.diseaseName == diseaseName;
+  }
+
+  @override
+  int get hashCode => diseaseName.hashCode;
+
+  @override
+  String toString() {
+    return 'Diseases(diseaseName: $diseaseName, medicine: $medicine)';
   }
 }
 
@@ -77,17 +86,24 @@ class Products {
     data['name'] = this.name;
     return data;
   }
+
+  @override
+  String toString() {
+    return 'Products(id: $id, name: $name)';
+  }
 }
 
 class Medicine {
   int? productId;
+  bool? isSelected = false;
   List<String>? time;
   String? toBeTaken;
 
-  Medicine({this.productId, this.time, this.toBeTaken});
+  Medicine({this.productId, this.time, this.toBeTaken, this.isSelected});
 
   Medicine.fromJson(Map<String, dynamic> json) {
     productId = json['product_id'];
+    isSelected = json['isSelected'];
     time = json['time'].cast<String>();
     toBeTaken = json['to_be_taken'];
   }
@@ -95,8 +111,14 @@ class Medicine {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['product_id'] = this.productId;
+    data['isSelected'] = this.isSelected;
     data['time'] = this.time;
     data['to_be_taken'] = this.toBeTaken;
     return data;
+  }
+
+  @override
+  String toString() {
+    return 'Medicine(productId: $productId, isSelected: $isSelected, time: $time, toBeTaken: $toBeTaken)';
   }
 }
