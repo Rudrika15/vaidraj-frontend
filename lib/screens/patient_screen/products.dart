@@ -86,10 +86,18 @@ class _RenderProductsState extends State<RenderProducts> {
       );
       final isLastPage = ((newItems?.data?.data?.length ?? 0) < 5);
       if (isLastPage) {
-        _pagingController.appendLastPage(newItems?.data?.data ?? []);
+        _pagingController.appendLastPage(newItems?.data?.data
+                ?.where((e) => e.isOnAmazone != "no")
+                .toList() ??
+            []);
       } else {
         final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems?.data?.data ?? [], nextPageKey);
+        _pagingController.appendPage(
+            newItems?.data?.data
+                    ?.where((e) => e.isOnAmazone != "no")
+                    .toList() ??
+                [],
+            nextPageKey);
       }
     } catch (error) {
       _pagingController.error = error;
