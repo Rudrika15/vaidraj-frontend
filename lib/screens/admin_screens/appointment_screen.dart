@@ -9,11 +9,12 @@ import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
-import 'package:vaidraj/widgets/custom_searchbar.dart';
 import 'package:vaidraj/widgets/custom_text_field_widget.dart';
+import 'package:vaidraj/widgets/green_divider.dart';
 import '../../models/product_model.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/loader.dart';
+import 'package:collection/collection.dart';
 
 class PrescriptionPage extends StatefulWidget {
   const PrescriptionPage({
@@ -26,6 +27,8 @@ class PrescriptionPage extends StatefulWidget {
 class _PrescriptionPageState extends State<PrescriptionPage> {
   /// variables
   TextEditingController patientNameController = TextEditingController();
+  TextEditingController otherMedicineController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -129,6 +132,19 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
             if (!prescriptionProvider.isLoading ||
                 prescriptionProvider.selectedDiseaseId != 0)
               PrescriptionWidget(),
+            MethodHelper.heightBox(height: 2.h),
+            paddingMethod(CustomTextFieldWidget(
+                validator: (value) {},
+                keyboardType: TextInputType.text,
+                controller: otherMedicineController,
+                decoration: MethodHelper.greenUnderLineBorder(
+                    hintText: "Other Notes (if Any)"))),
+            paddingMethod(CustomTextFieldWidget(
+                validator: (value) {},
+                keyboardType: TextInputType.text,
+                controller: noteController,
+                decoration: MethodHelper.greenUnderLineBorder(
+                    hintText: "Add Note..."))),
           ],
         ),
       ),
@@ -163,52 +179,58 @@ class _PrescriptionWidgetState extends State<PrescriptionWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<PrescriptionStateProvider>(
-      builder: (context, prescriptionProvider, child) => CustomContainer(
-        // backGroundColor: AppColors.errorColor,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // const CustomSearchBar(),
-              if (prescriptionProvider.productModel?.data?.data?.isNotEmpty ==
-                  true)
-                ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount:
-                        prescriptionProvider.productModel?.data?.data?.length ??
-                            0,
-                    itemBuilder: (context, index) {
-                      Product? product =
-                          prescriptionProvider.productModel?.data?.data?[index];
-                      final medicine = prescriptionProvider
-                          .prescriptionModel.diseases
-                          ?.firstWhere((e) =>
-                              e.diseaseName ==
-                              prescriptionProvider.selectedDisease)
-                          .medicine
-                          ?.firstWhere((e) => e.productId == product?.id,
-                              orElse: () => Medicine(
-                                  isSelected: false,
-                                  productId: product?.id,
-                                  time: [],
-                                  toBeTaken: "Before Meal"));
-                      return prescriptionProvider.selectedDiseaseId ==
-                              product?.diseaseId
-                          ? PrescriptionPageWidget(
-                              productId: product?.id ?? 0,
-                              productName: product?.displayName ?? "-",
-                              medicine: medicine,
-                              onChanged: (value) {
-                                prescriptionProvider.updateMedicineSelection(
-                                    isSelected: value ?? false,
-                                    productId: product?.id ?? 0);
-                              })
-                          : SizedBox.shrink();
-                    })
-            ],
-          ),
-        ),
-      ),
+      builder: (context, prescriptionProvider, child) => prescriptionProvider
+              .isLoading
+          ? const Center(
+              child: Loader(),
+            )
+          : CustomContainer(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // const CustomSearchBar(),
+                    prescriptionProvider.productToShow.isNotEmpty
+                        ? ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                GreenDividerLine(endIndent: 10.w, indent: 15.w),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount:
+                                prescriptionProvider.productToShow.length,
+                            itemBuilder: (context, index) {
+                              Product? product =
+                                  prescriptionProvider.productToShow[index];
+                              final medicine = prescriptionProvider.diseaseList
+                                  .firstWhereOrNull((e) =>
+                                      e.diseaseName ==
+                                      prescriptionProvider.selectedDisease)
+                                  ?.medicine
+                                  ?.firstWhereOrNull(
+                                    (e) => e.productId == product.id,
+                                  );
+                              return PrescriptionPageWidget(
+                                productId: product.id ?? 0,
+                                productName: product.displayName ?? "-",
+                                medicine: medicine,
+                                onChanged: (value) {
+                                  prescriptionProvider.updateMedicineSelection(
+                                      isSelected: value ?? false,
+                                      productId: product.id ?? 0);
+                                },
+                              );
+                            })
+                        : CustomContainer(
+                            height: 20.h,
+                            child: Center(
+                                child: Text(
+                              'No Data Found',
+                              style: TextSizeHelper.smallHeaderStyle,
+                            )),
+                          )
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }
@@ -239,7 +261,7 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
       child: Column(
         children: [
           _buildCheckboxRow(),
-          if (widget.medicine?.isSelected ?? true) ...[
+          if (widget.medicine?.isSelected ?? false) ...[
             _buildTimeOfDaySelector(),
             MethodHelper.heightBox(height: 1.h),
             _buildWhenToTakeSelector(medicine: widget.medicine),
@@ -261,7 +283,7 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
           Expanded(
             child: Text(
               widget.productName,
-              style: TextSizeHelper.smallHeaderStyle,
+              style: TextSizeHelper.smallTextStyle,
             ),
           ),
         ],
@@ -283,22 +305,23 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
   }
 
   Widget _buildTimeOfDayButtons() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: const EdgeInsets.only(left: AppSizes.size40),
-        child: Row(
-          children: ['morning', 'noon', 'evening', 'night'].map((time) {
-            return _buildSelectableButton(
-              label: time,
-              isSelected: widget.medicine?.time?.contains(time) ?? true,
-              onTap: () {
-                widget.medicine?.time?.contains(time) == false
-                    ? widget.medicine?.time?.remove(time)
-                    : widget.medicine?.time?.add(time);
-              },
-            );
-          }).toList(),
+    return Consumer<PrescriptionStateProvider>(
+      builder: (context, prescriptionProvider, child) => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Padding(
+          padding: const EdgeInsets.only(left: AppSizes.size40),
+          child: Row(
+            children: ['Morning', 'AfterNoon', 'Evening', 'Night'].map((time) {
+              return _buildSelectableButton(
+                label: time,
+                isSelected: widget.medicine?.time?.contains(time) ?? false,
+                onTap: () {
+                  prescriptionProvider.updateMedicineTime(
+                      productId: widget.productId, dayTime: time);
+                },
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -344,7 +367,7 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
       padding: EdgeInsets.only(left: AppSizes.size40),
       child: Row(
         children: [
-          Text(title, style: TextSizeHelper.smallTextStyle),
+          Text(title, style: TextSizeHelper.xSmallHeaderStyle),
         ],
       ),
     );
@@ -365,8 +388,8 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
             isSelected ? AppColors.whiteColor : Colors.grey.shade300,
         borderColor: isSelected ? AppColors.greenColor : Colors.grey.shade300,
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.size20,
-          vertical: AppSizes.size10,
+          horizontal: AppSizes.size10,
+          vertical: AppSizes.size10 - 5,
         ),
         child: Text(
           label,

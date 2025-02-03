@@ -110,11 +110,11 @@ class Product {
   String? descriptionHindi;
   String? amazonLink;
   String? thumbnail;
+  String? isOnAmazone;
   String? createdAt;
   String? updatedAt;
   String? displayName;
-  String? displayDescription;
-  Disease? disease;
+  List<DiseaseProducts>? diseaseProducts;
 
   Product(
       {this.id,
@@ -125,11 +125,11 @@ class Product {
       this.descriptionHindi,
       this.amazonLink,
       this.thumbnail,
+      this.isOnAmazone,
       this.createdAt,
       this.updatedAt,
       this.displayName,
-      this.displayDescription,
-      this.disease});
+      this.diseaseProducts});
 
   Product.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -140,12 +140,16 @@ class Product {
     descriptionHindi = json['description_hindi'];
     amazonLink = json['amazon_link'];
     thumbnail = json['thumbnail'];
+    isOnAmazone = json['is_on_amazone'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     displayName = json['display_name'];
-    displayDescription = json['display_description'];
-    disease =
-        json['disease'] != null ? new Disease.fromJson(json['disease']) : null;
+    if (json['disease_products'] != null) {
+      diseaseProducts = <DiseaseProducts>[];
+      json['disease_products'].forEach((v) {
+        diseaseProducts!.add(new DiseaseProducts.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -158,12 +162,54 @@ class Product {
     data['description_hindi'] = this.descriptionHindi;
     data['amazon_link'] = this.amazonLink;
     data['thumbnail'] = this.thumbnail;
+    data['is_on_amazone'] = this.isOnAmazone;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['display_name'] = this.displayName;
-    data['display_description'] = this.displayDescription;
-    if (this.disease != null) {
-      data['disease'] = this.disease!.toJson();
+    if (this.diseaseProducts != null) {
+      data['disease_products'] =
+          this.diseaseProducts!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class DiseaseProducts {
+  int? id;
+  int? diseaseId;
+  int? productId;
+  String? createdAt;
+  String? updatedAt;
+  Disease? diseases;
+
+  DiseaseProducts(
+      {this.id,
+      this.diseaseId,
+      this.productId,
+      this.createdAt,
+      this.updatedAt,
+      this.diseases});
+
+  DiseaseProducts.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    diseaseId = json['disease_id'];
+    productId = json['product_id'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    diseases = json['diseases'] != null
+        ? new Disease.fromJson(json['diseases'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['disease_id'] = this.diseaseId;
+    data['product_id'] = this.productId;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    if (this.diseases != null) {
+      data['diseases'] = this.diseases!.toJson();
     }
     return data;
   }
