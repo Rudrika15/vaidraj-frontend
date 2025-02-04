@@ -445,7 +445,8 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                       child: Center(child: Loader()),
                     )
                   : PrimaryBtn(
-                      btnText: widget.UserStatus == "STAFF"
+                      btnText: widget.UserStatus == "STAFF" ||
+                              widget.UserStatus == "ADMIN"
                           ? langProvider.translate("login")
                           : langProvider.translate("submit"),
                       onTap: () async {
@@ -461,7 +462,34 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                 password: passwordController.text);
                             if (mobileVerProvider.isPasswordVerified) {
                               pushRemoveUntil(
-                                  context, HomeScreen(isDoctor: true));
+                                  context,
+                                  HomeScreen(
+                                    isDoctor: true,
+                                    isAdmin: false,
+                                  ));
+                              WidgetHelper.customSnackBar(
+                                  context: context, title: "Welcome");
+                              print("staff validated");
+                              return;
+                            }
+                          }
+                        } else if (widget.UserStatus == "ADMIN") {
+                          if (staffForm.currentState!.validate()) {
+                            await mobileVerProvider.verifyPassword(
+                                context: context,
+                                mobile: mobileVerProvider
+                                        .verifyMobileNumberModel
+                                        ?.data
+                                        ?.mobileNo ??
+                                    "",
+                                password: passwordController.text);
+                            if (mobileVerProvider.isPasswordVerified) {
+                              pushRemoveUntil(
+                                  context,
+                                  HomeScreen(
+                                    isDoctor: false,
+                                    isAdmin: true,
+                                  ));
                               WidgetHelper.customSnackBar(
                                   context: context, title: "Welcome");
                               print("staff validated");
@@ -484,7 +512,11 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                 title: "Welcome",
                               );
                               pushRemoveUntil(
-                                  context, HomeScreen(isDoctor: false));
+                                  context,
+                                  HomeScreen(
+                                    isDoctor: false,
+                                    isAdmin: false,
+                                  ));
                               print("patient validated");
                               return;
                             } else {
@@ -513,7 +545,11 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   context: context,
                                   title: "User Account Created");
                               pushRemoveUntil(
-                                  context, const HomeScreen(isDoctor: false));
+                                  context,
+                                  const HomeScreen(
+                                    isDoctor: false,
+                                    isAdmin: false,
+                                  ));
                             }
                           }
                         }

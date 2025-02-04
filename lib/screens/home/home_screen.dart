@@ -11,6 +11,8 @@ import 'package:vaidraj/screens/admin_screens/home_screen.dart';
 import 'package:vaidraj/screens/admin_screens/patients_screen.dart';
 import 'package:vaidraj/screens/notification/notifications_screen.dart';
 import 'package:vaidraj/screens/patient_screen/about_us.dart';
+import 'package:vaidraj/screens/patient_screen/all_article.dart';
+import 'package:vaidraj/screens/patient_screen/all_youtube.dart';
 import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/screens/patient_screen/medical_history.dart';
@@ -29,9 +31,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     required this.isDoctor,
+    required this.isAdmin,
   });
   final bool isDoctor;
-
+  final bool isAdmin;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -55,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     ProductsScreen(),
     Appointment(),
     MedicalHistoryScreen(),
+    AllArticlePage(),
+    AllYouTubeVideos(),
     AboutUsScreen(),
     GetInTouchScreen(),
   ];
@@ -65,6 +70,8 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     {'icon': Icons.inventory_2_rounded, 'text': "products"},
     {'icon': Icons.auto_stories_rounded, 'text': "appointment"},
     {'icon': Icons.medical_information_rounded, 'text': "medicalHistory"},
+    {'icon': Icons.article_sharp, 'text': "article"},
+    {'icon': Icons.video_collection, 'text': "videos"},
     {'icon': Icons.verified_rounded, 'text': "aboutUs"},
     {'icon': Icons.contact_phone, 'text': "getInTouch"},
   ];
@@ -98,12 +105,13 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
             context: context),
         appBar: _buildAppBar(
             isDoctor: widget.isDoctor,
+            isAdmin: widget.isAdmin,
             langProvider: langProvider,
             userName: userName),
-        body: widget.isDoctor
+        body: widget.isDoctor || widget.isAdmin
             ? screensNav[_selectedNavTabIndex]
             : screensTab[_selectedTabIndex],
-        bottomNavigationBar: widget.isDoctor
+        bottomNavigationBar: widget.isDoctor || widget.isAdmin
             ? _buildBottomNavigationBar(langProvider: langProvider)
             : null,
       ),
@@ -164,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
                         backGroundColor: AppColors.backgroundColor,
                         borderRadius: BorderRadius.circular(5.w),
                         child: Text(
-                          "Language :- ${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
+                          "${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
                           style: TextSizeHelper.smallHeaderStyle,
                         ),
                       ),
@@ -178,13 +186,14 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
 
   AppBar _buildAppBar(
       {required bool isDoctor,
+      required bool isAdmin,
       required LocalizationProvider langProvider,
       required String userName}) {
     return AppBar(
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: AppColors.whiteColor,
       title: Text(
-        isDoctor
+        isDoctor || isAdmin
             ? _selectedNavTabIndex == 0
                 ? "Hello $userName"
                 : _selectedNavTabIndex == 1
@@ -196,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
         style: TextSizeHelper.mediumTextStyle
             .copyWith(color: AppColors.brownColor),
       ),
-      leading: isDoctor
+      leading: isDoctor || isAdmin
           ? _selectedNavTabIndex != 0
               ? null
               : Padding(
@@ -224,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
 
   List<Widget>? _buildAppBarActions() {
     List<Widget> actions = [];
-    widget.isDoctor
+    widget.isDoctor || widget.isAdmin
         ? _selectedNavTabIndex != 0
             ? null
             : actions.add(IconButton.filledTonal(
@@ -250,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
                     color: AppColors.brownColor),
               ));
 
-    if (widget.isDoctor) {
+    if (widget.isDoctor || widget.isAdmin) {
       actions.add(SizedBox(width: 5.w));
     } else {
       actions.add(
@@ -388,7 +397,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
   Widget build(BuildContext context) {
     return CustomContainer(
       width: 80.w,
-      height: 25.h,
+      height: 20.h,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,

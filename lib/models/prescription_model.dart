@@ -112,7 +112,7 @@ class Medicine {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['product_id'] = this.productId;
     data['isSelected'] = this.isSelected;
-    data['time'] = this.time;
+    data['time'] = this.time?.join(',');
     data['to_be_taken'] = this.toBeTaken;
     return data;
   }

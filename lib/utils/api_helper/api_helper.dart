@@ -25,4 +25,10 @@ class ApiHelper {
   static String getProductsDiseaseWise({required int diseaseId}) =>
       "$baseUrl/products/$diseaseId";
   static String getAllProducts = "$baseUrl/products";
+  static String getHomeScreenVideo = "$baseUrl/videos";
+  static String getAllYTVideos({required int currentPage, int? perPage = 3}) =>
+      "$baseUrl/videos?q=all&current_page=$currentPage&per_page=$perPage";
+  static String createPrescription = '$baseUrl/prescription';
+  static String updatePrescription({required int pId}) =>
+      "$baseUrl/prescription/$pId";
 }

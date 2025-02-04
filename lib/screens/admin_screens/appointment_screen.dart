@@ -11,6 +11,7 @@ import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_text_field_widget.dart';
 import 'package:vaidraj/widgets/green_divider.dart';
+import 'package:vaidraj/widgets/primary_btn.dart';
 import '../../models/product_model.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/loader.dart';
@@ -145,6 +146,21 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                 controller: noteController,
                 decoration: MethodHelper.greenUnderLineBorder(
                     hintText: "Add Note..."))),
+            MethodHelper.heightBox(height: 10.h),
+            SizedBox(
+              width: 50.w,
+              child: PrimaryBtn(
+                  btnText: 'Submit',
+                  onTap: () {
+                    prescriptionProvider.sendDataToBackend(
+                        patientName: patientNameController.text,
+                        context: context,
+                        appointmentId: 4,
+                        note: noteController.text,
+                        otherNote: otherMedicineController.text);
+                  }),
+            ),
+            MethodHelper.heightBox(height: 10.h),
           ],
         ),
       ),
@@ -346,13 +362,13 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
       child: Padding(
         padding: const EdgeInsets.only(left: AppSizes.size40),
         child: Row(
-          children: ['before meal', 'after meal'].map((when) {
+          children: ['before', 'after'].map((when) {
             return _buildSelectableButton(
-              label: when,
+              label: '$when Meal',
               isSelected: medicine?.toBeTaken == when,
               onTap: () {
                 setState(() {
-                  medicine?.toBeTaken = when;
+                  medicine?.toBeTaken = when.toLowerCase();
                 });
               },
             );

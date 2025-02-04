@@ -137,6 +137,13 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                                 .verifyMobileNumberModel?.data?.role ==
                             "admin") {
                           push(
+                              context, const SignInSignUp(UserStatus: "ADMIN"));
+                          return;
+                        }
+                        if (mobileVerProvider
+                                .verifyMobileNumberModel?.data?.role ==
+                            "doctor") {
+                          push(
                               context, const SignInSignUp(UserStatus: "STAFF"));
                           return;
                         }

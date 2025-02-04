@@ -8,15 +8,21 @@ import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/models/all_disease_model.dart';
 import 'package:vaidraj/models/upcoming_appointment_model.dart';
+import 'package:vaidraj/models/youtube_video_model.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart';
 import 'package:vaidraj/services/all_disease_service/all_disease_service.dart';
 import 'package:vaidraj/services/appointment/upcoming_appointment.dart';
+import 'package:vaidraj/services/youtube_video_service/youtube_video_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../../widgets/Custom_video_player.dart';
 import '../../widgets/custom_searchbar.dart';
+import '../../widgets/image_or_default_image_widget.dart';
 import '../../widgets/in_app_heading.dart';
 
 class PatientHomeScreen extends StatefulWidget {
@@ -34,13 +40,14 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           child: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
-              child: CustomSearchBar(
-                hintText: langProvider.translate("searchHere"),
-                horizontal: 0,
-              ),
-            ),
+            // Padding(
+
+            //   padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+            //   child: CustomSearchBar(
+            //     hintText: langProvider.translate("searchHere"),
+            //     horizontal: 0,
+            //   ),
+            // ),
             InScreenHeading(
               heading: langProvider.translate("ourSpeciality"),
             ),
@@ -64,27 +71,19 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             RenderUpcomingAppointment(),
             InScreenHeading(
                 heading: langProvider.translate("recommendedVideos")),
-            ListView.separated(
-              itemCount: 10,
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
-              physics: const NeverScrollableScrollPhysics(),
-              separatorBuilder: (context, index) {
-                return const SizedBox(
-                  height: AppSizes.size10,
-                );
+            StreamBuilder(
+              stream: langProvider.localeStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: Loader());
+                } else {
+                  bool isEnglish = snapshot.data == "en";
+                  return isEnglish
+                      ? RenderYoutubeVideos()
+                      : RenderYoutubeVideos();
+                }
               },
-              itemBuilder: (context, index) {
-                return CustomContainer(
-                  margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
-                  height: 20.h,
-                  backGroundColor: AppColors.lightBackGroundColor,
-                  borderColor: AppColors.brownColor,
-                  borderRadius: BorderRadius.circular(AppSizes.size10),
-                  borderWidth: 1,
-                );
-              },
-            )
+            ),
           ],
         ),
       )),
@@ -344,5 +343,113 @@ class SpecialityTempletContainer extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class RenderYoutubeVideos extends StatefulWidget {
+  const RenderYoutubeVideos({super.key});
+
+  @override
+  State<RenderYoutubeVideos> createState() => _RenderYoutubeVideosState();
+}
+
+class _RenderYoutubeVideosState extends State<RenderYoutubeVideos>
+    with NavigateHelper {
+  final YouTubeVideoService service = YouTubeVideoService();
+  YoutubeVideoModel? model;
+  bool isLoading = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getYoutubeVideo();
+  }
+
+  Future<void> getYoutubeVideo() async {
+    model = await service.getYouTubeVideo(context);
+    isLoading = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return isLoading
+        ? Center(
+            child: Loader(),
+          )
+        : SizedBox(
+            height: 30.h,
+            child: ListView.separated(
+              itemCount: model?.data?.data?.length ?? 0,
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: AppSizes.size10,
+                );
+              },
+              itemBuilder: (context, index) {
+                YoutubeVideoInfo? ytInfo = model?.data?.data?[index];
+                return CustomContainer(
+                    width: 90.w,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: AppSizes.size10),
+                    backGroundColor: AppColors.lightBackGroundColor,
+                    borderColor: AppColors.brownColor,
+                    borderRadius: BorderRadius.circular(AppSizes.size10),
+                    borderWidth: 1,
+                    child: GestureDetector(
+                        onTap: () {
+                          if (ytInfo?.youtubeLink?.contains("<iframe") ??
+                              false) {
+                            push(
+                                context,
+                                CustomVideoPlayer(
+                                  videoLink: MethodHelper.extractVideoId(
+                                    iframeEmbedUrl: ytInfo?.youtubeLink ?? "",
+                                  ),
+                                  heading: ytInfo?.displayName ?? "",
+                                  description:
+                                      ytInfo?.disease?.displayDescription ?? "",
+                                ));
+                          } else {
+                            push(
+                                context,
+                                CustomVideoPlayer(
+                                  videoLink: YoutubePlayer.convertUrlToId(
+                                          ytInfo?.youtubeLink ?? "") ??
+                                      "",
+                                  heading: ytInfo?.displayName ?? "",
+                                  description:
+                                      ytInfo?.disease?.displayDescription ?? "",
+                                ));
+                          }
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(AppSizes.size10),
+                                  topRight: Radius.circular(AppSizes.size10)),
+                              child: ImageOrDefaultImage(
+                                  image:
+                                      "${AppStrings.thumbnailPhotoUrl}/${ytInfo?.thumbnail ?? ""}"),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 3.w),
+                              child: Text(
+                                ytInfo?.displayName ?? '',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextSizeHelper.smallHeaderStyle
+                                    .copyWith(color: AppColors.brownColor),
+                              ),
+                            )
+                          ],
+                        )));
+              },
+            ),
+          );
   }
 }

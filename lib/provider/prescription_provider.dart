@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/prescription_model.dart';
+import 'package:vaidraj/services/prescription_service/prescription_service.dart';
 import 'package:vaidraj/services/product_service/product_service.dart';
 
 import '../models/product_model.dart';
@@ -10,6 +12,9 @@ class PrescriptionStateProvider extends ChangeNotifier {
   /// loading state
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  /// prescription service
+  PrescriptionService service = PrescriptionService();
 
   /// variables
   /// selected disease
@@ -120,13 +125,15 @@ class PrescriptionStateProvider extends ChangeNotifier {
             productId: productId,
             isSelected: isSelected,
             time: [],
-            toBeTaken: "Before Meal",
+            toBeTaken: "before",
           ));
         }
 
         // After the update, ensure the disease is updated in the list
         _diseaseList[diseaseIndex] = disease; // Update the reference of disease
       }
+    } else {
+      updateDisease(disease: _selectedDisease, diseaseId: _selectedDiseaseId);
     }
 
     // Log the updated disease list for debugging
@@ -172,5 +179,23 @@ class PrescriptionStateProvider extends ChangeNotifier {
 
     // Notify listeners to update the UI
     notifyListeners();
+  }
+
+  /// Method to send the diseases list as a JSON string to the backend
+  Future<void> sendDataToBackend(
+      {required int appointmentId,
+      required BuildContext context,
+      required String patientName,
+      required String note,
+      required String otherNote}) async {
+    _isLoading = true;
+    await service.createPrescription(
+        context: context,
+        patientName: patientName,
+        note: note,
+        otherNote: otherNote,
+        appointmentId: appointmentId,
+        diseaseList: diseaseList);
+    _isLoading = false;
   }
 }

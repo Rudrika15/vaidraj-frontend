@@ -147,20 +147,26 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                                       push(
                                           context,
                                           CustomVideoPlayer(
-                                              videoLink:
-                                                  MethodHelper.extractVideoId(
-                                            iframeEmbedUrl:
-                                                video?.youtubeLink ?? "",
-                                          )));
+                                            videoLink:
+                                                MethodHelper.extractVideoId(
+                                              iframeEmbedUrl:
+                                                  video?.youtubeLink ?? "",
+                                            ),
+                                            heading: video?.title ?? "",
+                                            description: widget.description,
+                                          ));
                                     } else {
                                       push(
                                           context,
                                           CustomVideoPlayer(
-                                              videoLink:
-                                                  YoutubePlayer.convertUrlToId(
-                                                          video?.youtubeLink ??
-                                                              "") ??
-                                                      ""));
+                                            videoLink:
+                                                YoutubePlayer.convertUrlToId(
+                                                        video?.youtubeLink ??
+                                                            "") ??
+                                                    "",
+                                            heading: video?.title ?? "",
+                                            description: widget.description,
+                                          ));
                                     }
                                   },
                                   child: ClipRRect(

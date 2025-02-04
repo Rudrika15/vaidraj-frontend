@@ -42,10 +42,28 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
     String? role = await getRole();
 
     if (token == true && role == "patient") {
-      pushRemoveUntil(context, const HomeScreen(isDoctor: false));
+      pushRemoveUntil(
+          context,
+          const HomeScreen(
+            isDoctor: false,
+            isAdmin: false,
+          ));
       return;
     } else if (token == true && role == "admin") {
-      pushRemoveUntil(context, const HomeScreen(isDoctor: true));
+      pushRemoveUntil(
+          context,
+          const HomeScreen(
+            isDoctor: false,
+            isAdmin: true,
+          ));
+      return;
+    } else if (token == true && role == "doctor") {
+      pushRemoveUntil(
+          context,
+          const HomeScreen(
+            isDoctor: true,
+            isAdmin: false,
+          ));
       return;
     } else {
       pushRemoveUntil(context, const WelcomePage());

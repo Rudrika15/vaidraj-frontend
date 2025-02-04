@@ -77,15 +77,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
+import 'package:vaidraj/constants/color.dart';
+import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/widgets/green_divider.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 /// Stateful widget to fetch and then display video content.
 class CustomVideoPlayer extends StatefulWidget {
-  CustomVideoPlayer({super.key, required this.videoLink});
+  CustomVideoPlayer(
+      {super.key,
+      required this.videoLink,
+      required this.heading,
+      required this.description});
   final String videoLink;
+  final String heading;
+  final String description;
   @override
   _VideoAppState createState() => _VideoAppState();
 }
@@ -146,7 +155,33 @@ class _VideoAppState extends State<CustomVideoPlayer> with NavigateHelper {
                     const FullScreenButton()
                   ],
                 ),
-                builder: (context, player) => player,
+                builder: (context, player) => Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    player,
+                    MethodHelper.heightBox(height: 2.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 5.w,
+                      ),
+                      child: Text(
+                        widget.heading,
+                        style: TextSizeHelper.smallHeaderStyle
+                            .copyWith(color: AppColors.brownColor),
+                      ),
+                    ),
+                    GreenDividerLine(endIndent: 5.w, indent: 5.w),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
+                      child: Text(
+                        widget.description,
+                        style: TextSizeHelper.smallTextStyle,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

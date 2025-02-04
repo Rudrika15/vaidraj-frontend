@@ -30,7 +30,7 @@ class _SpecialitiesScreenState extends State<SpecialitiesScreen> {
               : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CustomSearchBar(),
+                    // CustomSearchBar(),
                     Expanded(
                         child: StreamBuilder(
                       stream: langProvider.localeStream,
