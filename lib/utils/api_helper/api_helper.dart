@@ -31,4 +31,6 @@ class ApiHelper {
   static String createPrescription = '$baseUrl/prescription';
   static String updatePrescription({required int pId}) =>
       "$baseUrl/prescription/$pId";
+  static String getAllArticle({required int currentPage, int? perPage = 3}) =>
+      "$baseUrl/articles?q=all&current_page=$currentPage&per_page=$perPage";
 }
