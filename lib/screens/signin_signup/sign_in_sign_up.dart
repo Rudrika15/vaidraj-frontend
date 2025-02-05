@@ -193,8 +193,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   dob = await showDatePicker(
                                       context: context,
                                       firstDate: DateTime(1950),
-                                      lastDate:
-                                          DateTime(DateTime.now().year - 18));
+                                      lastDate: DateTime(DateTime.now().year));
                                   if (dob != null) {
                                     dobController.text =
                                         DateFormat('yyyy-MM-dd').format(dob!);
@@ -213,7 +212,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                               context: context,
                                               firstDate: DateTime(1950),
                                               lastDate: DateTime(
-                                                  DateTime.now().year - 18));
+                                                  DateTime.now().year));
                                           if (dob != null) {
                                             dobController.text =
                                                 DateFormat("yyyy-MM-dd")
@@ -317,8 +316,8 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                         dob = await showDatePicker(
                                             context: context,
                                             firstDate: DateTime(1950),
-                                            lastDate: DateTime(
-                                                DateTime.now().year - 18));
+                                            lastDate:
+                                                DateTime(DateTime.now().year));
                                         if (dob != null) {
                                           dobController.text =
                                               DateFormat('yyyy-MM-dd')
