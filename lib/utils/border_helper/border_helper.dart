@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
+
+import '../../constants/sizes.dart';
 
 class BorderHelper {
   static InputDecoration inputBorder = const InputDecoration(
@@ -45,4 +48,30 @@ class BorderHelper {
     focusedErrorBorder:
         OutlineInputBorder(borderSide: BorderSide(color: AppColors.errorColor)),
   );
+  static InputDecoration dropDownOutlinedBorder(
+          {required IconData suffixIcon}) =>
+      InputDecoration(
+        constraints: BoxConstraints(maxWidth: 50.w, maxHeight: 30.h),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.size10, vertical: 0),
+        suffixIcon: Icon(suffixIcon),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSizes.size30),
+            borderSide: const BorderSide(color: AppColors.brownColor)),
+        disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSizes.size30),
+            borderSide: const BorderSide(color: AppColors.brownColor)),
+        errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSizes.size30),
+            borderSide: const BorderSide(color: AppColors.errorColor)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSizes.size30),
+            borderSide: const BorderSide(color: AppColors.brownColor)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSizes.size30),
+            borderSide: const BorderSide(color: AppColors.brownColor)),
+        focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppSizes.size30),
+            borderSide: const BorderSide(color: AppColors.errorColor)),
+      );
 }

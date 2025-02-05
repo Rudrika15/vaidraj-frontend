@@ -70,4 +70,18 @@ class MethodHelper {
       throw ArgumentError('Invalid YouTube embed URL');
     }
   }
+
+  static String getInitials({required String name}) {
+    List<String> names = name.split(' ');
+    // Split the full name
+    // First letter of first name
+    String firstNameInitial =
+        names[0].isNotEmpty ? names[0][0].toUpperCase() : '';
+    // First letter of last name
+    String lastNameInitial = names.length > 1 && names[1].isNotEmpty
+        ? names[1][0].toUpperCase()
+        : '';
+
+    return firstNameInitial + lastNameInitial;
+  }
 }

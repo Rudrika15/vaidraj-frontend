@@ -26,6 +26,7 @@ class ApiHelper {
       "$baseUrl/products/$diseaseId";
   static String getAllProducts = "$baseUrl/products";
   static String getHomeScreenVideo = "$baseUrl/videos";
+  static String todaysAppointment = "$baseUrl/todayAppointments";
   static String getAllYTVideos({required int currentPage, int? perPage = 3}) =>
       "$baseUrl/videos?q=all&current_page=$currentPage&per_page=$perPage";
   static String createPrescription = '$baseUrl/prescription';
@@ -33,4 +34,9 @@ class ApiHelper {
       "$baseUrl/prescription/$pId";
   static String getAllArticle({required int currentPage, int? perPage = 3}) =>
       "$baseUrl/articles?q=all&current_page=$currentPage&per_page=$perPage";
+  static String getMyPatients(
+          {required String branchId,
+          required int currentPage,
+          required int perPage}) =>
+      "$baseUrl/myPatients?branch_id=$branchId&current_page=$currentPage&per_page=$perPage";
 }

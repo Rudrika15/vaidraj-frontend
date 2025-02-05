@@ -7,11 +7,18 @@ import '../../utils/api_helper/api_helper.dart';
 import '../../utils/http_helper/http_helper.dart';
 
 class MyPatientService {
-  Future<MyPatientsModel?> getPatients({required BuildContext context}) async {
+  Future<MyPatientsModel?> getPatients(
+      {required BuildContext context,
+      required String branchId,
+      required int currentPage,
+      required int perPage}) async {
     try {
+      print(ApiHelper.getMyPatients(
+          branchId: branchId, currentPage: currentPage, perPage: perPage));
       Response response = await HttpHelper.get(
         context: context,
-        uri: ApiHelper.getHomeScreenVideo,
+        uri: ApiHelper.getMyPatients(
+            branchId: branchId, currentPage: currentPage, perPage: perPage),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);

@@ -10,6 +10,7 @@ import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/provider/medical_history_provider.dart';
 import 'package:vaidraj/provider/mobile_verification_provider.dart';
+import 'package:vaidraj/provider/my_patients_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/screens/splash_screen/splash.dart';
 import 'package:sizer/sizer.dart';
@@ -31,6 +32,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => AppointmentProvider()),
       ChangeNotifierProvider(create: (_) => MedicalHistoryProvider()),
       ChangeNotifierProvider(create: (_) => PrescriptionStateProvider()),
+      ChangeNotifierProvider(create: (_) => MyPatientsProvider()),
     ],
     child: const MyApp(),
   ));

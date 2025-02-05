@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/prescription_model.dart';
-import 'package:vaidraj/models/update_lang_model.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
 import 'package:vaidraj/utils/http_helper/http_helper.dart';
 import 'package:http/src/response.dart';
 import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
-
 import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 
 class PrescriptionService {
