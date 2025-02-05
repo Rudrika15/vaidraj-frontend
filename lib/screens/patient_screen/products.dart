@@ -7,13 +7,17 @@ import 'package:vaidraj/models/product_model.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/services/product_service/product_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/color.dart';
 import '../../constants/sizes.dart';
+import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../widgets/custom_container.dart';
 import '../../widgets/custom_searchbar.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../home/home_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -22,37 +26,54 @@ class ProductsScreen extends StatefulWidget {
   State<ProductsScreen> createState() => _ProductsScreenState();
 }
 
-class _ProductsScreenState extends State<ProductsScreen> {
+class _ProductsScreenState extends State<ProductsScreen> with NavigateHelper {
   ///
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Column(
-      children: [
-        CustomSearchBar(),
-        Expanded(
-          child: CustomContainer(
-            child: Consumer<LocalizationProvider>(
-              builder: (context, langProvider, child) => StreamBuilder(
-                stream: langProvider.localeStream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: Loader(),
-                    );
-                  } else {
-                    bool isEnglish = snapshot.data == "en";
-                    return isEnglish
-                        ? const RenderProducts()
-                        : const RenderProducts();
-                  }
-                },
+    return PopScope(
+      // will send user to my property page on back btn press
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        String role = await SharedPrefs.getRole();
+        pushRemoveUntil(
+            context,
+            HomeScreen(
+              isAdmin: role == "admin",
+              isDoctor: role == "doctor",
+              screenIndex: 1,
+            ));
+      },
+      child: SafeArea(
+          child: Column(
+        children: [
+          CustomSearchBar(),
+          Expanded(
+            child: CustomContainer(
+              child: Consumer<LocalizationProvider>(
+                builder: (context, langProvider, child) => StreamBuilder(
+                  stream: langProvider.localeStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: Loader(),
+                      );
+                    } else {
+                      bool isEnglish = snapshot.data == "en";
+                      return isEnglish
+                          ? const RenderProducts()
+                          : const RenderProducts();
+                    }
+                  },
+                ),
               ),
             ),
-          ),
-        )
-      ],
-    ));
+          )
+        ],
+      )),
+    );
   }
 }
 

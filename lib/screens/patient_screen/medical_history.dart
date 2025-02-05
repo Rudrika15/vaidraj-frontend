@@ -10,8 +10,12 @@ import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/services/download_pdf.dart/download_pdf.dart';
 import 'package:vaidraj/services/medical_history/medical_history_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
+
+import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
+import '../home/home_screen.dart';
 
 class MedicalHistoryScreen extends StatefulWidget {
   const MedicalHistoryScreen({super.key});
@@ -20,23 +24,40 @@ class MedicalHistoryScreen extends StatefulWidget {
   State<MedicalHistoryScreen> createState() => _MedicalHistoryScreenState();
 }
 
-class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> {
+class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> with NavigateHelper {
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-        builder: (context, langProvider, child) => StreamBuilder<String>(
-              stream: langProvider.localeStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: Loader());
-                } else {
-                  bool isEnglish = snapshot.data == "en";
-                  return isEnglish
-                      ? RenderMedicalHistory()
-                      : RenderMedicalHistory();
-                }
-              },
+    return PopScope(
+      // will send user to my property page on back btn press
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        String role = await SharedPrefs.getRole();
+        pushRemoveUntil(
+            context,
+            HomeScreen(
+              isAdmin: role == "admin",
+              isDoctor: role == "doctor",
+              screenIndex: 3,
             ));
+      },
+      child: Consumer<LocalizationProvider>(
+          builder: (context, langProvider, child) => StreamBuilder<String>(
+                stream: langProvider.localeStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: Loader());
+                  } else {
+                    bool isEnglish = snapshot.data == "en";
+                    return isEnglish
+                        ? RenderMedicalHistory()
+                        : RenderMedicalHistory();
+                  }
+                },
+              )),
+    );
   }
 }
 

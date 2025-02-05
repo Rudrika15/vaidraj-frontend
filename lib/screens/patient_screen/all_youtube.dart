@@ -12,10 +12,12 @@ import '../../models/youtube_video_model.dart';
 import '../../provider/localization_provider.dart';
 import '../../services/youtube_video_service/youtube_video_service.dart';
 import '../../utils/method_helper.dart';
+import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../widgets/Custom_video_player.dart';
 import '../../widgets/custom_container.dart';
 import '../../widgets/image_or_default_image_widget.dart';
 import '../../widgets/loader.dart';
+import '../home/home_screen.dart';
 
 class AllYouTubeVideos extends StatefulWidget {
   const AllYouTubeVideos({super.key});
@@ -24,36 +26,54 @@ class AllYouTubeVideos extends StatefulWidget {
   State<AllYouTubeVideos> createState() => _AllYouTubeVideosState();
 }
 
-class _AllYouTubeVideosState extends State<AllYouTubeVideos> {
+class _AllYouTubeVideosState extends State<AllYouTubeVideos>
+    with NavigateHelper {
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => SafeArea(
-          child: langProvider.isLoading
-              ? Center(child: Loader())
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // CustomSearchBar(),
-                    Expanded(
-                        child: StreamBuilder(
-                      stream: langProvider.localeStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: Loader(),
-                          );
-                        } else {
-                          bool isEnglish = snapshot.data == "en";
-                          return isEnglish
-                              ? RenderYouTubeVideos()
-                              : RenderYouTubeVideos();
-                        }
-                      },
-                    )),
-                  ],
-                )),
+    return PopScope(
+      // will send user to my property page on back btn press
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        String role = await SharedPrefs.getRole();
+        pushRemoveUntil(
+            context,
+            HomeScreen(
+              isAdmin: role == "admin",
+              isDoctor: role == "doctor",
+              screenIndex: 5,
+            ));
+      },
+      child: Consumer<LocalizationProvider>(
+        builder: (context, langProvider, child) => SafeArea(
+            child: langProvider.isLoading
+                ? Center(child: Loader())
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // CustomSearchBar(),
+                      Expanded(
+                          child: StreamBuilder(
+                        stream: langProvider.localeStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: Loader(),
+                            );
+                          } else {
+                            bool isEnglish = snapshot.data == "en";
+                            return isEnglish
+                                ? RenderYouTubeVideos()
+                                : RenderYouTubeVideos();
+                          }
+                        },
+                      )),
+                    ],
+                  )),
+      ),
     );
   }
 

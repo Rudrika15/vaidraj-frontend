@@ -6,12 +6,13 @@ import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/models/all_disease_model.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/patient_home.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
-import 'package:vaidraj/widgets/custom_searchbar.dart';
 import 'package:vaidraj/widgets/loader.dart';
-
 import '../../constants/color.dart';
 import '../../services/all_disease_service/all_disease_service.dart';
+import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
+import '../home/home_screen.dart';
 
 class SpecialitiesScreen extends StatefulWidget {
   const SpecialitiesScreen({super.key});
@@ -20,36 +21,54 @@ class SpecialitiesScreen extends StatefulWidget {
   State<SpecialitiesScreen> createState() => _SpecialitiesScreenState();
 }
 
-class _SpecialitiesScreenState extends State<SpecialitiesScreen> {
+class _SpecialitiesScreenState extends State<SpecialitiesScreen>
+    with NavigateHelper {
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => SafeArea(
-          child: langProvider.isLoading
-              ? Center(child: Loader())
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // CustomSearchBar(),
-                    Expanded(
-                        child: StreamBuilder(
-                      stream: langProvider.localeStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: Loader(),
-                          );
-                        } else {
-                          bool isEnglish = snapshot.data == "en";
-                          return isEnglish
-                              ? RenderSpeciality()
-                              : RenderSpeciality();
-                        }
-                      },
-                    )),
-                  ],
-                )),
+    return PopScope(
+      // will send user to my property page on back btn press
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        String role = await SharedPrefs.getRole();
+        pushRemoveUntil(
+            context,
+            HomeScreen(
+              isAdmin: role == "admin",
+              isDoctor: role == "doctor",
+              screenIndex: 0,
+            ));
+      },
+      child: Consumer<LocalizationProvider>(
+        builder: (context, langProvider, child) => SafeArea(
+            child: langProvider.isLoading
+                ? Center(child: Loader())
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // CustomSearchBar(),
+                      Expanded(
+                          child: StreamBuilder(
+                        stream: langProvider.localeStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: Loader(),
+                            );
+                          } else {
+                            bool isEnglish = snapshot.data == "en";
+                            return isEnglish
+                                ? RenderSpeciality()
+                                : RenderSpeciality();
+                          }
+                        },
+                      )),
+                    ],
+                  )),
+      ),
     );
   }
 

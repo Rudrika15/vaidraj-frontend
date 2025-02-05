@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -21,6 +22,7 @@ import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../widgets/Custom_video_player.dart';
+import '../../widgets/custom_exit_dialog_widget.dart';
 import '../../widgets/custom_searchbar.dart';
 import '../../widgets/image_or_default_image_widget.dart';
 import '../../widgets/in_app_heading.dart';
@@ -35,58 +37,72 @@ class PatientHomeScreen extends StatefulWidget {
 class _PatientHomeScreenState extends State<PatientHomeScreen> {
   @override
   Widget build(BuildContext pContext) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => SafeArea(
-          child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Padding(
+    /// this will prevent app from closing accidentetly
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        showDialog(
+            context: context,
+            builder: (context) => CustomAlertBox(
+                content: "Do you really want to exit?",
+                heading: "Exit App",
+                secondBtnText: "Exit",
+                onPressedSecondBtn: () => SystemChannels.platform
+                    .invokeMethod('SystemNavigator.pop')));
+      },
+      child: Consumer<LocalizationProvider>(
+        builder: (context, langProvider, child) => SafeArea(
+            child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Padding(
 
-            //   padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
-            //   child: CustomSearchBar(
-            //     hintText: langProvider.translate("searchHere"),
-            //     horizontal: 0,
-            //   ),
-            // ),
-            InScreenHeading(
-              heading: langProvider.translate("ourSpeciality"),
-            ),
-            //// on lang change will discard the current speciality widget and use a new one
-            StreamBuilder(
-              stream: langProvider.localeStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: Loader());
-                } else {
-                  bool isEnglish = snapshot.data == "en";
-                  return isEnglish
-                      ? SpecialitiesRenderWidget()
-                      : SpecialitiesRenderWidget();
-                }
-              },
-            ),
-            InScreenHeading(heading: langProvider.translate("appointment")),
+              //   padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+              //   child: CustomSearchBar(
+              //     hintText: langProvider.translate("searchHere"),
+              //     horizontal: 0,
+              //   ),
+              // ),
+              InScreenHeading(
+                heading: langProvider.translate("ourSpeciality"),
+              ),
+              //// on lang change will discard the current speciality widget and use a new one
+              StreamBuilder(
+                stream: langProvider.localeStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: Loader());
+                  } else {
+                    bool isEnglish = snapshot.data == "en";
+                    return isEnglish
+                        ? SpecialitiesRenderWidget()
+                        : SpecialitiesRenderWidget();
+                  }
+                },
+              ),
+              InScreenHeading(heading: langProvider.translate("appointment")),
 
-            /// render appointment
-            RenderUpcomingAppointment(),
-            InScreenHeading(
-                heading: langProvider.translate("recommendedVideos")),
-            StreamBuilder(
-              stream: langProvider.localeStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: Loader());
-                } else {
-                  bool isEnglish = snapshot.data == "en";
-                  return isEnglish
-                      ? RenderYoutubeVideos()
-                      : RenderYoutubeVideos();
-                }
-              },
-            ),
-          ],
-        ),
-      )),
+              /// render appointment
+              RenderUpcomingAppointment(),
+              InScreenHeading(
+                  heading: langProvider.translate("recommendedVideos")),
+              StreamBuilder(
+                stream: langProvider.localeStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: Loader());
+                  } else {
+                    bool isEnglish = snapshot.data == "en";
+                    return isEnglish
+                        ? RenderYoutubeVideos()
+                        : RenderYoutubeVideos();
+                  }
+                },
+              ),
+            ],
+          ),
+        )),
+      ),
     );
   }
 }
