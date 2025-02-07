@@ -43,7 +43,7 @@ class _AllYouTubeVideosState extends State<AllYouTubeVideos>
             HomeScreen(
               isAdmin: role == "admin",
               isDoctor: role == "doctor",
-              screenIndex: 5,
+              screenIndex: 4,
             ));
       },
       child: Consumer<LocalizationProvider>(

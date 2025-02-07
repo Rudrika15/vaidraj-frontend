@@ -94,7 +94,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
             HomeScreen(
               isAdmin: role == "admin",
               isDoctor: role == "doctor",
-              screenIndex: 2,
+              screenIndex: 1,
             ));
       },
       child: Consumer3<LocalizationProvider, AllDiseaseProvider,

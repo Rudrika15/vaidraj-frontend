@@ -4,6 +4,7 @@ import 'package:vaidraj/constants/text_size.dart';
 class CustomAlertBox extends StatelessWidget {
   final String content;
   final String heading;
+  final String? firstBtnText;
   final String secondBtnText;
   final VoidCallback onPressedSecondBtn;
   final Color? color;
@@ -12,6 +13,7 @@ class CustomAlertBox extends StatelessWidget {
       {Key? key,
       required this.content,
       required this.heading,
+      this.firstBtnText,
       required this.secondBtnText,
       required this.onPressedSecondBtn,
       this.color})
@@ -29,7 +31,7 @@ class CustomAlertBox extends StatelessWidget {
         TextButton(
           onPressed: () => Navigator.of(context).pop(), // Dismiss the dialog
           child: Text(
-            'Cancel',
+            firstBtnText ?? 'Cancel',
             style: TextSizeHelper.smallTextStyle,
           ),
         ),

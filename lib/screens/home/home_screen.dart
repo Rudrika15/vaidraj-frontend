@@ -25,7 +25,10 @@ import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart'
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
+import '../../widgets/custom_exit_dialog_widget.dart';
+import '../../widgets/primary_btn.dart';
 import '../admin_screens/appointment_screen.dart';
+import '../mobile_verification/mobile_verification.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -57,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   final List<Widget> screensTab = [
     PatientHomeScreen(),
     SpecialitiesScreen(),
-    ProductsScreen(),
     Appointment(),
     MedicalHistoryScreen(),
     AllArticlePage(),
@@ -69,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   final List<Map<String, dynamic>> drawerOptions = [
     {'icon': Icons.home_rounded, 'text': "home"},
     {'icon': Icons.stars_rounded, 'text': "specialities"},
-    {'icon': Icons.inventory_2_rounded, 'text': "products"},
     {'icon': Icons.auto_stories_rounded, 'text': "appointment"},
     {'icon': Icons.medical_information_rounded, 'text': "medicalHistory"},
     {'icon': Icons.article_sharp, 'text': "article"},
@@ -105,6 +106,9 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
       canPop: false,
       child: Consumer2<LocalizationProvider, AllDiseaseProvider>(
         builder: (context, langProvider, diseaseProvider, child) => Scaffold(
+          endDrawerEnableOpenDragGesture: false,
+          // Disable drawer swipe gesture here
+          drawerEnableOpenDragGesture: false,
           key: _scaffoldKey,
           backgroundColor: AppColors.whiteColor,
           endDrawer: _buildDrawer(
@@ -154,40 +158,84 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
               );
             }),
             const Divider(),
-            Consumer<GetBrachProvider>(
-              builder: (context, branchProvider, child) => GestureDetector(
-                onTap: () async {
-                  await langProvider
-                      .changeLanguage(
-                          context: context,
-                          locale:
-                              langProvider.currentLocale == "en" ? "hi" : "en")
-                      .then((isSuccess) {
-                    if (isSuccess) {
-                      /// this is useing for update data in appointment page to update disease id
-                      diseaseProvider.resetState(context: context);
-                      branchProvider.resetBranchAddressModel(context: context);
-                    } else {
-                      print("pagination not refreshed");
-                    }
-                  });
-                },
-                child: langProvider.isLoading
-                    ? const Center(
-                        child: Loader(),
-                      )
-                    : CustomContainer(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 5.w, vertical: 1.h),
-                        backGroundColor: AppColors.backgroundColor,
-                        borderRadius: BorderRadius.circular(5.w),
-                        child: Text(
-                          "${langProvider.currentLocale == "en" ? "English" : "Hindi"}",
-                          style: TextSizeHelper.smallHeaderStyle,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Consumer<GetBrachProvider>(
+                  builder: (context, branchProvider, child) => GestureDetector(
+                    onTap: () async {
+                      await langProvider
+                          .changeLanguage(
+                              context: context,
+                              locale: langProvider.currentLocale == "en"
+                                  ? "hi"
+                                  : "en")
+                          .then((isSuccess) {
+                        if (isSuccess) {
+                          /// this is useing for update data in appointment page to update disease id
+                          diseaseProvider.resetState(context: context);
+                          branchProvider.resetBranchAddressModel(
+                              context: context);
+                        } else {
+                          print("pagination not refreshed");
+                        }
+                      });
+                    },
+                    child: langProvider.isLoading
+                        ? const Center(
+                            child: Loader(),
+                          )
+                        : CustomContainer(
+                            borderColor: AppColors.brownColor,
+                            borderWidth: 0.3,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 5.w, vertical: 1.h),
+                            backGroundColor: AppColors.backgroundColor,
+                            borderRadius: BorderRadius.circular(5.w),
+                            child: Text(
+                              "${langProvider.currentLocale == "en" ? "English" : "हिन्दी"}",
+                              style: TextSizeHelper.smallHeaderStyle,
+                            ),
+                          ),
+                  ),
+                ),
+                MethodHelper.widthBox(width: 1.h),
+                GestureDetector(
+                  onTap: () async => showDialog(
+                    context: context,
+                    builder: (context) => CustomAlertBox(
+                      content:
+                          langProvider.translate("doYouReallyWantToLogout"),
+                      heading: langProvider.translate('areYouSure'),
+                      firstBtnText: langProvider.translate('cancel'),
+                      secondBtnText: langProvider.translate('logout'),
+                      color: AppColors.errorColor,
+                      onPressedSecondBtn: () async {
+                        await SharedPrefs.clearShared();
+                        pushRemoveUntil(context, MobileVerification());
+                      },
+                    ),
+                  ),
+                  child: langProvider.isLoading
+                      ? const Center(
+                          child: Loader(),
+                        )
+                      : CustomContainer(
+                          borderColor: Colors.black,
+                          borderWidth: 0.3,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 5.w, vertical: 1.h),
+                          backGroundColor: AppColors.errorColor,
+                          borderRadius: BorderRadius.circular(5.w),
+                          child: Text(
+                            langProvider.translate('logout'),
+                            style: TextSizeHelper.smallHeaderStyle
+                                .copyWith(color: AppColors.whiteColor),
+                          ),
                         ),
-                      ),
-              ),
-            )
+                )
+              ],
+            ),
           ],
         ),
       ),

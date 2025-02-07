@@ -179,7 +179,10 @@ class RenderUpcomingAppointment extends StatelessWidget {
                               Text(
                                 "${appointment.status}".toUpperCase(),
                                 style: TextSizeHelper.xSmallHeaderStyle
-                                    .copyWith(color: AppColors.errorColor),
+                                    .copyWith(
+                                        color: appointment.status == "completed"
+                                            ? AppColors.greenColor
+                                            : AppColors.errorColor),
                               ),
                             ],
                           ),

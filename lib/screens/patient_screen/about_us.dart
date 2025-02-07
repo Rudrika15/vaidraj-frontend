@@ -30,7 +30,7 @@ class AboutUsScreen extends StatelessWidget with NavigateHelper {
             HomeScreen(
               isAdmin: role == "admin",
               isDoctor: role == "doctor",
-              screenIndex: 6,
+              screenIndex: 5,
             ));
       },
       child: Consumer<LocalizationProvider>(

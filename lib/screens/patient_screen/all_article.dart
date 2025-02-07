@@ -39,7 +39,7 @@ class _AllYouTubeVideosState extends State<AllArticlePage> with NavigateHelper {
             HomeScreen(
               isAdmin: role == "admin",
               isDoctor: role == "doctor",
-              screenIndex: 4,
+              screenIndex: 3,
             ));
       },
       child: Consumer<LocalizationProvider>(
