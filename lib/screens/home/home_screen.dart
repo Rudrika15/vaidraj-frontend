@@ -17,7 +17,6 @@ import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/screens/patient_screen/medical_history.dart';
 import 'package:vaidraj/screens/patient_screen/patient_home.dart';
-import 'package:vaidraj/screens/patient_screen/products.dart';
 import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -26,7 +25,6 @@ import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
 import '../../widgets/custom_exit_dialog_widget.dart';
-import '../../widgets/primary_btn.dart';
 import '../admin_screens/appointment_screen.dart';
 import '../mobile_verification/mobile_verification.dart';
 

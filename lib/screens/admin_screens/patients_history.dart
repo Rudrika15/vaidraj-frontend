@@ -173,6 +173,11 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                       isCreating: item?.status == "completed",
                                       appointmentId: item?.id ?? 0,
                                       name: item?.name ?? "",
+                                      previousPrescriptionDisease:
+                                          item?.status == "completed"
+                                              ? (item
+                                                  ?.prescriptions?[0].medicines)
+                                              : null,
                                       diseaseId: item?.diseaseId ?? 0));
                             },
                             height: 3.h,

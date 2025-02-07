@@ -6,7 +6,6 @@ import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/models/prescription_model.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
-import 'package:vaidraj/provider/appointment_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
@@ -14,6 +13,7 @@ import 'package:vaidraj/widgets/custom_text_field_widget.dart';
 import 'package:vaidraj/widgets/green_divider.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import '../../models/product_model.dart';
+import '../../models/upcoming_appointment_model.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/loader.dart';
 import 'package:collection/collection.dart';
@@ -24,11 +24,13 @@ class PrescriptionPage extends StatefulWidget {
       required this.isCreating,
       required this.diseaseId,
       required this.appointmentId,
-      required this.name});
+      required this.name,
+      this.previousPrescriptionDisease});
   final bool isCreating;
   final int diseaseId;
   final String name;
   final int appointmentId;
+  final List<Medicines>? previousPrescriptionDisease;
   @override
   State<PrescriptionPage> createState() => _PrescriptionPageState();
 }
@@ -75,7 +77,13 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
             "",
       );
       prescriptionProvider.updateDisease(
-          disease: disease, diseaseId: widget.diseaseId);
+          disease: disease,
+          diseaseId: widget.diseaseId,
+          previousList: widget.previousPrescriptionDisease);
+      if (widget.previousPrescriptionDisease?.isNotEmpty == true) {
+        await prescriptionProvider.initPreviousDiseaseList(
+            previousList: widget.previousPrescriptionDisease ?? []);
+      }
     });
   }
 

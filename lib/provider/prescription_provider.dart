@@ -5,8 +5,8 @@ import 'package:vaidraj/models/prescription_model.dart';
 import 'package:vaidraj/services/prescription_service/prescription_service.dart';
 import 'package:vaidraj/services/product_service/product_service.dart';
 import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
-
 import '../models/product_model.dart';
+import '../models/upcoming_appointment_model.dart';
 
 class PrescriptionStateProvider extends ChangeNotifier {
   /// loading state
@@ -52,10 +52,48 @@ class PrescriptionStateProvider extends ChangeNotifier {
   PrescriptionModel get prescriptionModel => _prescriptionModel;
   List<Diseases> _diseaseList = [];
   List<Diseases> get diseaseList => _diseaseList;
+
+  /// empty disease list
   void emptyDiseaseListAfterSuccess() {
     _diseaseList.clear();
     updateDisease(disease: _selectedDisease, diseaseId: _selectedDiseaseId);
     notifyListeners();
+  }
+
+  Future<void> initPreviousDiseaseList(
+      {required List<Medicines> previousList}) async {
+    _isLoading = true;
+    for (Medicines m in previousList) {
+      final index = _diseaseList.indexWhere(
+        (e) =>
+            e.medicine
+                ?.any((d) => d.productId == int.parse(m.productId ?? "")) ??
+            false,
+      );
+      if (index != -1) {
+        final disease = _diseaseList[index];
+        // Find the medicine by productId
+        final medicineIndex =
+            disease.medicine?.indexWhere((mm) => m.productId == m.productId);
+
+        /// if got both
+        if (medicineIndex != null && medicineIndex != -1) {
+          final medicine = disease.medicine?[medicineIndex];
+          medicine?.isSelected = true;
+          medicine?.productId = int.parse(m.productId ?? "");
+          medicine?.time = m.time?.split(",");
+          medicine?.toBeTaken = m.toBeTaken;
+          disease.medicine?[medicineIndex] = medicine!;
+          _diseaseList[index] = disease;
+          log("medicine" + medicine.toString());
+          log("disease => " + disease.toString());
+        }
+      } else {
+        print('No medicine found');
+      }
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   ///// products model
@@ -80,7 +118,10 @@ class PrescriptionStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateDisease({required String disease, required int diseaseId}) {
+  void updateDisease(
+      {required String disease,
+      required int diseaseId,
+      List<Medicines>? previousList}) {
     /// check if diseases exist in list or not
     final existingDisease = diseaseList.firstWhereOrNull(
       (e) => e.diseaseName == disease,
@@ -107,6 +148,9 @@ class PrescriptionStateProvider extends ChangeNotifier {
     /// attach new list to original list
     if (newList.isNotEmpty) {
       _productToShow = newList;
+      if (previousList != null) {
+        initPreviousDiseaseList(previousList: previousList);
+      }
     } else {
       _diseaseList.removeWhere((e) => e.diseaseName == _selectedDisease);
       print("add no thi yu");

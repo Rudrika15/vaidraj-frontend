@@ -1,3 +1,5 @@
+import 'upcoming_appointment_model.dart';
+
 class MedicalHistoryListModel {
   bool? success;
   String? message;
@@ -341,43 +343,43 @@ class User {
   }
 }
 
-class Medicines {
-  int? id;
-  int? prescriptionId;
-  String? productId;
-  String? time;
-  String? toBeTaken;
-  String? createdAt;
-  String? updatedAt;
+// class Medicines {
+//   int? id;
+//   int? prescriptionId;
+//   String? productId;
+//   String? time;
+//   String? toBeTaken;
+//   String? createdAt;
+//   String? updatedAt;
 
-  Medicines(
-      {this.id,
-      this.prescriptionId,
-      this.productId,
-      this.time,
-      this.toBeTaken,
-      this.createdAt,
-      this.updatedAt});
+//   Medicines(
+//       {this.id,
+//       this.prescriptionId,
+//       this.productId,
+//       this.time,
+//       this.toBeTaken,
+//       this.createdAt,
+//       this.updatedAt});
 
-  Medicines.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    prescriptionId = json['prescription_id'];
-    productId = json['product_id'];
-    time = json['time'];
-    toBeTaken = json['to_be_taken'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
+//   Medicines.fromJson(Map<String, dynamic> json) {
+//     id = json['id'];
+//     prescriptionId = json['prescription_id'];
+//     productId = json['product_id'];
+//     time = json['time'];
+//     toBeTaken = json['to_be_taken'];
+//     createdAt = json['created_at'];
+//     updatedAt = json['updated_at'];
+//   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['prescription_id'] = this.prescriptionId;
-    data['product_id'] = this.productId;
-    data['time'] = this.time;
-    data['to_be_taken'] = this.toBeTaken;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['id'] = this.id;
+//     data['prescription_id'] = this.prescriptionId;
+//     data['product_id'] = this.productId;
+//     data['time'] = this.time;
+//     data['to_be_taken'] = this.toBeTaken;
+//     data['created_at'] = this.createdAt;
+//     data['updated_at'] = this.updatedAt;
+//     return data;
+//   }
+// }
