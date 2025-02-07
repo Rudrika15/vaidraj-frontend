@@ -37,6 +37,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 content: "Do you really want to exit?",
                 heading: "Exit App",
                 secondBtnText: "Exit",
+                color: AppColors.errorColor,
                 onPressedSecondBtn: () => SystemChannels.platform
                     .invokeMethod('SystemNavigator.pop')));
       },

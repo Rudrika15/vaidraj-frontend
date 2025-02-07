@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:vaidraj/constants/text_size.dart';
 
 class CustomAlertBox extends StatelessWidget {
   final String content;
   final String heading;
   final String secondBtnText;
   final VoidCallback onPressedSecondBtn;
+  final Color? color;
 
-  const CustomAlertBox({
-    Key? key,
-    required this.content,
-    required this.heading,
-    required this.secondBtnText,
-    required this.onPressedSecondBtn,
-  }) : super(key: key);
+  const CustomAlertBox(
+      {Key? key,
+      required this.content,
+      required this.heading,
+      required this.secondBtnText,
+      required this.onPressedSecondBtn,
+      this.color})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +28,17 @@ class CustomAlertBox extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(), // Dismiss the dialog
-          child: Text('Cancel'),
+          child: Text(
+            'Cancel',
+            style: TextSizeHelper.smallTextStyle,
+          ),
         ),
         TextButton(
           onPressed: onPressedSecondBtn, // Trigger the exit action
-          child: Text(secondBtnText),
+          child: Text(
+            secondBtnText,
+            style: TextSizeHelper.smallTextStyle.copyWith(color: color),
+          ),
         ),
       ],
     );
