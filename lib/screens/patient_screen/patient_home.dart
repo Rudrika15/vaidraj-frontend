@@ -129,9 +129,10 @@ class RenderUpcomingAppointment extends StatelessWidget {
           return Center(child: Text('Failed to load appointments'));
         }
 
-        List<UpcomingAppointment> appointments = snapshot.data!.data!;
+        List<UpcomingAppointmentInfo> appointments =
+            snapshot.data?.data?.data ?? [];
 
-        return snapshot.data?.data?.isEmpty == true
+        return snapshot.data?.data?.data?.isEmpty == true
             ? SizedBox(
                 height: 10.h,
                 child: const ContainerForNoDataFound(title: "No Data Found"))
@@ -142,7 +143,7 @@ class RenderUpcomingAppointment extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: AppSizes.size20),
                   itemBuilder: (context, index) {
-                    UpcomingAppointment appointment = appointments[index];
+                    UpcomingAppointmentInfo appointment = appointments[index];
                     return CustomContainer(
                       margin:
                           const EdgeInsets.symmetric(vertical: AppSizes.size10),

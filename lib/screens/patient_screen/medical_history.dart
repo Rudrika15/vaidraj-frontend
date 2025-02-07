@@ -24,7 +24,8 @@ class MedicalHistoryScreen extends StatefulWidget {
   State<MedicalHistoryScreen> createState() => _MedicalHistoryScreenState();
 }
 
-class _MedicalHistoryScreenState extends State<MedicalHistoryScreen> with NavigateHelper {
+class _MedicalHistoryScreenState extends State<MedicalHistoryScreen>
+    with NavigateHelper {
   @override
   Widget build(BuildContext context) {
     return PopScope(

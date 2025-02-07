@@ -35,6 +35,7 @@ class CustomDropDownWidget extends StatelessWidget {
         menuMaxHeight: 25.h,
         value: value,
         items: items,
+        isExpanded: true,
         iconSize: 0,
         alignment: alignment,
         onChanged: onChanged,

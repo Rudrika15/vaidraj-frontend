@@ -9,11 +9,11 @@ import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 
 class PrescriptionService {
-  Future<void> createPrescription(
+  Future<bool> createPrescription(
       {required BuildContext context,
       required String patientName,
-      required String note,
-      required String otherNote,
+      String? note,
+      String? otherNote,
       required int appointmentId,
       required List<Diseases> diseaseList}) async {
     try {
@@ -55,13 +55,16 @@ class PrescriptionService {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {
           WidgetHelper.customSnackBar(context: context, title: data['message']);
+          return true;
         } else {
           WidgetHelper.customSnackBar(
               context: context, title: data['message'], isError: true);
         }
       }
+      return false;
     } catch (e) {
       print("error while creating Prescription=> $e");
+      return false;
     }
   }
 }

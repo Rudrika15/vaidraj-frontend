@@ -30,4 +30,31 @@ class MedicalHistoryService {
       return null;
     }
   }
+
+  Future<MedicalHistoryListModel?> getMedicalHistoryById(
+      {required BuildContext context, required int id}) async {
+    try {
+      Response response = await HttpHelper.get(
+          context: context,
+          uri: ApiHelper.getMedicalHistoryById(
+            id: id.toString(),
+          ));
+      log(ApiHelper.getMedicalHistoryById(
+        id: id.toString(),
+      ));
+      log(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          MedicalHistoryListModel model =
+              MedicalHistoryListModel.fromJson(data);
+          return model;
+        }
+      }
+      return null;
+    } catch (e) {
+      print("error while getting medical history by Id => $e");
+      return null;
+    }
+  }
 }

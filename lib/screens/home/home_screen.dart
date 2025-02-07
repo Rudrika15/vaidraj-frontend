@@ -32,9 +32,11 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.isDoctor,
     required this.isAdmin,
+    this.screenIndex,
   });
   final bool isDoctor;
   final bool isAdmin;
+  final int? screenIndex;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -46,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   String userName = "";
   final List<Widget> screensNav = const [
     AdminHomeScreen(),
-    PrescriptionPage(),
+    AdminAppointmentScreen(),
     AdminPatientsScreen(),
     AdminProfilePage()
   ];
@@ -81,6 +83,11 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     // TODO: implement initState
     super.initState();
     getUserName();
+    if (widget.isAdmin || widget.isDoctor) {
+      _selectedNavTabIndex = widget.screenIndex ?? 0;
+    } else {
+      _selectedTabIndex = widget.screenIndex ?? 0;
+    }
   }
 
   Future<String> getUserName() async {
@@ -94,26 +101,29 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LocalizationProvider, AllDiseaseProvider>(
-      builder: (context, langProvider, diseaseProvider, child) => Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: AppColors.whiteColor,
-        endDrawer: _buildDrawer(
-            langProvider: langProvider,
-            diseaseProvider: diseaseProvider,
-            userName: userName,
-            context: context),
-        appBar: _buildAppBar(
-            isDoctor: widget.isDoctor,
-            isAdmin: widget.isAdmin,
-            langProvider: langProvider,
-            userName: userName),
-        body: widget.isDoctor || widget.isAdmin
-            ? screensNav[_selectedNavTabIndex]
-            : screensTab[_selectedTabIndex],
-        bottomNavigationBar: widget.isDoctor || widget.isAdmin
-            ? _buildBottomNavigationBar(langProvider: langProvider)
-            : null,
+    return PopScope(
+      canPop: false,
+      child: Consumer2<LocalizationProvider, AllDiseaseProvider>(
+        builder: (context, langProvider, diseaseProvider, child) => Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: AppColors.whiteColor,
+          endDrawer: _buildDrawer(
+              langProvider: langProvider,
+              diseaseProvider: diseaseProvider,
+              userName: userName,
+              context: context),
+          appBar: _buildAppBar(
+              isDoctor: widget.isDoctor,
+              isAdmin: widget.isAdmin,
+              langProvider: langProvider,
+              userName: userName),
+          body: widget.isDoctor || widget.isAdmin
+              ? screensNav[_selectedNavTabIndex]
+              : screensTab[_selectedTabIndex],
+          bottomNavigationBar: widget.isDoctor || widget.isAdmin
+              ? _buildBottomNavigationBar(langProvider: langProvider)
+              : null,
+        ),
       ),
     );
   }

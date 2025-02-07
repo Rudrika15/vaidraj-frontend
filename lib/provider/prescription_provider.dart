@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/prescription_model.dart';
 import 'package:vaidraj/services/prescription_service/prescription_service.dart';
 import 'package:vaidraj/services/product_service/product_service.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 
 import '../models/product_model.dart';
 
@@ -22,7 +22,7 @@ class PrescriptionStateProvider extends ChangeNotifier {
   String get selectedDisease => _selectedDisease;
   set setSelectedDisease(String disease) {
     _selectedDisease = disease;
-    // notifyListeners();
+    notifyListeners();
   }
 
   /// selected diseaseId
@@ -34,9 +34,12 @@ class PrescriptionStateProvider extends ChangeNotifier {
   }
 
   /// init disease on start
-  void initSelectedDisease() {
-    _selectedDisease = 'Depression';
-    _selectedDiseaseId = 16;
+  Future<void> initSelectedDisease(
+      {required int diseaseId, required String disease}) async {
+    _isLoading = true;
+    _selectedDiseaseId = diseaseId;
+    _selectedDisease = disease;
+    _isLoading = false;
     notifyListeners();
   }
 
@@ -49,6 +52,12 @@ class PrescriptionStateProvider extends ChangeNotifier {
   PrescriptionModel get prescriptionModel => _prescriptionModel;
   List<Diseases> _diseaseList = [];
   List<Diseases> get diseaseList => _diseaseList;
+  void emptyDiseaseListAfterSuccess() {
+    _diseaseList.clear();
+    updateDisease(disease: _selectedDisease, diseaseId: _selectedDiseaseId);
+    notifyListeners();
+  }
+
   ///// products model
   ProductModel? _productModel;
   ProductModel? get productModel => _productModel;
@@ -79,7 +88,7 @@ class PrescriptionStateProvider extends ChangeNotifier {
     if (existingDisease == null) {
       _diseaseList.add(Diseases(diseaseName: disease, medicine: []));
     }
-
+    log(productToShow.map((e) => print(e)).toString());
     // update both fields
     _selectedDisease = disease;
     _selectedDiseaseId = diseaseId;
@@ -92,11 +101,20 @@ class PrescriptionStateProvider extends ChangeNotifier {
         newList.add(e);
       }
     });
-    notifyListeners();
+    print(
+        'products that can be added in this $_selectedDisease is ${newList.length}');
 
     /// attach new list to original list
-    _productToShow = newList;
+    if (newList.isNotEmpty) {
+      _productToShow = newList;
+    } else {
+      _diseaseList.removeWhere((e) => e.diseaseName == _selectedDisease);
+      print("add no thi yu");
+    }
+
+    log(newList.length.toString());
     log(_diseaseList.map((e) => print(e)).toString());
+    notifyListeners();
   }
 
   void updateMedicineSelection(
@@ -182,14 +200,35 @@ class PrescriptionStateProvider extends ChangeNotifier {
   }
 
   /// Method to send the diseases list as a JSON string to the backend
-  Future<void> sendDataToBackend(
+  Future<bool> sendDataToBackend(
       {required int appointmentId,
       required BuildContext context,
       required String patientName,
       required String note,
       required String otherNote}) async {
     _isLoading = true;
-    await service.createPrescription(
+    if (_diseaseList.any((e) =>
+        e.medicine?.isEmpty == true ||
+        e.medicine?.every((f) => f.isSelected == false) == true ||
+        e.medicine?.any(
+                (f) => f.isSelected == true && (f.time?.isEmpty ?? true)) ==
+            true)) {
+      // Show error message if no medicine is selected or if selected medicines don't have time set
+      WidgetHelper.customSnackBar(
+          context: context,
+          title: "No Medicine Selected or Time Missing",
+          isError: true);
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+    WidgetHelper.customSnackBar(
+      context: context,
+      title: "Sending Data",
+    );
+    _isLoading = false;
+    notifyListeners();
+    bool success = await service.createPrescription(
         context: context,
         patientName: patientName,
         note: note,
@@ -197,5 +236,6 @@ class PrescriptionStateProvider extends ChangeNotifier {
         appointmentId: appointmentId,
         diseaseList: diseaseList);
     _isLoading = false;
+    return success;
   }
 }

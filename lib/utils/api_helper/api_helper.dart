@@ -14,6 +14,9 @@ class ApiHelper {
   static String getMedicalHistory(
           {required int currentPage, int? perPage = 5}) =>
       "$baseUrl/medicalHistory?current_page=$currentPage&per_page=$perPage";
+  static String getMedicalHistoryById(
+          {required String id}) =>
+      "$baseUrl/medicalHistory/$id";
   static String contact = "$baseUrl/contact";
   static String feedback = "$baseUrl/feedback";
   static String appointments = "$baseUrl/appointments";
@@ -39,4 +42,10 @@ class ApiHelper {
           required int currentPage,
           required int perPage}) =>
       "$baseUrl/myPatients?branch_id=$branchId&current_page=$currentPage&per_page=$perPage";
+  static String getDoctorAppointments(
+          {required String branchId,
+          required String date,
+          required int currentPage,
+          required int perPage}) =>
+      "$baseUrl/appointments?current_page=$currentPage&per_page=$perPage&date=$date&branch_id=$branchId";
 }

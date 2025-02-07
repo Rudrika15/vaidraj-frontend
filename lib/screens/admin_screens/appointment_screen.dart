@@ -1,418 +1,323 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
-import 'package:vaidraj/constants/text_size.dart';
-import 'package:vaidraj/models/prescription_model.dart';
-import 'package:vaidraj/provider/all_disease_provider.dart';
-import 'package:vaidraj/provider/prescription_provider.dart';
-import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/models/upcoming_appointment_model.dart';
+import 'package:vaidraj/provider/appointment_provider.dart';
+import 'package:vaidraj/screens/admin_screens/prescription_page.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
-import 'package:vaidraj/widgets/custom_text_field_widget.dart';
-import 'package:vaidraj/widgets/green_divider.dart';
-import 'package:vaidraj/widgets/primary_btn.dart';
-import '../../models/product_model.dart';
+import '../../constants/text_size.dart';
+import '../../provider/get_brach_provider.dart';
+import '../../provider/prescription_provider.dart';
+import '../../utils/border_helper/border_helper.dart';
+import '../../utils/method_helper.dart';
+import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/loader.dart';
-import 'package:collection/collection.dart';
+import '../../widgets/primary_btn.dart';
+import '../home/home_screen.dart';
 
-class PrescriptionPage extends StatefulWidget {
-  const PrescriptionPage({
-    super.key,
-  });
+class AdminAppointmentScreen extends StatefulWidget {
+  const AdminAppointmentScreen({super.key});
+
   @override
-  State<PrescriptionPage> createState() => _PrescriptionPageState();
+  State<AdminAppointmentScreen> createState() => _AdminAppointmentScreenState();
 }
 
-class _PrescriptionPageState extends State<PrescriptionPage> {
-  /// variables
-  TextEditingController patientNameController = TextEditingController();
-  TextEditingController otherMedicineController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
+class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
+    with NavigateHelper {
+  String? role;
+  // String? branchId;
+
+  Future<void> loadRole() async {
+    role = await SharedPrefs.getRole();
+    print('$role');
+  }
+
+  Future<void> loadBranchId() async {
+    var doctorAppointmentProvider =
+        Provider.of<AppointmentProvider>(context, listen: false);
+    var branchProvider = Provider.of<GetBrachProvider>(context, listen: false);
+
+    await doctorAppointmentProvider.setBranchId();
+    doctorAppointmentProvider.initPaginController(context: context);
+    branchProvider.getBranch(context: context);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    var diseaseProvider =
-        Provider.of<AllDiseaseProvider>(context, listen: false);
-    if (diseaseProvider.diseasesModelForAppointment == null) {
-      diseaseProvider.getAllDiseaseWithoutPagination(context: context);
-    }
-    var prescriptionProvider =
-        Provider.of<PrescriptionStateProvider>(context, listen: false);
-    prescriptionProvider.setSelectedDisease = "Depression";
-    prescriptionProvider.setSelectedDiseaseId = 16;
-    if (prescriptionProvider.productModel == null) {
-      prescriptionProvider.getAllProducts(context: context);
-    } else {
-      print('product model has data');
-    }
-    if (prescriptionProvider.prescriptionModel.diseases?.isEmpty == true) {
-      prescriptionProvider.prescriptionModel.diseases?.add(Diseases(
-        diseaseName: prescriptionProvider.selectedDisease,
-      ));
-    }
+    loadRole();
+    loadBranchId();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<AllDiseaseProvider, PrescriptionStateProvider>(
-      builder: (context, diseasesProvider, prescriptionProvider, child) =>
-          SingleChildScrollView(
-        child: Column(
-          children: [
-            paddingMethod(CustomTextFieldWidget(
-                validator: (value) {},
-                keyboardType: TextInputType.text,
-                controller: patientNameController,
-                decoration: MethodHelper.greenUnderLineBorder(
-                    hintText: "Patient Name"))),
-            paddingMethod(
-              diseasesProvider.isLoading
-                  ? const Center(
-                      child: Loader(),
-                    )
-                  : CustomDropDownWidget(
-                      value: prescriptionProvider.selectedDisease,
-                      alignment: Alignment.centerLeft,
-                      prefixIcon: Icons.storefront_outlined,
-                      decoration: MethodHelper.greenUnderLineBorder(
-                          hintText: "Disease"),
-                      items: diseasesProvider.diseasesModelForAppointment?.data
-                                  ?.data?.isNotEmpty ==
-                              true
-                          ? List<DropdownMenuItem<Object?>>.generate(
-                              diseasesProvider.diseasesModelForAppointment?.data
-                                      ?.data?.length ??
-                                  0,
-                              (index) {
-                                return DropdownMenuItem(
-                                  value: diseasesProvider
-                                          .diseasesModelForAppointment
-                                          ?.data
-                                          ?.data?[index]
-                                          .displayName ??
-                                      "-",
-                                  child: Text(
-                                    diseasesProvider.diseasesModelForAppointment
-                                            ?.data?.data?[index].displayName ??
-                                        "-",
-                                    style: TextSizeHelper.smallHeaderStyle,
+    return PopScope(
+      // will send user to my property page on back btn press
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        String role = await SharedPrefs.getRole();
+        pushRemoveUntil(
+            context,
+            HomeScreen(
+              isAdmin: role == "admin",
+              isDoctor: role == "doctor",
+              screenIndex: 0,
+            ));
+      },
+      child: Consumer2<AppointmentProvider, GetBrachProvider>(
+        builder: (context, doctorAppointmentProvider, brachProvider, child) =>
+            doctorAppointmentProvider.isLoading
+                ? Center(
+                    child: Loader(),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomContainer(
+                        height: 8.h,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.w, vertical: 1.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            brachProvider.isLoading
+                                ? Center(
+                                    child: Loader(),
+                                  )
+                                : role == "admin"
+                                    ? CustomDropDownWidget(
+                                        value: doctorAppointmentProvider
+                                                .branchId ??
+                                            '0',
+                                        decoration:
+                                            BorderHelper.dropDownOutlinedBorder(
+                                                suffixIcon:
+                                                    Icons.keyboard_arrow_down),
+                                        items: brachProvider.getBranchModel
+                                                    ?.data?.isNotEmpty ==
+                                                true
+                                            ? List<
+                                                DropdownMenuItem<
+                                                    Object?>>.generate(
+                                                brachProvider.getBranchModel
+                                                        ?.data?.length ??
+                                                    0,
+                                                (index) {
+                                                  return DropdownMenuItem(
+                                                    value: brachProvider
+                                                            .getBranchModel
+                                                            ?.data?[index]
+                                                            .id
+                                                            .toString() ??
+                                                        "",
+                                                    child: Text(
+                                                      brachProvider
+                                                              .getBranchModel
+                                                              ?.data?[index]
+                                                              .branchName ??
+                                                          "-",
+                                                      style: TextSizeHelper
+                                                          .smallHeaderStyle,
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                            : [
+                                                DropdownMenuItem(
+                                                  value: 0,
+                                                  child: Text(
+                                                    "No Branch Found",
+                                                    style: TextSizeHelper
+                                                        .smallHeaderStyle,
+                                                  ),
+                                                )
+                                              ],
+                                        onChanged: (value) {
+                                          doctorAppointmentProvider.setBranchId(
+                                              branchId: value as String);
+                                          doctorAppointmentProvider
+                                              .pagingController
+                                              .refresh();
+                                        },
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return "Please select Disease !!";
+                                          }
+                                          return null;
+                                        },
+                                      )
+                                    : const SizedBox.shrink(),
+                            MethodHelper.widthBox(width: 2.w),
+                            Consumer<AppointmentProvider>(
+                              builder:
+                                  (context, doctorAppointmentProvider, child) =>
+                                      GestureDetector(
+                                /// choose new date
+                                onTap: () => doctorAppointmentProvider
+                                    .chooseDateAppointments(context: context),
+                                child: CustomContainer(
+                                  padding: EdgeInsets.all(AppSizes.size10),
+                                  borderColor: AppColors.brownColor,
+                                  borderWidth: 1,
+                                  borderRadius:
+                                      BorderRadius.circular(AppSizes.size30),
+                                  height: 6.h,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(doctorAppointmentProvider.date),
+                                      MethodHelper.widthBox(width: 2.w),
+                                      const Icon(
+                                        Icons.calendar_month,
+                                        color: AppColors.brownColor,
+                                      )
+                                    ],
                                   ),
-                                );
-                              },
-                            )
-                          : [
-                              DropdownMenuItem(
-                                value: 0,
-                                child: Text(
-                                  "No Diseases Found",
-                                  style: TextSizeHelper.smallHeaderStyle,
                                 ),
-                              )
-                            ],
-                      onChanged: (value) {
-                        prescriptionProvider.updateDisease(
-                            disease: value as String,
-                            diseaseId: diseasesProvider
-                                    .diseasesModelForAppointment?.data?.data
-                                    ?.where((e) => e.displayName == value)
-                                    .first
-                                    .id ??
-                                0);
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return "Please select Disease !!";
-                        }
-                        return null;
-                      },
-                    ),
-            ),
-            if (!prescriptionProvider.isLoading ||
-                prescriptionProvider.selectedDiseaseId != 0)
-              PrescriptionWidget(),
-            MethodHelper.heightBox(height: 2.h),
-            paddingMethod(CustomTextFieldWidget(
-                validator: (value) {},
-                keyboardType: TextInputType.text,
-                controller: otherMedicineController,
-                decoration: MethodHelper.greenUnderLineBorder(
-                    hintText: "Other Notes (if Any)"))),
-            paddingMethod(CustomTextFieldWidget(
-                validator: (value) {},
-                keyboardType: TextInputType.text,
-                controller: noteController,
-                decoration: MethodHelper.greenUnderLineBorder(
-                    hintText: "Add Note..."))),
-            MethodHelper.heightBox(height: 10.h),
-            SizedBox(
-              width: 50.w,
-              child: PrimaryBtn(
-                  btnText: 'Submit',
-                  onTap: () {
-                    prescriptionProvider.sendDataToBackend(
-                        patientName: patientNameController.text,
-                        context: context,
-                        appointmentId: 4,
-                        note: noteController.text,
-                        otherNote: otherMedicineController.text);
-                  }),
-            ),
-            MethodHelper.heightBox(height: 10.h),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Padding paddingMethod(Widget child) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0.5.h),
-        child: child,
-      );
-}
-
-class PrescriptionWidget extends StatefulWidget {
-  PrescriptionWidget({
-    super.key,
-  });
-
-  @override
-  State<PrescriptionWidget> createState() => _PrescriptionWidgetState();
-}
-
-class _PrescriptionWidgetState extends State<PrescriptionWidget> {
-  /// variable
-  // Diseases? diseases;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-// List of products (for illustration)
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<PrescriptionStateProvider>(
-      builder: (context, prescriptionProvider, child) => prescriptionProvider
-              .isLoading
-          ? const Center(
-              child: Loader(),
-            )
-          : CustomContainer(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // const CustomSearchBar(),
-                    prescriptionProvider.productToShow.isNotEmpty
-                        ? ListView.separated(
-                            separatorBuilder: (context, index) =>
-                                GreenDividerLine(endIndent: 10.w, indent: 15.w),
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount:
-                                prescriptionProvider.productToShow.length,
-                            itemBuilder: (context, index) {
-                              Product? product =
-                                  prescriptionProvider.productToShow[index];
-                              final medicine = prescriptionProvider.diseaseList
-                                  .firstWhereOrNull((e) =>
-                                      e.diseaseName ==
-                                      prescriptionProvider.selectedDisease)
-                                  ?.medicine
-                                  ?.firstWhereOrNull(
-                                    (e) => e.productId == product.id,
-                                  );
-                              return PrescriptionPageWidget(
-                                productId: product.id ?? 0,
-                                productName: product.displayName ?? "-",
-                                medicine: medicine,
-                                onChanged: (value) {
-                                  prescriptionProvider.updateMedicineSelection(
-                                      isSelected: value ?? false,
-                                      productId: product.id ?? 0);
-                                },
-                              );
-                            })
-                        : CustomContainer(
-                            height: 20.h,
-                            child: Center(
-                                child: Text(
-                              'No Data Found',
-                              style: TextSizeHelper.smallHeaderStyle,
-                            )),
-                          )
-                  ],
-                ),
-              ),
-            ),
-    );
-  }
-}
-
-// A common widget for the prescription item with checkboxes and selectable buttons
-class PrescriptionPageWidget extends StatefulWidget {
-  final int productId;
-  final String productName;
-  final Medicine? medicine;
-  final void Function(bool?)? onChanged;
-  PrescriptionPageWidget({
-    required this.productId,
-    required this.productName,
-    required this.medicine,
-    required this.onChanged,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  _PrescriptionItemWidgetState createState() => _PrescriptionItemWidgetState();
-}
-
-class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
-  // Default selections for time of day and when to take
-  @override
-  Widget build(BuildContext context) {
-    return CustomContainer(
-      child: Column(
-        children: [
-          _buildCheckboxRow(),
-          if (widget.medicine?.isSelected ?? false) ...[
-            _buildTimeOfDaySelector(),
-            MethodHelper.heightBox(height: 1.h),
-            _buildWhenToTakeSelector(medicine: widget.medicine),
-          ]
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCheckboxRow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSizes.size10),
-      child: Row(
-        children: [
-          Checkbox(
-              activeColor: AppColors.greenColor,
-              value: widget.medicine?.isSelected ?? false,
-              onChanged: widget.onChanged),
-          Expanded(
-            child: Text(
-              widget.productName,
-              style: TextSizeHelper.smallTextStyle,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimeOfDaySelector() {
-    return CustomContainer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionHeader('Time of the Day'),
-          MethodHelper.heightBox(height: 2.h),
-          _buildTimeOfDayButtons(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimeOfDayButtons() {
-    return Consumer<PrescriptionStateProvider>(
-      builder: (context, prescriptionProvider, child) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Padding(
-          padding: const EdgeInsets.only(left: AppSizes.size40),
-          child: Row(
-            children: ['Morning', 'AfterNoon', 'Evening', 'Night'].map((time) {
-              return _buildSelectableButton(
-                label: time,
-                isSelected: widget.medicine?.time?.contains(time) ?? false,
-                onTap: () {
-                  prescriptionProvider.updateMedicineTime(
-                      productId: widget.productId, dayTime: time);
-                },
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWhenToTakeSelector({required Medicine? medicine}) {
-    return CustomContainer(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionHeader('When to Take'),
-          MethodHelper.heightBox(height: 2.h),
-          _buildWhenToTakeButtons(medicine: medicine),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWhenToTakeButtons({required Medicine? medicine}) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: const EdgeInsets.only(left: AppSizes.size40),
-        child: Row(
-          children: ['before', 'after'].map((when) {
-            return _buildSelectableButton(
-              label: '$when Meal',
-              isSelected: medicine?.toBeTaken == when,
-              onTap: () {
-                setState(() {
-                  medicine?.toBeTaken = when.toLowerCase();
-                });
-              },
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: EdgeInsets.only(left: AppSizes.size40),
-      child: Row(
-        children: [
-          Text(title, style: TextSizeHelper.xSmallHeaderStyle),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectableButton({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: CustomContainer(
-        margin: const EdgeInsets.symmetric(horizontal: 5),
-        borderRadius: BorderRadius.circular(AppSizes.size20),
-        borderWidth: 1,
-        backGroundColor:
-            isSelected ? AppColors.whiteColor : Colors.grey.shade300,
-        borderColor: isSelected ? AppColors.greenColor : Colors.grey.shade300,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.size10,
-          vertical: AppSizes.size10 - 5,
-        ),
-        child: Text(
-          label,
-          style: TextSizeHelper.xSmallHeaderStyle.copyWith(
-            color: isSelected ? AppColors.greenColor : Colors.black,
-          ),
-        ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: PagedListView.separated(
+                              separatorBuilder: (context, index) => Divider(
+                                    endIndent: 5.w,
+                                    indent: 5.w,
+                                    height: 2.h,
+                                  ),
+                              shrinkWrap: true,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 5.w, vertical: 2.h),
+                              pagingController:
+                                  doctorAppointmentProvider.pagingController,
+                              builderDelegate: PagedChildBuilderDelegate<
+                                      UpcomingAppointmentInfo>(
+                                  itemBuilder: (context, item, index) =>
+                                      CustomContainer(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: AppSizes.size10),
+                                        padding: const EdgeInsets.all(
+                                            AppSizes.size10),
+                                        width: 80.w,
+                                        backGroundColor:
+                                            AppColors.lightBackGroundColor,
+                                        borderColor: AppColors.brownColor,
+                                        borderRadius: BorderRadius.circular(
+                                            AppSizes.size10),
+                                        borderWidth: 1,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    item.name ?? 'Unknown',
+                                                    style: TextSizeHelper
+                                                        .smallHeaderStyle,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  item.date ?? 'No date',
+                                                  style: TextSizeHelper
+                                                      .smallTextStyle,
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "${item.status}"
+                                                      .toUpperCase(),
+                                                  style: TextSizeHelper
+                                                      .xSmallHeaderStyle
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .errorColor),
+                                                ),
+                                              ],
+                                            ),
+                                            MethodHelper.heightBox(height: 1.h),
+                                            Text(
+                                              "Appointment Slot : ${item.slot}",
+                                              style: TextSizeHelper
+                                                  .xSmallTextStyle,
+                                            ),
+                                            Text(
+                                              "Subject  : ${item.subject}",
+                                              style: TextSizeHelper
+                                                  .xSmallTextStyle,
+                                            ),
+                                            Text(
+                                              "Message : ${item.message}",
+                                              style: TextSizeHelper
+                                                  .xSmallTextStyle,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                PrimaryBtn(
+                                                  btnText: "Prescription",
+                                                  onTap: () {
+                                                    print(
+                                                        "appointmentID => ${item.id} ");
+                                                    Provider.of<PrescriptionStateProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .emptyDiseaseListAfterSuccess();
+                                                    push(
+                                                        context,
+                                                        PrescriptionPage(
+                                                            isCreating: true,
+                                                            appointmentId:
+                                                                item.id ?? 0,
+                                                            name:
+                                                                item.name ?? "",
+                                                            diseaseId:
+                                                                item.diseaseId ??
+                                                                    0));
+                                                  },
+                                                  height: 3.h,
+                                                  width: 25.w,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  backGroundColor:
+                                                      AppColors.whiteColor,
+                                                  borderColor:
+                                                      AppColors.brownColor,
+                                                  textStyle: TextSizeHelper
+                                                      .xSmallTextStyle
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .brownColor),
+                                                )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ))))
+                    ],
+                  ),
       ),
     );
   }

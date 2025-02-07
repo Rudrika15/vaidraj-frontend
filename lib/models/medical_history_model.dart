@@ -32,7 +32,8 @@ class Data {
   Data({this.data, this.currentPage, this.lastPage, this.perPage, this.total});
 
   Data.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new MedicalHistory.fromJson(json['data']) : null;
+    data =
+        json['data'] != null ? new MedicalHistory.fromJson(json['data']) : null;
     currentPage = json['current_page'];
     lastPage = json['last_page'];
     perPage = json['per_page'];
@@ -217,7 +218,7 @@ class Prescriptions {
   int? id;
   int? appointmentId;
   int? doctorId;
-  String? diseaseId;
+  int? diseaseId;
   String? note;
   String? otherMedicines;
   String? createdAt;
