@@ -73,7 +73,10 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomSearchBar(),
+          CustomSearchBar(
+              onSubmitted: (value) =>
+                  Provider.of<MyPatientsProvider>(context, listen: false)
+                      .setSearchQuery = value),
           if (role == "admin")
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

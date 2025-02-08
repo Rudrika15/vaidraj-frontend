@@ -1,6 +1,7 @@
 class AppStrings {
   /// logo
   static const String logo = "assets/images/logo.png";
+  static const String splashScreen = "assets/images/vedraj_splash_screen.png";
 
   ///
   static const String image1 = "assets/images/image1.png";
@@ -26,6 +27,7 @@ class AppStrings {
   ///
   static const String productPhotoUrl =
       "https://vedraj.flipcodesolutions.com/images/products";
+
   ///
   static const String thumbnailPhotoUrl =
       "https://vedraj.flipcodesolutions.com/images/videos";

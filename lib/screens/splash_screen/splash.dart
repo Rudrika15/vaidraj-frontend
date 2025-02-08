@@ -73,13 +73,13 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: AppColors.whiteColor,
       body: Center(
         child: Image(
             fit: BoxFit.contain,
             width: 60.w,
-            height: 20.h,
-            image: AssetImage(AppStrings.logo)),
+            height: 30.h,
+            image: const AssetImage(AppStrings.splashScreen)),
       ),
     );
   }
