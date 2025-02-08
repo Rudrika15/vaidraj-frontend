@@ -32,7 +32,7 @@ class CustomDropDownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<Object?>(
-        menuMaxHeight: 25.h,
+        menuMaxHeight: 50.h,
         value: value,
         items: items,
         isExpanded: true,

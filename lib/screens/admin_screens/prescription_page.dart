@@ -82,10 +82,6 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
           disease: disease,
           diseaseId: widget.diseaseId,
           previousList: widget.previousPrescriptionDisease);
-      if (widget.previousPrescriptionDisease?.isNotEmpty == true) {
-        await prescriptionProvider.initPreviousDiseaseList(
-            previousList: widget.previousPrescriptionDisease ?? []);
-      }
     });
   }
 
