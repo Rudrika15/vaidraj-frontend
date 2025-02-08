@@ -107,166 +107,157 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                       ? Center(
                           child: Loader(),
                         )
-                      : WillPopScope(
-                          onWillPop: () async {
-                            prescriptionProvider.emptyDiseaseListAfterSuccess();
-                            // log(prescriptionProvider.diseaseList.toString());
-                            Navigator.of(context).pop(true);
-                            return true;
-                          },
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                paddingMethod(CustomTextFieldWidget(
-                                    validator: (value) {},
-                                    enabled: false,
-                                    keyboardType: TextInputType.text,
-                                    controller: patientNameController,
-                                    decoration:
-                                        MethodHelper.greenUnderLineBorder(
-                                            hintText: "Patient Name"))),
-                                paddingMethod(
-                                  diseasesProvider.isLoading
-                                      ? const Center(
-                                          child: Loader(),
-                                        )
-                                      : CustomDropDownWidget(
-                                          value: prescriptionProvider
-                                              .selectedDiseaseId,
-                                          alignment: Alignment.centerLeft,
-                                          prefixIcon: Icons.storefront_outlined,
-                                          decoration:
-                                              MethodHelper.greenUnderLineBorder(
-                                                  hintText: "Disease"),
-                                          items: diseasesProvider
-                                                      .diseasesModelForAppointment
-                                                      ?.data
-                                                      ?.data
-                                                      ?.isNotEmpty ==
-                                                  true
-                                              ? List<
-                                                  DropdownMenuItem<
-                                                      Object?>>.generate(
-                                                  diseasesProvider
-                                                          .diseasesModelForAppointment
-                                                          ?.data
-                                                          ?.data
-                                                          ?.length ??
-                                                      0,
-                                                  (index) {
-                                                    return DropdownMenuItem(
-                                                      value: diseasesProvider
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              paddingMethod(CustomTextFieldWidget(
+                                  validator: (value) {},
+                                  enabled: false,
+                                  keyboardType: TextInputType.text,
+                                  controller: patientNameController,
+                                  decoration: MethodHelper.greenUnderLineBorder(
+                                      hintText: "Patient Name"))),
+                              paddingMethod(
+                                diseasesProvider.isLoading
+                                    ? const Center(
+                                        child: Loader(),
+                                      )
+                                    : CustomDropDownWidget(
+                                        value: prescriptionProvider
+                                            .selectedDiseaseId,
+                                        alignment: Alignment.centerLeft,
+                                        prefixIcon: Icons.storefront_outlined,
+                                        decoration:
+                                            MethodHelper.greenUnderLineBorder(
+                                                hintText: "Disease"),
+                                        items: diseasesProvider
+                                                    .diseasesModelForAppointment
+                                                    ?.data
+                                                    ?.data
+                                                    ?.isNotEmpty ==
+                                                true
+                                            ? List<
+                                                DropdownMenuItem<
+                                                    Object?>>.generate(
+                                                diseasesProvider
+                                                        .diseasesModelForAppointment
+                                                        ?.data
+                                                        ?.data
+                                                        ?.length ??
+                                                    0,
+                                                (index) {
+                                                  return DropdownMenuItem(
+                                                    value: diseasesProvider
+                                                            .diseasesModelForAppointment
+                                                            ?.data
+                                                            ?.data?[index]
+                                                            .id ??
+                                                        0,
+                                                    child: Text(
+                                                      diseasesProvider
                                                               .diseasesModelForAppointment
                                                               ?.data
                                                               ?.data?[index]
-                                                              .id ??
-                                                          0,
-                                                      child: Text(
-                                                        diseasesProvider
-                                                                .diseasesModelForAppointment
-                                                                ?.data
-                                                                ?.data?[index]
-                                                                .displayName ??
-                                                            "-",
-                                                        style: TextSizeHelper
-                                                            .smallHeaderStyle,
-                                                      ),
-                                                    );
-                                                  },
-                                                )
-                                              : [
-                                                  DropdownMenuItem(
-                                                    value: 0,
-                                                    child: Text(
-                                                      "No Diseases Found",
+                                                              .displayName ??
+                                                          "-",
                                                       style: TextSizeHelper
                                                           .smallHeaderStyle,
                                                     ),
-                                                  )
-                                                ],
-                                          onChanged: (value) {
-                                            prescriptionProvider.updateDisease(
-                                                disease: diseasesProvider
-                                                        .diseasesModelForAppointment
-                                                        ?.data
-                                                        ?.data
-                                                        ?.where((e) =>
-                                                            e.id == value)
-                                                        .first
-                                                        .diseaseName ??
-                                                    "",
-                                                diseaseId: diseasesProvider
-                                                        .diseasesModelForAppointment
-                                                        ?.data
-                                                        ?.data
-                                                        ?.where((e) =>
-                                                            e.id == value)
-                                                        .first
-                                                        .id ??
-                                                    0);
-                                          },
-                                          validator: (value) {
-                                            if (value == null) {
-                                              return "Please select Disease !!";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                ),
-                                if (!prescriptionProvider.isLoading ||
-                                    prescriptionProvider.selectedDiseaseId != 0)
-                                  PrescriptionWidget(),
-                                MethodHelper.heightBox(height: 2.h),
-                                paddingMethod(CustomTextFieldWidget(
-                                    validator: (value) {},
-                                    keyboardType: TextInputType.text,
-                                    controller: otherMedicineController,
-                                    decoration:
-                                        MethodHelper.greenUnderLineBorder(
-                                            hintText: "Other Notes (if Any)"))),
-                                paddingMethod(CustomTextFieldWidget(
-                                    validator: (value) {},
-                                    keyboardType: TextInputType.text,
-                                    controller: noteController,
-                                    decoration:
-                                        MethodHelper.greenUnderLineBorder(
-                                            hintText: "Add Note..."))),
-                                MethodHelper.heightBox(height: 10.h),
-                                SizedBox(
-                                  width: 50.w,
-                                  child: prescriptionProvider.isLoading
-                                      ? const Center(
-                                          child: Loader(),
-                                        )
-                                      : PrimaryBtn(
-                                          btnText: 'Submit',
-                                          onTap: () async {
-                                            bool success =
-                                                await prescriptionProvider
-                                                    .sendDataToBackend(
-                                                        patientName:
-                                                            patientNameController
-                                                                .text,
-                                                        context: context,
-                                                        isCreating:
-                                                            widget.isCreating,
-                                                        pId: widget.pId,
-                                                        appointmentId: widget
-                                                            .appointmentId,
-                                                        note:
-                                                            noteController.text,
-                                                        otherNote:
-                                                            otherMedicineController
-                                                                .text);
-                                            if (success) {
+                                                  );
+                                                },
+                                              )
+                                            : [
+                                                DropdownMenuItem(
+                                                  value: 0,
+                                                  child: Text(
+                                                    "No Diseases Found",
+                                                    style: TextSizeHelper
+                                                        .smallHeaderStyle,
+                                                  ),
+                                                )
+                                              ],
+                                        onChanged: (value) {
+                                          prescriptionProvider.updateDisease(
+                                              disease: diseasesProvider
+                                                      .diseasesModelForAppointment
+                                                      ?.data
+                                                      ?.data
+                                                      ?.where(
+                                                          (e) => e.id == value)
+                                                      .first
+                                                      .diseaseName ??
+                                                  "",
+                                              diseaseId: diseasesProvider
+                                                      .diseasesModelForAppointment
+                                                      ?.data
+                                                      ?.data
+                                                      ?.where(
+                                                          (e) => e.id == value)
+                                                      .first
+                                                      .id ??
+                                                  0);
+                                        },
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return "Please select Disease !!";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                              ),
+                              if (!prescriptionProvider.isLoading ||
+                                  prescriptionProvider.selectedDiseaseId != 0)
+                                PrescriptionWidget(),
+                              MethodHelper.heightBox(height: 2.h),
+                              paddingMethod(CustomTextFieldWidget(
+                                  validator: (value) {},
+                                  keyboardType: TextInputType.text,
+                                  controller: otherMedicineController,
+                                  decoration: MethodHelper.greenUnderLineBorder(
+                                      hintText: "Other Notes (if Any)"))),
+                              paddingMethod(CustomTextFieldWidget(
+                                  validator: (value) {},
+                                  keyboardType: TextInputType.text,
+                                  controller: noteController,
+                                  decoration: MethodHelper.greenUnderLineBorder(
+                                      hintText: "Add Note..."))),
+                              MethodHelper.heightBox(height: 10.h),
+                              SizedBox(
+                                width: 50.w,
+                                child: prescriptionProvider.isLoading
+                                    ? const Center(
+                                        child: Loader(),
+                                      )
+                                    : PrimaryBtn(
+                                        btnText: 'Submit',
+                                        onTap: () async {
+                                          await prescriptionProvider
+                                              .sendDataToBackend(
+                                                  patientName:
+                                                      patientNameController
+                                                          .text,
+                                                  context: context,
+                                                  isCreating: widget.isCreating,
+                                                  pId: widget.pId,
+                                                  appointmentId:
+                                                      widget.appointmentId,
+                                                  note: noteController.text,
+                                                  otherNote:
+                                                      otherMedicineController
+                                                          .text)
+                                              .then((value) {
+                                            if (value == true) {
                                               prescriptionProvider
                                                   .emptyDiseaseListAfterSuccess();
+                                              Navigator.pop(context, true);
+                                            } else {
+                                              Navigator.pop(context, false);
                                             }
-                                          }),
-                                ),
-                                MethodHelper.heightBox(height: 10.h),
-                              ],
-                            ),
+                                          });
+                                        }),
+                              ),
+                              MethodHelper.heightBox(height: 10.h),
+                            ],
                           ),
                         ),
             ),
