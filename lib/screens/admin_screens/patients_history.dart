@@ -40,6 +40,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
     try {
       patientsHistoryModel =
           await service.getMedicalHistoryById(context: context, id: widget.id);
+      print("data collected");
     } catch (error) {
       // Handle error gracefully, maybe show an error message
       print('Error fetching medical history: $error');
@@ -170,9 +171,13 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                               push(
                                   context,
                                   PrescriptionPage(
-                                      isCreating: item?.status == "completed",
+                                      isCreating: item?.status != "completed",
                                       appointmentId: item?.id ?? 0,
                                       name: item?.name ?? "",
+                                      pId: item?.prescriptions?.isNotEmpty ==
+                                              true
+                                          ? (item?.prescriptions?[0].id) ?? 0
+                                          : -1,
                                       previousPrescriptionDisease:
                                           item?.status == "completed"
                                               ? (item

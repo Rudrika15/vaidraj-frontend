@@ -5,7 +5,6 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/models/todays_appointment_model.dart';
 import 'package:vaidraj/provider/appointment_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
-import 'package:vaidraj/screens/patient_screen/view_product_or_appointment.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
@@ -179,6 +178,7 @@ class _RenderTodaysAppointmentsState extends State<RenderTodaysAppointments>
                                             isCreating: true,
                                             appointmentId: appointment?.id ?? 0,
                                             name: appointment?.name ?? "",
+                                            pId: -1,
                                             diseaseId:
                                                 appointment?.diseaseId ?? 0));
                                   },

@@ -9,62 +9,100 @@ import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 
 class PrescriptionService {
-  Future<bool> createPrescription(
-      {required BuildContext context,
-      required String patientName,
-      String? note,
-      String? otherNote,
-      required int appointmentId,
-      required List<Diseases> diseaseList}) async {
+  Future<bool> createPrescription({
+    required BuildContext context,
+    required String patientName,
+    String? note,
+    String? otherNote,
+    required bool isCreating,
+    required int appointmentId,
+    required int pId,
+    required List<Diseases> diseaseList,
+  }) async {
     try {
       var token = await SharedPrefs.getToken();
       var header = {
         "Authorization": "Bearer $token",
-        "Content-Type": "application/json"
-      };
-      Map<String, dynamic> payload = {
-        'appointment_id': appointmentId,
-        "other_medicines": otherNote,
-        'note': note,
-        'medicine': diseaseList
-            .map((disease) {
-              if (disease.medicine?.isNotEmpty == true) {
-                // Return selected medicines in each disease
-                return disease.medicine
-                    ?.where((m) => m.isSelected == true)
-                    .toList();
-              }
-              return null; // Return null if no medicines are selected
-            })
-            .where((medicineList) =>
-                medicineList != null &&
-                medicineList.isNotEmpty) // Filter out null and empty lists
-            .expand((medicineList) =>
-                medicineList!) // Flatten the list of lists into a single list
-            .toList(),
+        "Content-Type": "application/json",
       };
 
-      Response response = await HttpHelper.post(
+      Map<String, dynamic> payload =
+          _buildPayload(diseaseList, note, otherNote, appointmentId);
+
+      Response response;
+      if (isCreating) {
+        response = await _sendRequest(
           context: context,
-          uri: ApiHelper.createPrescription,
-          body: jsonEncode(payload),
-          headers: header);
-      log(jsonEncode(payload));
-      log(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          WidgetHelper.customSnackBar(context: context, title: data['message']);
-          return true;
-        } else {
-          WidgetHelper.customSnackBar(
-              context: context, title: data['message'], isError: true);
-        }
+          url: ApiHelper.createPrescription,
+          payload: payload,
+          header: header,
+        );
+      } else {
+        response = await _sendRequest(
+          context: context,
+          url: ApiHelper.updatePrescription(pId: pId),
+          payload: payload,
+          header: header,
+        );
       }
-      return false;
+
+      return _handleResponse(context, response);
     } catch (e) {
-      print("error while creating Prescription=> $e");
+      print("Error while creating  or updating prescription => $e");
       return false;
     }
+  }
+
+  Map<String, dynamic> _buildPayload(
+    List<Diseases> diseaseList,
+    String? note,
+    String? otherNote,
+    int appointmentId,
+  ) {
+    return {
+      'appointment_id': appointmentId,
+      'note': note,
+      'other_medicines': otherNote,
+      'medicine': diseaseList
+          .map((disease) =>
+              disease.medicine?.where((m) => m.isSelected == true).toList())
+          .where((medicineList) => medicineList?.isNotEmpty == true)
+          .expand((medicineList) => medicineList!)
+          .toList(),
+    };
+  }
+
+  Future<Response> _sendRequest({
+    required BuildContext context,
+    required String url,
+    required Map<String, dynamic> payload,
+    required Map<String, String> header,
+  }) async {
+    log(url);
+    log(jsonEncode(payload));
+    return await HttpHelper.post(
+      context: context,
+      uri: url,
+      body: jsonEncode(payload),
+      headers: header,
+    );
+  }
+
+  bool _handleResponse(BuildContext context, Response response) {
+    log(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      if (data['success'] == true) {
+        WidgetHelper.customSnackBar(context: context, title: data['message']);
+        return true;
+      } else {
+        WidgetHelper.customSnackBar(
+          context: context,
+          title: data['message'],
+          isError: true,
+        );
+      }
+    }
+    return false;
   }
 }

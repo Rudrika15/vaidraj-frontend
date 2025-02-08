@@ -56,44 +56,58 @@ class PrescriptionStateProvider extends ChangeNotifier {
   /// empty disease list
   void emptyDiseaseListAfterSuccess() {
     _diseaseList.clear();
-    updateDisease(disease: _selectedDisease, diseaseId: _selectedDiseaseId);
+    // updateDisease(disease: _selectedDisease, diseaseId: _selectedDiseaseId);
     notifyListeners();
   }
 
   Future<void> initPreviousDiseaseList(
       {required List<Medicines> previousList}) async {
     _isLoading = true;
-    for (Medicines m in previousList) {
-      final index = _diseaseList.indexWhere(
-        (e) =>
-            e.medicine
-                ?.any((d) => d.productId == int.parse(m.productId ?? "")) ??
-            false,
-      );
+    print("Starting to initialize previous disease list...");
+    List<Medicine> tempList = List.generate(
+        previousList.length,
+        (i) => Medicine(
+            isSelected: true,
+            productId: int.parse(previousList[i].productId ?? ""),
+            time: previousList[i].time?.split(","),
+            toBeTaken: previousList[i].toBeTaken));
+    if (tempList.isNotEmpty) {
+      tempList.map((i) => print("i ====> ${i.productId}"));
+    }
+    for (Medicine m in tempList) {
+      print("Processing medicine: ${m.productId}");
+
+      final index = _productToShow.indexWhere((i) => i.id == m.productId);
+
       if (index != -1) {
         final disease = _diseaseList[index];
+        print("Disease found at index $index: ${disease.toString()}");
+
         // Find the medicine by productId
         final medicineIndex =
-            disease.medicine?.indexWhere((mm) => m.productId == m.productId);
+            disease.medicine?.indexWhere((mm) => m.productId == mm.productId);
 
-        /// if got both
+        // If both the disease and medicine are found
         if (medicineIndex != null && medicineIndex != -1) {
           final medicine = disease.medicine?[medicineIndex];
-          medicine?.isSelected = true;
-          medicine?.productId = int.parse(m.productId ?? "");
-          medicine?.time = m.time?.split(",");
-          medicine?.toBeTaken = m.toBeTaken;
+          print("Found medicine: ${medicine.toString()}");
+
           disease.medicine?[medicineIndex] = medicine!;
           _diseaseList[index] = disease;
-          log("medicine" + medicine.toString());
-          log("disease => " + disease.toString());
+
+          print("Updated medicine: ${medicine.toString()}");
+          print("Updated disease: ${disease.toString()}");
+        } else {
+          print("No medicine found for productId ${m.productId}");
         }
       } else {
-        print('No medicine found');
+        print("No disease found for medicine with productId ${m.productId}");
       }
-      _isLoading = false;
-      notifyListeners();
     }
+
+    _isLoading = false;
+    print("Finished initializing disease list");
+    notifyListeners();
   }
 
   ///// products model
@@ -118,46 +132,73 @@ class PrescriptionStateProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateDisease(
-      {required String disease,
-      required int diseaseId,
-      List<Medicines>? previousList}) {
-    /// check if diseases exist in list or not
+  void updateDisease({
+    required String disease,
+    required int diseaseId,
+    List<Medicines>? previousList,
+  }) {
+    // Check if disease already exists, if not, add it
     final existingDisease = diseaseList.firstWhereOrNull(
       (e) => e.diseaseName == disease,
     );
     if (existingDisease == null) {
       _diseaseList.add(Diseases(diseaseName: disease, medicine: []));
     }
-    log(productToShow.map((e) => print(e)).toString());
-    // update both fields
+
     _selectedDisease = disease;
     _selectedDiseaseId = diseaseId;
     _productToShow.clear();
-    List<Product> newList = [];
 
-    /// loop and generate new disease wise list
-    _productModel?.data?.data?.forEach((e) {
-      if (e.diseaseId == _selectedDiseaseId) {
-        newList.add(e);
-      }
-    });
-    print(
-        'products that can be added in this $_selectedDisease is ${newList.length}');
+    // Filter products by disease ID
+    final newList = _productModel?.data?.data
+            ?.where((e) => e.diseaseId == _selectedDiseaseId)
+            .toList() ??
+        [];
 
-    /// attach new list to original list
+    print('Products that can be added to $_selectedDisease: ${newList.length}');
+
+    /// if found products than add them in list
     if (newList.isNotEmpty) {
       _productToShow = newList;
-      if (previousList != null) {
-        initPreviousDiseaseList(previousList: previousList);
+      //// if previous list found than try to load them in medicine list to let doctor know that this is the medicines that are previusly selected
+      if (previousList != null && previousList.isNotEmpty) {
+        final tempList = previousList
+            .map((prevMed) => Medicine(
+                  isSelected: true,
+                  productId: int.tryParse(prevMed.productId ?? "") ?? -1,
+                  time: prevMed.time?.split(","),
+                  toBeTaken: prevMed.toBeTaken,
+                ))
+            .where((med) => med.productId != -1)
+            .toList();
+
+        final diseaseIndex =
+            diseaseList.indexWhere((e) => e.diseaseName == selectedDisease);
+
+        if (diseaseIndex != -1) {
+          final currentMedicines = _diseaseList[diseaseIndex].medicine ?? [];
+          //// do check and add them
+          for (var medicine in tempList) {
+            if (_productToShow.any((prod) => prod.id == medicine.productId) &&
+                !currentMedicines
+                    .any((med) => med.productId == medicine.productId)) {
+              currentMedicines.add(medicine);
+            }
+          }
+
+          /// add them in original list
+          _diseaseList[diseaseIndex].medicine = currentMedicines;
+          log(_diseaseList.toString());
+        }
       }
     } else {
-      _diseaseList.removeWhere((e) => e.diseaseName == _selectedDisease);
-      print("add no thi yu");
+      diseaseList.removeWhere((e) => e.diseaseName == _selectedDisease);
+      print("No products found.");
     }
 
     log(newList.length.toString());
-    log(_diseaseList.map((e) => print(e)).toString());
+    log(_diseaseList.map((e) => e.toString()).toList().toString());
+
     notifyListeners();
   }
 
@@ -246,11 +287,14 @@ class PrescriptionStateProvider extends ChangeNotifier {
   /// Method to send the diseases list as a JSON string to the backend
   Future<bool> sendDataToBackend(
       {required int appointmentId,
+      required int pId,
       required BuildContext context,
       required String patientName,
       required String note,
+      required bool isCreating,
       required String otherNote}) async {
     _isLoading = true;
+    log(_diseaseList.toString());
     if (_diseaseList.any((e) =>
         e.medicine?.isEmpty == true ||
         e.medicine?.every((f) => f.isSelected == false) == true ||
@@ -276,6 +320,8 @@ class PrescriptionStateProvider extends ChangeNotifier {
         context: context,
         patientName: patientName,
         note: note,
+        isCreating: isCreating,
+        pId: pId,
         otherNote: otherNote,
         appointmentId: appointmentId,
         diseaseList: diseaseList);

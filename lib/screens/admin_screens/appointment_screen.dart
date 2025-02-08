@@ -251,8 +251,12 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                   style: TextSizeHelper
                                                       .xSmallHeaderStyle
                                                       .copyWith(
-                                                          color: AppColors
-                                                              .errorColor),
+                                                          color: item.status ==
+                                                                  "completed"
+                                                              ? AppColors
+                                                                  .greenColor
+                                                              : AppColors
+                                                                  .errorColor),
                                                 ),
                                               ],
                                             ),
@@ -288,9 +292,28 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                     push(
                                                         context,
                                                         PrescriptionPage(
-                                                            isCreating: true,
+                                                            isCreating: item
+                                                                    .status !=
+                                                                "completed",
+                                                            pId: item.prescriptions
+                                                                        ?.isNotEmpty ==
+                                                                    true
+                                                                ? (item
+                                                                        .prescriptions?[
+                                                                            0]
+                                                                        .id) ??
+                                                                    -1
+                                                                : -1,
                                                             appointmentId:
                                                                 item.id ?? 0,
+                                                            previousPrescriptionDisease: item
+                                                                        .status ==
+                                                                    "completed"
+                                                                ? (item
+                                                                    .prescriptions?[
+                                                                        0]
+                                                                    .medicines)
+                                                                : null,
                                                             name:
                                                                 item.name ?? "",
                                                             diseaseId:
