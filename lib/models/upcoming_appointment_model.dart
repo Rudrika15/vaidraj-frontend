@@ -196,7 +196,7 @@ class Prescriptions {
   int? id;
   int? appointmentId;
   int? doctorId;
-  String? diseaseId;
+  int? diseaseId;
   String? note;
   String? otherMedicines;
   String? createdAt;
