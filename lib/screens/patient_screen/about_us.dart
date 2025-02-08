@@ -35,85 +35,88 @@ class AboutUsScreen extends StatelessWidget with NavigateHelper {
       },
       child: Consumer<LocalizationProvider>(
         builder: (context, langProvider, child) => SafeArea(
-            child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: Opacity(
-                opacity: 0.2,
-                child: Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(math.pi),
-                  child: const Image(
-                    image: AssetImage(AppStrings.logoHerb),
-                    fit: BoxFit.fitHeight,
+            child: RefreshIndicator(
+          onRefresh: () async {},
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Opacity(
+                  opacity: 0.2,
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(math.pi),
+                    child: const Image(
+                      image: AssetImage(AppStrings.logoHerb),
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SafeArea(
-                child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.size20, vertical: AppSizes.size10),
-              child: Column(
-                children: [
-                  CustomContainer(
-                    padding: const EdgeInsets.all(AppSizes.size10),
-                    child: Text(
-                      langProvider.translate('maharshi'),
-                      textAlign: TextAlign.center,
-                      style: TextSizeHelper.smallHeaderStyle,
+              SafeArea(
+                  child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSizes.size20, vertical: AppSizes.size10),
+                child: Column(
+                  children: [
+                    CustomContainer(
+                      padding: const EdgeInsets.all(AppSizes.size10),
+                      child: Text(
+                        langProvider.translate('maharshi'),
+                        textAlign: TextAlign.center,
+                        style: TextSizeHelper.smallHeaderStyle,
+                      ),
                     ),
-                  ),
-                  MethodHelper.heightBox(height: 3.h),
-                  Text(
-                    langProvider.translate('aboutUsPara1'),
-                    style: TextSizeHelper.smallTextStyle,
-                  ),
-                  MethodHelper.heightBox(height: 2.h),
-                  Text(
-                    langProvider.translate('aboutUsPara2'),
-                    style: TextSizeHelper.smallTextStyle,
-                  ),
-                  MethodHelper.heightBox(height: 3.h),
-                  Padding(
-                    padding: const EdgeInsets.only(left: AppSizes.size20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildBulletPoint(
-                            langProvider.translate("RHEUMATOIDARTHRITIS")),
-                        _buildBulletPoint(langProvider.translate("ALLERGY")),
-                        _buildBulletPoint(langProvider.translate("ASTHMA")),
-                        _buildBulletPoint(
-                            langProvider.translate("PEDIATRICASTHMA")),
-                        _buildBulletPoint(langProvider.translate("MIGRAINE")),
-                        _buildBulletPoint(langProvider
-                            .translate("VERTEBRAE'SANDSPINALCORDDISEASES")),
-                        _buildBulletPoint(
-                            langProvider.translate("OSTEOARTHRITIS-KNEEJOINT")),
-                        _buildBulletPoint(
-                            langProvider.translate("GASTRODISEASES")),
-                        _buildBulletPoint(
-                            langProvider.translate("SKINDISEASES")),
-                        _buildBulletPoint(
-                            langProvider.translate("HAIR&BEAUTY")),
-                        _buildBulletPoint(
-                            langProvider.translate("DIABETESCONTROL")),
-                        _buildBulletPoint(
-                            langProvider.translate("HIGHBLOODPRESSURE")),
-                      ],
+                    MethodHelper.heightBox(height: 3.h),
+                    Text(
+                      langProvider.translate('aboutUsPara1'),
+                      style: TextSizeHelper.smallTextStyle,
                     ),
-                  ),
-                  MethodHelper.heightBox(height: 3.h),
-                  Text(
-                    langProvider.translate("aboutUsPara3"),
-                    style: TextSizeHelper.smallTextStyle,
-                  )
-                ],
-              ),
-            ))
-          ],
+                    MethodHelper.heightBox(height: 2.h),
+                    Text(
+                      langProvider.translate('aboutUsPara2'),
+                      style: TextSizeHelper.smallTextStyle,
+                    ),
+                    MethodHelper.heightBox(height: 3.h),
+                    Padding(
+                      padding: const EdgeInsets.only(left: AppSizes.size20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildBulletPoint(
+                              langProvider.translate("RHEUMATOIDARTHRITIS")),
+                          _buildBulletPoint(langProvider.translate("ALLERGY")),
+                          _buildBulletPoint(langProvider.translate("ASTHMA")),
+                          _buildBulletPoint(
+                              langProvider.translate("PEDIATRICASTHMA")),
+                          _buildBulletPoint(langProvider.translate("MIGRAINE")),
+                          _buildBulletPoint(langProvider
+                              .translate("VERTEBRAE'SANDSPINALCORDDISEASES")),
+                          _buildBulletPoint(langProvider
+                              .translate("OSTEOARTHRITIS-KNEEJOINT")),
+                          _buildBulletPoint(
+                              langProvider.translate("GASTRODISEASES")),
+                          _buildBulletPoint(
+                              langProvider.translate("SKINDISEASES")),
+                          _buildBulletPoint(
+                              langProvider.translate("HAIR&BEAUTY")),
+                          _buildBulletPoint(
+                              langProvider.translate("DIABETESCONTROL")),
+                          _buildBulletPoint(
+                              langProvider.translate("HIGHBLOODPRESSURE")),
+                        ],
+                      ),
+                    ),
+                    MethodHelper.heightBox(height: 3.h),
+                    Text(
+                      langProvider.translate("aboutUsPara3"),
+                      style: TextSizeHelper.smallTextStyle,
+                    )
+                  ],
+                ),
+              ))
+            ],
+          ),
         )),
       ),
     );

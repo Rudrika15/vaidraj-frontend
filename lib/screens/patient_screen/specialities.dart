@@ -161,6 +161,7 @@ class _RenderSpecialityState extends State<RenderSpeciality> {
               videos: item.videos ?? [],
               articles: item.articles ?? [],
               foodPlan: item.displayFoodPlan ?? "",
+              diseaseId: item.id ?? -1,
             ),
           )),
     );

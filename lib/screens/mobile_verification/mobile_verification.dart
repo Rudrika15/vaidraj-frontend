@@ -155,7 +155,13 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                           return;
                         }
                       } else {
-                        push(context, const SignInSignUp(UserStatus: "NEW"));
+                        /// passing mobile number to registration screen
+                        push(
+                            context,
+                            SignInSignUp(
+                              UserStatus: "NEW",
+                              phoneNumber: mobileController.text,
+                            ));
                         return;
                       }
                       return;

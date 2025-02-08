@@ -35,6 +35,7 @@ class Branch {
   String? mobileNo;
   String? createdAt;
   String? updatedAt;
+  String? displayAddress;
 
   Branch(
       {this.id,
@@ -43,7 +44,8 @@ class Branch {
       this.city,
       this.mobileNo,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.displayAddress});
 
   Branch.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -53,6 +55,7 @@ class Branch {
     mobileNo = json['mobile_no'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    displayAddress = json['display_address'];
   }
 
   Map<String, dynamic> toJson() {
@@ -64,6 +67,7 @@ class Branch {
     data['mobile_no'] = this.mobileNo;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    data['display_address'] = this.displayAddress;
     return data;
   }
 }

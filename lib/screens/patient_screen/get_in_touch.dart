@@ -80,248 +80,259 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
       },
       child: Consumer2<LocalizationProvider, GetBrachProvider>(
         builder: (context, langProvider, branchProvider, child) => SafeArea(
-            child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: Opacity(
-                opacity: 0.2,
-                child: Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(math.pi),
-                  child: const Image(
-                    image: AssetImage(AppStrings.logoHerb),
-                    fit: BoxFit.fitHeight,
+            child: RefreshIndicator(
+          color: AppColors.brownColor,
+          backgroundColor: AppColors.lightBackGroundColor,
+          onRefresh: () async {
+            branchProvider.resetBranchAddressModel(context: context);
+          },
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.center,
+                child: Opacity(
+                  opacity: 0.2,
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(math.pi),
+                    child: const Image(
+                      image: AssetImage(AppStrings.logoHerb),
+                      fit: BoxFit.fitHeight,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SafeArea(
-                child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: AppSizes.size30),
-              child: Column(
-                children: [
-                  LogoWithInfoContainer(
-                    children: [
-                      const ContatInfoRender(
-                        icon: Icons.email,
-                        info: "drkrishnaravalmcdcr@gmail.com",
-                      ),
-                      const ContatInfoRender(
-                        icon: Icons.email,
-                        info: "scientistdrhraval@gmail.com",
-                      ),
-                      MethodHelper.heightBox(height: 2.h),
-                      const ContatInfoRender(
-                        icon: Icons.phone,
-                        info: "+91 98247 49263",
-                      ),
-                      const ContatInfoRender(
-                        icon: Icons.phone,
-                        info: "+91 88288 88202",
-                      ),
-                      const ContatInfoRender(
-                        icon: Icons.phone,
-                        info: "+91 88980 88980 ,",
-                      ),
-                      const ContatInfoRender(
-                        icon: Icons.phone,
-                        info: "+91 98259 42366",
-                      ),
-                    ],
-                  ),
-                  MethodHelper.heightBox(height: 5.h),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSizes.size20,
+              SafeArea(
+                  child: SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: AppSizes.size30),
+                child: Column(
+                  children: [
+                    LogoWithInfoContainer(
+                      children: [
+                        const ContatInfoRender(
+                          icon: Icons.email,
+                          info: "drkrishnaravalmcdcr@gmail.com",
+                        ),
+                        const ContatInfoRender(
+                          icon: Icons.email,
+                          info: "scientistdrhraval@gmail.com",
+                        ),
+                        MethodHelper.heightBox(height: 2.h),
+                        const ContatInfoRender(
+                          icon: Icons.phone,
+                          info: "+91 98247 49263",
+                        ),
+                        const ContatInfoRender(
+                          icon: Icons.phone,
+                          info: "+91 88288 88202",
+                        ),
+                        const ContatInfoRender(
+                          icon: Icons.phone,
+                          info: "+91 88980 88980 ,",
+                        ),
+                        const ContatInfoRender(
+                          icon: Icons.phone,
+                          info: "+91 98259 42366",
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      langProvider.translate("getInTouchPara"),
-                      style: TextSizeHelper.smallTextStyle,
+                    MethodHelper.heightBox(height: 5.h),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSizes.size20,
+                      ),
+                      child: Text(
+                        langProvider.translate("getInTouchPara"),
+                        style: TextSizeHelper.smallTextStyle,
+                      ),
                     ),
-                  ),
-                  MethodHelper.heightBox(height: 2.h),
-                  ///// render branch address fetching from server
-                  branchProvider.isLoading
-                      ? const Center(
-                          child: Loader(),
-                        )
-                      : branchProvider.addressModel?.data?.isEmpty == true
-                          ? Text(langProvider.translate('noDataFound'))
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                for (BranchAddress address
-                                    in branchProvider.addressModel?.data ??
-                                        []) ...[
-                                  AddressRender(
-                                      text: address.displayAddress ??
-                                          "Coming Soon")
-                                ]
-                              ],
-                            ),
-                  InScreenHeading(
-                    heading: langProvider.translate('contact'),
-                    endIndent: 70.w,
-                  ),
-                  CustomContainer(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: AppSizes.size20),
-                      child: Form(
-                        key: contactFormKey,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextFieldWidget(
-                                    decoration:
-                                        MethodHelper.greenUnderLineBorder(
-                                            hintText: langProvider
-                                                .translate('firstName')),
-                                    controller: firstNameController,
-                                    keyboardType: TextInputType.text,
-                                    maxLength: 30,
-                                    validator: (value) {
-                                      if (value?.isEmpty == true) {
-                                        return langProvider
-                                            .translate('firstNameReq');
-                                      }
-                                      return null;
-                                    },
+                    MethodHelper.heightBox(height: 2.h),
+                    ///// render branch address fetching from server
+                    branchProvider.isLoading
+                        ? const Center(
+                            child: Loader(),
+                          )
+                        : branchProvider.addressModel?.data?.isEmpty == true
+                            ? Text(langProvider.translate('noDataFound'))
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  for (BranchAddress address
+                                      in branchProvider.addressModel?.data ??
+                                          []) ...[
+                                    AddressRender(
+                                        text: address.displayAddress ??
+                                            "Coming Soon")
+                                  ]
+                                ],
+                              ),
+                    InScreenHeading(
+                      heading: langProvider.translate('contact'),
+                      endIndent: 70.w,
+                    ),
+                    CustomContainer(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: AppSizes.size20),
+                        child: Form(
+                          key: contactFormKey,
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomTextFieldWidget(
+                                      decoration:
+                                          MethodHelper.greenUnderLineBorder(
+                                              hintText: langProvider
+                                                  .translate('firstName')),
+                                      controller: firstNameController,
+                                      keyboardType: TextInputType.text,
+                                      maxLength: 30,
+                                      validator: (value) {
+                                        if (value?.isEmpty == true) {
+                                          return langProvider
+                                              .translate('firstNameReq');
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                   ),
-                                ),
-                                MethodHelper.widthBox(width: AppSizes.size10),
-                                Expanded(
-                                  child: CustomTextFieldWidget(
-                                    decoration:
-                                        MethodHelper.greenUnderLineBorder(
-                                            hintText: langProvider
-                                                .translate('lastName')),
-                                    controller: lastNameController,
-                                    keyboardType: TextInputType.text,
-                                    maxLength: 30,
-                                    validator: (value) {
-                                      if (value?.isEmpty == true) {
-                                        return langProvider
-                                            .translate('lastNameReq');
-                                      }
-                                      return null;
-                                    },
+                                  MethodHelper.widthBox(width: AppSizes.size10),
+                                  Expanded(
+                                    child: CustomTextFieldWidget(
+                                      decoration:
+                                          MethodHelper.greenUnderLineBorder(
+                                              hintText: langProvider
+                                                  .translate('lastName')),
+                                      controller: lastNameController,
+                                      keyboardType: TextInputType.text,
+                                      maxLength: 30,
+                                      validator: (value) {
+                                        if (value?.isEmpty == true) {
+                                          return langProvider
+                                              .translate('lastNameReq');
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            MethodHelper.heightBox(height: 1.h),
-                            CustomTextFieldWidget(
-                              decoration: MethodHelper.greenUnderLineBorder(
-                                  hintText: langProvider.translate('email')),
-                              controller: emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              maxLength: 40,
-                              validator: (value) {
-                                if (value?.isEmpty == true) {
-                                  return langProvider.translate("emailReq");
-                                } else {
-                                  if (!RegExp(
-                                          r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
-                                      .hasMatch(value ?? "")) {
-                                    return langProvider
-                                        .translate('emailNotValid');
-                                  }
-                                  ;
-                                }
-                                return null;
-                              },
-                            ),
-                            MethodHelper.heightBox(height: 1.h),
-                            CustomTextFieldWidget(
-                              decoration: MethodHelper.greenUnderLineBorder(
-                                  hintText:
-                                      langProvider.translate("contactNumber")),
-                              controller: contactNumberController,
-                              keyboardType: TextInputType.number,
-                              maxLength: 10,
-                              validator: (value) {
-                                if (value?.isEmpty == true) {
-                                  return langProvider.translate("numberReq");
-                                }
-                                return null;
-                              },
-                            ),
-                            MethodHelper.heightBox(height: 1.h),
-                            CustomTextFieldWidget(
+                                ],
+                              ),
+                              MethodHelper.heightBox(height: 1.h),
+                              CustomTextFieldWidget(
                                 decoration: MethodHelper.greenUnderLineBorder(
-                                    hintText:
-                                        langProvider.translate('subject')),
-                                maxLines: 2,
+                                    hintText: langProvider.translate('email')),
+                                controller: emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                maxLength: 40,
                                 validator: (value) {
                                   if (value?.isEmpty == true) {
-                                    return langProvider.translate('subjectReq');
+                                    return langProvider.translate("emailReq");
+                                  } else {
+                                    if (!RegExp(
+                                            r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
+                                        .hasMatch(value ?? "")) {
+                                      return langProvider
+                                          .translate('emailNotValid');
+                                    }
+                                    ;
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.text,
-                                controller: subjectController),
-                            MethodHelper.heightBox(height: 1.h),
-                            CustomTextFieldWidget(
-                              decoration: MethodHelper.greenUnderLineBorder(
-                                  hintText: langProvider.translate("message")),
-                              controller: messageController,
-                              minLines: 2,
-                              keyboardType: TextInputType.text,
-                              validator: (value) {
-                                if (value?.isEmpty == true) {
-                                  return langProvider.translate("messageReq");
-                                }
-                                return null;
-                              },
-                            ),
-                            MethodHelper.heightBox(height: 3.h),
-                            SizedBox(
-                              width: 50.w,
-                              child: PrimaryBtn(
-                                  btnText: langProvider.translate("submit"),
-                                  onTap: () async {
-                                    if (contactFormKey.currentState!
-                                        .validate()) {
-                                      bool success =
-                                          await service.ContactVaidraj(
-                                              context: context,
-                                              firstName:
-                                                  firstNameController.text,
-                                              lastName: lastNameController.text,
-                                              email: emailController.text,
-                                              mobile:
-                                                  contactNumberController.text,
-                                              subject: subjectController.text,
-                                              message: messageController.text);
-                                      if (success) {
-                                        WidgetHelper.customSnackBar(
-                                            context: context,
-                                            title: langProvider
-                                                .translate('messageSent'));
-
-                                        /// clean controllers after success
-                                        firstNameController.clear();
-                                        lastNameController.clear();
-                                        emailController.clear();
-                                        contactNumberController.clear();
-                                        subjectController.clear();
-                                        messageController.clear();
-                                      }
+                              ),
+                              MethodHelper.heightBox(height: 1.h),
+                              CustomTextFieldWidget(
+                                decoration: MethodHelper.greenUnderLineBorder(
+                                    hintText: langProvider
+                                        .translate("contactNumber")),
+                                controller: contactNumberController,
+                                keyboardType: TextInputType.number,
+                                maxLength: 10,
+                                validator: (value) {
+                                  if (value?.isEmpty == true) {
+                                    return langProvider.translate("numberReq");
+                                  }
+                                  return null;
+                                },
+                              ),
+                              MethodHelper.heightBox(height: 1.h),
+                              CustomTextFieldWidget(
+                                  decoration: MethodHelper.greenUnderLineBorder(
+                                      hintText:
+                                          langProvider.translate('subject')),
+                                  maxLines: 2,
+                                  validator: (value) {
+                                    if (value?.isEmpty == true) {
+                                      return langProvider
+                                          .translate('subjectReq');
                                     }
-                                    ;
-                                  }),
-                            )
-                          ],
-                        ),
-                      ))
-                ],
-              ),
-            ))
-          ],
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  controller: subjectController),
+                              MethodHelper.heightBox(height: 1.h),
+                              CustomTextFieldWidget(
+                                decoration: MethodHelper.greenUnderLineBorder(
+                                    hintText:
+                                        langProvider.translate("message")),
+                                controller: messageController,
+                                minLines: 2,
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (value?.isEmpty == true) {
+                                    return langProvider.translate("messageReq");
+                                  }
+                                  return null;
+                                },
+                              ),
+                              MethodHelper.heightBox(height: 3.h),
+                              SizedBox(
+                                width: 50.w,
+                                child: PrimaryBtn(
+                                    btnText: langProvider.translate("submit"),
+                                    onTap: () async {
+                                      if (contactFormKey.currentState!
+                                          .validate()) {
+                                        bool success =
+                                            await service.ContactVaidraj(
+                                                context: context,
+                                                firstName:
+                                                    firstNameController.text,
+                                                lastName:
+                                                    lastNameController.text,
+                                                email: emailController.text,
+                                                mobile: contactNumberController
+                                                    .text,
+                                                subject: subjectController.text,
+                                                message:
+                                                    messageController.text);
+                                        if (success) {
+                                          WidgetHelper.customSnackBar(
+                                              context: context,
+                                              title: langProvider
+                                                  .translate('messageSent'));
+
+                                          /// clean controllers after success
+                                          firstNameController.clear();
+                                          lastNameController.clear();
+                                          emailController.clear();
+                                          contactNumberController.clear();
+                                          subjectController.clear();
+                                          messageController.clear();
+                                        }
+                                      }
+                                      ;
+                                    }),
+                              )
+                            ],
+                          ),
+                        ))
+                  ],
+                ),
+              ))
+            ],
+          ),
         )),
       ),
     );

@@ -28,7 +28,7 @@ class Data {
   String? slot;
   String? subject;
   String? message;
-  String? userId;
+  int? userId;
   String? name;
   String? email;
   String? dob;

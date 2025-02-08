@@ -9,6 +9,7 @@ import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_text_field_widget.dart';
 import 'package:vaidraj/widgets/loader.dart';
@@ -20,8 +21,9 @@ import '../../widgets/custom_dropdown.dart';
 import '../home/home_screen.dart';
 
 class Appointment extends StatefulWidget {
-  const Appointment({super.key, this.fromPage = false});
+  const Appointment({super.key, this.fromPage = false, this.diseaseId});
   final bool fromPage;
+  final int? diseaseId;
   @override
   State<Appointment> createState() => _AppointmentState();
 }
@@ -48,6 +50,9 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.diseaseId != null) {
+      diseaseId = widget.diseaseId;
+    }
     appointmentDateController.text =
         DateFormat('yyyy-MM-dd').format(DateTime.now());
     slotToBook = slots[0];
@@ -106,6 +111,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
           appBar: widget.fromPage
               ? AppBar(
                   backgroundColor: AppColors.whiteColor,
+                  surfaceTintColor: AppColors.whiteColor,
                   title: Text(
                     langProvider.translate("appointment"),
                     style: TextSizeHelper.mediumTextStyle
@@ -394,6 +400,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                             child: Loader(),
                           )
                         : CustomDropDownWidget(
+                            value: !widget.fromPage ? null : diseaseId as int,
                             alignment: Alignment.centerLeft,
                             prefixIcon: Icons.storefront_outlined,
                             decoration: MethodHelper.greenUnderLineBorder(
@@ -504,12 +511,17 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                             appointmentDateController.text,
                                         diseaseId: diseaseId ?? 0,
                                         message: messageController.text,
-                                        slot: slotToBook ?? "Not selected",
+                                        slot: slotToBook,
                                         subject: subjectController.text,
                                         context: context)
                                     .then((success) {
                                   if (success) {
                                     emptyController();
+                                  } else {
+                                    WidgetHelper.customSnackBar(
+                                        context: context,
+                                        title: "Somthing went Wrong",
+                                        isError: true);
                                   }
                                 });
 

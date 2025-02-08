@@ -51,21 +51,26 @@ class _AllYouTubeVideosState extends State<AllArticlePage> with NavigateHelper {
                     children: [
                       // CustomSearchBar(),
                       Expanded(
-                          child: StreamBuilder(
-                        stream: langProvider.localeStream,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: Loader(),
-                            );
-                          } else {
-                            bool isEnglish = snapshot.data == "en";
-                            return isEnglish
-                                ? RenderAllArticle()
-                                : RenderAllArticle();
-                          }
+                          child: RefreshIndicator(
+                        onRefresh: () async {
+                          Future.delayed(Duration(seconds: 1));
                         },
+                        child: StreamBuilder(
+                          stream: langProvider.localeStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: Loader(),
+                              );
+                            } else {
+                              bool isEnglish = snapshot.data == "en";
+                              return isEnglish
+                                  ? RenderAllArticle()
+                                  : RenderAllArticle();
+                            }
+                          },
+                        ),
                       )),
                     ],
                   )),

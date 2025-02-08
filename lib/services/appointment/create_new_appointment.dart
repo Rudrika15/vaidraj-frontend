@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/appointment_model.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
@@ -36,6 +37,7 @@ class AppointmentService {
       };
       Response response = await HttpHelper.post(
           uri: ApiHelper.createAppointment, context: context, body: body);
+      log(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success']) {

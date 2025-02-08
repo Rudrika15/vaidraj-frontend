@@ -26,13 +26,15 @@ class ViewProductOrAppointment extends StatefulWidget {
       required this.description,
       required this.foolPlan,
       required this.videos,
-      required this.articles});
+      required this.articles,
+      required this.diseaseId});
   final String title;
   final String image;
   final String description;
   final String foolPlan;
   final List<Videos>? videos;
   final List<Articles>? articles;
+  final int diseaseId;
   @override
   State<ViewProductOrAppointment> createState() =>
       _ViewProductOrAppointmentState();
@@ -104,8 +106,9 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                       // logic to send user to appointment page
                       push(
                           context,
-                          const Appointment(
+                          Appointment(
                             fromPage: true,
+                            diseaseId: widget.diseaseId,
                           ));
                     }),
               ),

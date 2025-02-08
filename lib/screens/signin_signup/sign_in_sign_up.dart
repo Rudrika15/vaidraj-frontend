@@ -24,8 +24,9 @@ import '../../widgets/custom_text_field_widget.dart';
 import '../../widgets/primary_btn.dart';
 
 class SignInSignUp extends StatefulWidget {
-  const SignInSignUp({super.key, required this.UserStatus});
+  const SignInSignUp({super.key, required this.UserStatus, this.phoneNumber});
   final String UserStatus;
+  final String? phoneNumber;
   @override
   State<SignInSignUp> createState() => _SignInSignUpState();
 }
@@ -53,6 +54,9 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.phoneNumber != null) {
+      numberController.text = widget.phoneNumber ?? "";
+    }
     var getBranch = Provider.of<GetBrachProvider>(context, listen: false);
     getBranch.getBranch(context: context);
   }
@@ -109,8 +113,9 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                        widget.UserStatus == "STAFF"
-                            ? langProvider.translate("welcomeBackDoctor")
+                        widget.UserStatus == "STAFF" ||
+                                widget.UserStatus == "ADMIN"
+                            ? langProvider.translate("Welcome")
                             : widget.UserStatus == "PATIENT"
                                 ? langProvider.translate("welcomeBack")
                                 : langProvider.translate("registration"),
@@ -124,9 +129,9 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                         ? 25.w
                         : widget.UserStatus == "NEW"
                             ? 28.w
-                            : 16.w),
+                            : 32.w),
                 MethodHelper.heightBox(height: 5.h),
-                widget.UserStatus == "STAFF"
+                widget.UserStatus == "STAFF" || widget.UserStatus == "ADMIN"
                     ?
 
                     /// login staff member
