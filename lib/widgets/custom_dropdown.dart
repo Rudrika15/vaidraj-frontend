@@ -17,7 +17,8 @@ class CustomDropDownWidget extends StatelessWidget {
       this.validator,
       this.alignment = Alignment.center,
       this.decoration,
-      this.dropdownColor});
+      this.dropdownColor,
+      this.enabled = true});
 
   final List<DropdownMenuItem<Object?>>? items;
   final void Function(Object?)? onChanged;
@@ -29,6 +30,7 @@ class CustomDropDownWidget extends StatelessWidget {
   final AlignmentGeometry alignment;
   final InputDecoration? decoration;
   final Color? dropdownColor;
+  final bool enabled;
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<Object?>(
@@ -44,6 +46,7 @@ class CustomDropDownWidget extends StatelessWidget {
         style: TextSizeHelper.smallTextStyle.copyWith(color: Colors.black),
         decoration: decoration ??
             BorderHelper.inputBorder.copyWith(
+                enabled: enabled,
                 hintText: hintText,
                 hintStyle:
                     TextSizeHelper.smallTextStyle.copyWith(color: Colors.black),

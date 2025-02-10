@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
-import 'package:vaidraj/screens/admin_screens/account_screen.dart';
+import 'package:vaidraj/screens/profile_page/account_screen.dart';
 import 'package:vaidraj/screens/admin_screens/home_screen.dart';
 import 'package:vaidraj/screens/admin_screens/patients_screen.dart';
 import 'package:vaidraj/screens/notification/notifications_screen.dart';
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     AdminHomeScreen(),
     AdminAppointmentScreen(),
     AdminPatientsScreen(),
-    AdminProfilePage()
+    ProfilePage()
   ];
   final List<String> navTabNames = const ["Appointment", "Patients", "Account"];
 
@@ -448,7 +449,8 @@ class DrawerHeaderWidget extends StatefulWidget {
   State<DrawerHeaderWidget> createState() => _DrawerHeaderWidgetState();
 }
 
-class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
+class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget>
+    with NavigateHelper {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
@@ -460,16 +462,35 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget> {
           children: [
             CustomContainer(
               borderColor: AppColors.brownColor,
+              backGroundColor: AppColors.greenColor,
               shape: BoxShape.circle,
               borderWidth: 2,
-              child: CircleAvatar(
-                backgroundColor: AppColors.backgroundColor,
-                radius: 10.w,
-                child: Text(
-                    widget.userName.isNotEmpty ? widget.userName[0] : "",
-                    overflow: TextOverflow.ellipsis,
-                    style: TextSizeHelper.mediumHeaderStyle),
-              ),
+              child: Stack(children: [
+                CircleAvatar(
+                  backgroundColor: AppColors.backgroundColor,
+                  radius: 10.w,
+                  child: Text(
+                      widget.userName.isNotEmpty ? widget.userName[0] : "",
+                      overflow: TextOverflow.ellipsis,
+                      style: TextSizeHelper.mediumHeaderStyle),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () => push(context, ProfilePage()),
+                    child: CustomContainer(
+                      shape: BoxShape.circle,
+                      borderColor: AppColors.brownColor,
+                      backGroundColor: AppColors.brownColor,
+                      child: Icon(
+                        Icons.edit,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ),
+                )
+              ]),
             ),
             MethodHelper.heightBox(height: 2.h),
             Text(

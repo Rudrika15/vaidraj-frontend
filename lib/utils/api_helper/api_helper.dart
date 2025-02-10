@@ -19,6 +19,7 @@ class ApiHelper {
       "$baseUrl/medicalHistory/$id";
   static String contact = "$baseUrl/contact";
   static String feedback = "$baseUrl/feedback";
+  static String updateProfile = "$baseUrl/profileUpdate";
   static String appointments = "$baseUrl/appointments";
   static String getPrescriptionPdf({required int prescriptionId}) =>
       "$baseUrl/generatePdf/$prescriptionId";
