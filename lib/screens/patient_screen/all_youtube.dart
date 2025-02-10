@@ -129,86 +129,91 @@ class _RenderSpecialityState extends State<RenderYouTubeVideos>
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      child: PagedListView(
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSizes.size20, vertical: AppSizes.size10),
-          shrinkWrap: true,
-          pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<YoutubeVideoInfo>(
-            noItemsFoundIndicatorBuilder: (context) => CustomContainer(
-                alignment: Alignment.center,
-                //// will show to let user start controller again
-                child: GestureDetector(
-                  onTap: () async {
-                    _pagingController.refresh();
-                  },
-                  child: const CustomContainer(
-                    shape: BoxShape.circle,
-                    child: Icon(
-                      Icons.refresh_outlined,
-                      color: AppColors.brownColor,
-                      size: AppSizes.size40,
-                    ),
-                  ),
-                )),
-            itemBuilder: (context, item, index) => CustomContainer(
-                width: 90.w,
-                margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
-                backGroundColor: AppColors.lightBackGroundColor,
-                borderColor: AppColors.brownColor,
-                borderRadius: BorderRadius.circular(AppSizes.size10),
-                borderWidth: 1,
-                child: GestureDetector(
-                    onTap: () {
-                      if (item.youtubeLink?.contains("<iframe") ?? false) {
-                        push(
-                            context,
-                            CustomVideoPlayer(
-                              videoLink: MethodHelper.extractVideoId(
-                                iframeEmbedUrl: item.youtubeLink ?? "",
-                              ),
-                              heading: item.displayName ?? "",
-                              description:
-                                  item.disease?.displayDescription ?? "",
-                            ));
-                      } else {
-                        push(
-                            context,
-                            CustomVideoPlayer(
-                              videoLink: YoutubePlayer.convertUrlToId(
-                                      item.youtubeLink ?? "") ??
-                                  "",
-                              heading: item.displayName ?? "",
-                              description:
-                                  item.disease?.displayDescription ?? "",
-                            ));
-                      }
+      child: RefreshIndicator(
+        onRefresh: () async {
+          _pagingController.refresh();
+        },
+        child: PagedListView(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.size20, vertical: AppSizes.size10),
+            shrinkWrap: true,
+            pagingController: _pagingController,
+            builderDelegate: PagedChildBuilderDelegate<YoutubeVideoInfo>(
+              noItemsFoundIndicatorBuilder: (context) => CustomContainer(
+                  alignment: Alignment.center,
+                  //// will show to let user start controller again
+                  child: GestureDetector(
+                    onTap: () async {
+                      _pagingController.refresh();
                     },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(AppSizes.size10),
-                              topRight: Radius.circular(AppSizes.size10)),
-                          child: ImageOrDefaultImage(
-                              image:
-                                  "${AppStrings.thumbnailPhotoUrl}/${item.thumbnail ?? ""}"),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 3.w),
-                          child: Text(
-                            item.displayName ?? '',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextSizeHelper.smallHeaderStyle
-                                .copyWith(color: AppColors.brownColor),
+                    child: const CustomContainer(
+                      shape: BoxShape.circle,
+                      child: Icon(
+                        Icons.refresh_outlined,
+                        color: AppColors.brownColor,
+                        size: AppSizes.size40,
+                      ),
+                    ),
+                  )),
+              itemBuilder: (context, item, index) => CustomContainer(
+                  width: 90.w,
+                  margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
+                  backGroundColor: AppColors.lightBackGroundColor,
+                  borderColor: AppColors.brownColor,
+                  borderRadius: BorderRadius.circular(AppSizes.size10),
+                  borderWidth: 1,
+                  child: GestureDetector(
+                      onTap: () {
+                        if (item.youtubeLink?.contains("<iframe") ?? false) {
+                          push(
+                              context,
+                              CustomVideoPlayer(
+                                videoLink: MethodHelper.extractVideoId(
+                                  iframeEmbedUrl: item.youtubeLink ?? "",
+                                ),
+                                heading: item.displayName ?? "",
+                                description:
+                                    item.disease?.displayDescription ?? "",
+                              ));
+                        } else {
+                          push(
+                              context,
+                              CustomVideoPlayer(
+                                videoLink: YoutubePlayer.convertUrlToId(
+                                        item.youtubeLink ?? "") ??
+                                    "",
+                                heading: item.displayName ?? "",
+                                description:
+                                    item.disease?.displayDescription ?? "",
+                              ));
+                        }
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(AppSizes.size10),
+                                topRight: Radius.circular(AppSizes.size10)),
+                            child: ImageOrDefaultImage(
+                                image:
+                                    "${AppStrings.thumbnailPhotoUrl}/${item.thumbnail ?? ""}"),
                           ),
-                        )
-                      ],
-                    ))),
-          )),
+                          Padding(
+                            padding: EdgeInsets.only(left: 3.w),
+                            child: Text(
+                              item.displayName ?? '',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextSizeHelper.smallHeaderStyle
+                                  .copyWith(color: AppColors.brownColor),
+                            ),
+                          )
+                        ],
+                      ))),
+            )),
+      ),
     );
   }
 }

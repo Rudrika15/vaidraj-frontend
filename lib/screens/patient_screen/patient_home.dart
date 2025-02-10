@@ -23,7 +23,6 @@ import 'package:vaidraj/widgets/primary_btn.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../widgets/Custom_video_player.dart';
 import '../../widgets/custom_exit_dialog_widget.dart';
-import '../../widgets/custom_searchbar.dart';
 import '../../widgets/image_or_default_image_widget.dart';
 import '../../widgets/in_app_heading.dart';
 

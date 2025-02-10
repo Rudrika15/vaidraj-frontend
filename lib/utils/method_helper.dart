@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vaidraj/constants/color.dart';
 
 import '../constants/text_size.dart';
@@ -83,5 +84,13 @@ class MethodHelper {
         : '';
 
     return firstNameInitial + lastNameInitial;
+  }
+
+  static Future<void> dialNumber(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    await launchUrl(launchUri);
   }
 }

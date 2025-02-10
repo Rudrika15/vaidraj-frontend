@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/appointment_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
@@ -141,7 +142,13 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                         PrimaryBtn(
                           btnText: langProvider.translate("sendEmail"),
                           onTap: () {
-                            // add logic to email
+                            pushRemoveUntil(
+                                context,
+                                HomeScreen(
+                                  isDoctor: false,
+                                  isAdmin: false,
+                                  screenIndex: 7,
+                                ));
                           },
                           height: 3.h,
                           width: 25.w,
@@ -155,7 +162,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                         PrimaryBtn(
                           btnText: langProvider.translate("call"),
                           onTap: () {
-                            // add logic to call
+                            MethodHelper.dialNumber(AppStrings.mobile);
                           },
                           height: 3.h,
                           width: 25.w,

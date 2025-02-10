@@ -22,7 +22,7 @@ import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../widgets/custom_text_field_widget.dart';
 
 class GetInTouchScreen extends StatefulWidget {
-  GetInTouchScreen({super.key});
+  const GetInTouchScreen({super.key});
 
   @override
   State<GetInTouchScreen> createState() => _GetInTouchScreenState();
@@ -48,7 +48,6 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
   ContactService service = ContactService();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     var provider = Provider.of<GetBrachProvider>(context, listen: false);
     if (mounted) {
@@ -104,35 +103,33 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
               ),
               SafeArea(
                   child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: AppSizes.size30),
+                padding: const EdgeInsets.only(bottom: AppSizes.size30),
                 child: Column(
                   children: [
                     LogoWithInfoContainer(
                       children: [
-                        const ContatInfoRender(
+                        const ContactInfoRender(
+                            icon: Icons.email, info: AppStrings.email),
+                        const ContactInfoRender(
                           icon: Icons.email,
-                          info: "drkrishnaravalmcdcr@gmail.com",
-                        ),
-                        const ContatInfoRender(
-                          icon: Icons.email,
-                          info: "scientistdrhraval@gmail.com",
+                          info: AppStrings.email2,
                         ),
                         MethodHelper.heightBox(height: 2.h),
-                        const ContatInfoRender(
+                        const ContactInfoRender(
                           icon: Icons.phone,
-                          info: "+91 98247 49263",
+                          info: AppStrings.mobile,
                         ),
-                        const ContatInfoRender(
+                        const ContactInfoRender(
                           icon: Icons.phone,
-                          info: "+91 88288 88202",
+                          info: AppStrings.mobile2,
                         ),
-                        const ContatInfoRender(
+                        const ContactInfoRender(
                           icon: Icons.phone,
-                          info: "+91 88980 88980 ,",
+                          info: AppStrings.mobile3,
                         ),
-                        const ContatInfoRender(
+                        const ContactInfoRender(
                           icon: Icons.phone,
-                          info: "+91 98259 42366",
+                          info: AppStrings.mobile4,
                         ),
                       ],
                     ),
@@ -236,7 +233,6 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
                                       return langProvider
                                           .translate('emailNotValid');
                                     }
-                                    ;
                                   }
                                   return null;
                                 },
@@ -322,7 +318,6 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
                                           messageController.clear();
                                         }
                                       }
-                                      ;
                                     }),
                               )
                             ],
@@ -374,8 +369,8 @@ class LogoWithInfoContainer extends StatelessWidget {
   }
 }
 
-class ContatInfoRender extends StatelessWidget {
-  const ContatInfoRender({super.key, required this.icon, required this.info});
+class ContactInfoRender extends StatelessWidget {
+  const ContactInfoRender({super.key, required this.icon, required this.info});
   final IconData icon;
   final String info;
   @override
@@ -408,7 +403,7 @@ class AddressRender extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.size10, vertical: AppSizes.size10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,7 +411,7 @@ class AddressRender extends StatelessWidget {
           MethodHelper.widthBox(width: 5.w),
           const Padding(
             padding: EdgeInsets.only(top: AppSizes.size10),
-            child: const Icon(Icons.location_on, color: AppColors.greenColor),
+            child: Icon(Icons.location_on, color: AppColors.greenColor),
           ),
           MethodHelper.widthBox(width: 2.w), // Bullet point icon
           const SizedBox(width: 8), // Space between the bullet and the text

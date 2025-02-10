@@ -125,45 +125,50 @@ class _RenderSpecialityState extends State<RenderSpeciality> {
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
-      child: PagedGridView(
-          showNewPageErrorIndicatorAsGridChild: true,
-          showNoMoreItemsIndicatorAsGridChild: true,
-          showNewPageProgressIndicatorAsGridChild: true,
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSizes.size20, vertical: AppSizes.size10),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: AppSizes.size10,
-              mainAxisSpacing: AppSizes.size10),
-          shrinkWrap: true,
-          pagingController: _pagingController,
-          builderDelegate: PagedChildBuilderDelegate<Diseases>(
-            noItemsFoundIndicatorBuilder: (context) => CustomContainer(
-                alignment: Alignment.center,
-                //// will show to let user start controller again
-                child: GestureDetector(
-                  onTap: () async {
-                    _pagingController.refresh();
-                  },
-                  child: CustomContainer(
-                    shape: BoxShape.circle,
-                    child: Icon(
-                      Icons.refresh_outlined,
-                      color: AppColors.brownColor,
-                      size: AppSizes.size40,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          _pagingController.refresh();
+        },
+        child: PagedGridView(
+            showNewPageErrorIndicatorAsGridChild: true,
+            showNoMoreItemsIndicatorAsGridChild: true,
+            showNewPageProgressIndicatorAsGridChild: true,
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSizes.size20, vertical: AppSizes.size10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: AppSizes.size10,
+                mainAxisSpacing: AppSizes.size10),
+            shrinkWrap: true,
+            pagingController: _pagingController,
+            builderDelegate: PagedChildBuilderDelegate<Diseases>(
+              noItemsFoundIndicatorBuilder: (context) => CustomContainer(
+                  alignment: Alignment.center,
+                  //// will show to let user start controller again
+                  child: GestureDetector(
+                    onTap: () async {
+                      _pagingController.refresh();
+                    },
+                    child: const CustomContainer(
+                      shape: BoxShape.circle,
+                      child: Icon(
+                        Icons.refresh_outlined,
+                        color: AppColors.brownColor,
+                        size: AppSizes.size40,
+                      ),
                     ),
-                  ),
-                )),
-            itemBuilder: (context, item, index) => SpecialityTempletContainer(
-              image: "${AppStrings.dieasesPhotoUrl}/${item.thumbnail ?? ""}",
-              title: item.displayName ?? "",
-              description: item.displayDescription ?? "",
-              videos: item.videos ?? [],
-              articles: item.articles ?? [],
-              foodPlan: item.displayFoodPlan ?? "",
-              diseaseId: item.id ?? -1,
-            ),
-          )),
+                  )),
+              itemBuilder: (context, item, index) => SpecialityTempletContainer(
+                image: "${AppStrings.dieasesPhotoUrl}/${item.thumbnail ?? ""}",
+                title: item.displayName ?? "",
+                description: item.displayDescription ?? "",
+                videos: item.videos ?? [],
+                articles: item.articles ?? [],
+                foodPlan: item.displayFoodPlan ?? "",
+                diseaseId: item.id ?? -1,
+              ),
+            )),
+      ),
     );
   }
 }

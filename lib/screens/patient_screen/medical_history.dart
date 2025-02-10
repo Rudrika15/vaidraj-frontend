@@ -115,98 +115,104 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
 
   @override
   Widget build(BuildContext context) {
-    return PagedListView<int, Appointments>(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
-      pagingController: pagingController,
-      builderDelegate: PagedChildBuilderDelegate<Appointments>(
-        itemBuilder: (context, item, index) {
-          return CustomContainer(
-            margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
-            padding: const EdgeInsets.all(AppSizes.size10),
-            width: 80.w,
-            borderColor: AppColors.brownColor,
-            borderRadius: BorderRadius.circular(AppSizes.size10),
-            borderWidth: 1,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        flex: 2,
-                        child: Text(
-                          item.prescriptions?[0].user?.name ?? "",
-                          style: TextSizeHelper.smallHeaderStyle
-                              .copyWith(color: AppColors.brownColor),
-                        )),
-                    MethodHelper.widthBox(width: 2.w),
-                    Text(
-                      item.date ?? "",
-                      style: TextSizeHelper.xSmallHeaderStyle,
-                    ),
-                  ],
-                ),
-                MethodHelper.heightBox(height: 1.h),
-                Text(
-                  'Note : ${item.prescriptions?[0].note}',
-                  style: TextSizeHelper.xSmallTextStyle,
-                ),
-                if (item.prescriptions?[0].otherMedicines?.isNotEmpty == true)
+    return RefreshIndicator(
+      onRefresh: () async {
+        pagingController.refresh();
+      },
+      child: PagedListView<int, Appointments>(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
+        pagingController: pagingController,
+        builderDelegate: PagedChildBuilderDelegate<Appointments>(
+          itemBuilder: (context, item, index) {
+            return CustomContainer(
+              margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
+              padding: const EdgeInsets.all(AppSizes.size10),
+              width: 80.w,
+              borderColor: AppColors.brownColor,
+              borderRadius: BorderRadius.circular(AppSizes.size10),
+              borderWidth: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          flex: 2,
+                          child: Text(
+                            item.prescriptions?[0].user?.name ?? "",
+                            style: TextSizeHelper.smallHeaderStyle
+                                .copyWith(color: AppColors.brownColor),
+                          )),
+                      MethodHelper.widthBox(width: 2.w),
+                      Text(
+                        item.date ?? "",
+                        style: TextSizeHelper.xSmallHeaderStyle,
+                      ),
+                    ],
+                  ),
+                  MethodHelper.heightBox(height: 1.h),
                   Text(
-                    'Other Medicines : ${item.prescriptions?[0].otherMedicines}',
+                    'Note : ${item.prescriptions?[0].note}',
                     style: TextSizeHelper.xSmallTextStyle,
                   ),
-                MethodHelper.heightBox(height: 1.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        await pdfService.downloadPdf(
-                            context,
-                            item.prescriptions?[0].id ?? 0,
-                            item.prescriptions?[0].diseaseId.toString() ?? "");
-                      },
-                      child: CustomContainer(
-                        padding: const EdgeInsets.all(AppSizes.size10 - 5),
-                        borderColor: AppColors.brownColor,
-                        borderRadius: BorderRadius.circular(AppSizes.size10),
-                        borderWidth: 0.5,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.download,
-                              color: AppColors.brownColor,
-                              size: AppSizes.size10 + 5,
-                            ),
-                            MethodHelper.widthBox(width: 2.w),
-                            Text(
-                              'Get Prescription',
-                              style: TextSizeHelper.xSmallTextStyle,
-                            )
-                          ],
+                  if (item.prescriptions?[0].otherMedicines?.isNotEmpty == true)
+                    Text(
+                      'Other Medicines : ${item.prescriptions?[0].otherMedicines}',
+                      style: TextSizeHelper.xSmallTextStyle,
+                    ),
+                  MethodHelper.heightBox(height: 1.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          await pdfService.downloadPdf(
+                              context,
+                              item.prescriptions?[0].id ?? 0,
+                              item.prescriptions?[0].diseaseId.toString() ??
+                                  "");
+                        },
+                        child: CustomContainer(
+                          padding: const EdgeInsets.all(AppSizes.size10 - 5),
+                          borderColor: AppColors.brownColor,
+                          borderRadius: BorderRadius.circular(AppSizes.size10),
+                          borderWidth: 0.5,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.download,
+                                color: AppColors.brownColor,
+                                size: AppSizes.size10 + 5,
+                              ),
+                              MethodHelper.widthBox(width: 2.w),
+                              Text(
+                                'Get Prescription',
+                                style: TextSizeHelper.xSmallTextStyle,
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          );
-        },
-        noItemsFoundIndicatorBuilder: (context) {
-          return Center(
-            child: Text(
-              'No Medical History Found',
-              style: TextSizeHelper.smallHeaderStyle,
-            ),
-          );
-        },
+                      )
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
+          noItemsFoundIndicatorBuilder: (context) {
+            return Center(
+              child: Text(
+                'No Medical History Found',
+                style: TextSizeHelper.smallHeaderStyle,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

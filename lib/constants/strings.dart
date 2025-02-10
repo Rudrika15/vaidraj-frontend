@@ -15,6 +15,18 @@ class AppStrings {
 
   ///
   static const String image3 = "assets/images/image3.png";
+  ///
+  static const String mobile = "+91 9824749263";
+  ///
+  static const String mobile2 = "+91 8828888202";
+  ///
+  static const String mobile3 = "+91 8898088980";
+  ///
+  static const String mobile4 = "+91 9825942366";
+  ///
+  static const String email = "drkrishnaravalmcdcr@gmail.com";
+  ///
+  static const String email2 = "scientistdrhraval@gmail.com";
 
   ///
   static const String dieasesPhotoUrl =
