@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
                             backGroundColor: AppColors.backgroundColor,
                             borderRadius: BorderRadius.circular(5.w),
                             child: Text(
-                              "${langProvider.currentLocale == "en" ? "English" : "हिन्दी"}",
+                              "${langProvider.currentLocale != "en" ? "English" : "हिन्दी"}",
                               style: TextSizeHelper.smallHeaderStyle,
                             ),
                           ),

@@ -16,6 +16,7 @@ import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_dropdown.dart';
 import 'package:vaidraj/widgets/custom_searchbar.dart';
 import '../../widgets/loader.dart';
+import '../../widgets/primary_btn.dart';
 import '../home/home_screen.dart';
 import 'patients_history.dart';
 
@@ -68,23 +69,27 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
               screenIndex: 1,
             ));
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomSearchBar(
-              onSubmitted: (value) =>
-                  Provider.of<MyPatientsProvider>(context, listen: false)
-                      .setSearchQuery = value),
-          if (role == "admin")
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Consumer2<GetBrachProvider, MyPatientsProvider>(
-                  builder: (context, brachProvider, myPatientProvider, child) {
-                    return brachProvider.isLoading
-                        ? Center(
+      child: Consumer2<GetBrachProvider, MyPatientsProvider>(
+        builder: (context, brachProvider, myPatientProvider, child) =>
+            RefreshIndicator(
+          onRefresh: () async {
+            myPatientProvider.pagingController.refresh();
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomSearchBar(
+                  onSubmitted: (value) =>
+                      Provider.of<MyPatientsProvider>(context, listen: false)
+                          .setSearchQuery = value),
+              if (role == "admin")
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    brachProvider.isLoading
+                        ? const Center(
                             child: Loader(),
                           )
                         : CustomDropDownWidget(
@@ -131,36 +136,63 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                               }
                               return null;
                             },
-                          );
-                  },
-                ),
-                MethodHelper.widthBox(width: 5.w)
-              ],
-            ),
-          Expanded(
-            child: Consumer<MyPatientsProvider>(
-              builder: (context, patientsProvider, child) =>
-                  PagedListView.separated(
-                      separatorBuilder: (context, index) => Divider(
-                            endIndent: 5.w,
-                            indent: 5.w,
-                            height: 2.h,
                           ),
-                      shrinkWrap: true,
-                      pagingController: patientsProvider.pagingController,
-                      builderDelegate: PagedChildBuilderDelegate<PatientsInfo>(
-                        itemBuilder: (context, item, index) {
-                          print(item.appointment?.userId);
-                          return MyPatientsListTile(
-                              userId: item.appointment?.userId ?? 0,
-                              contactNumber: item.appointment?.contact ?? "",
-                              role: role,
-                              name: item.appointment?.name ?? "");
-                        },
-                      )),
-            ),
-          )
-        ],
+                    MethodHelper.widthBox(width: 5.w)
+                  ],
+                ),
+              Expanded(
+                child: PagedListView.separated(
+                    separatorBuilder: (context, index) => Divider(
+                          endIndent: 5.w,
+                          indent: 5.w,
+                          height: 2.h,
+                        ),
+                    shrinkWrap: true,
+                    pagingController: myPatientProvider.pagingController,
+                    builderDelegate: PagedChildBuilderDelegate<PatientsInfo>(
+                      noItemsFoundIndicatorBuilder: (context) => SizedBox(
+                        height: 60.h,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "No Patients Found",
+                                style: TextSizeHelper.smallHeaderStyle
+                                    .copyWith(color: AppColors.brownColor),
+                              ),
+                              MethodHelper.heightBox(height: 5.h),
+                              SizedBox(
+                                height: 5.h,
+                                width: 25.w,
+                                child: PrimaryBtn(
+                                    btnText: "Refresh",
+                                    textStyle: TextSizeHelper.smallTextStyle
+                                        .copyWith(color: AppColors.whiteColor),
+                                    onTap: () async {
+                                      print("clicked");
+                                      myPatientProvider.pagingController
+                                          .refresh();
+                                    }),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      itemBuilder: (context, item, index) {
+                        print(item.appointment?.userId);
+                        return MyPatientsListTile(
+                            userId: item.appointment?.userId ?? 0,
+                            contactNumber: item.appointment?.contact ?? "",
+                            role: role,
+                            name: item.appointment?.name ?? "");
+                      },
+                    )),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

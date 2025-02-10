@@ -101,9 +101,6 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                     )
                                   : role == "admin"
                                       ? CustomDropDownWidget(
-                                          value: doctorAppointmentProvider
-                                                  .branchId ??
-                                              '0',
                                           decoration: BorderHelper
                                               .dropDownOutlinedBorder(
                                                   suffixIcon: Icons
@@ -164,31 +161,27 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                         )
                                       : const SizedBox.shrink(),
                               MethodHelper.widthBox(width: 2.w),
-                              Consumer<AppointmentProvider>(
-                                builder: (context, doctorAppointmentProvider,
-                                        child) =>
-                                    GestureDetector(
-                                  /// choose new date
-                                  onTap: () => doctorAppointmentProvider
-                                      .chooseDateAppointments(context: context),
-                                  child: CustomContainer(
-                                    padding: EdgeInsets.all(AppSizes.size10),
-                                    borderColor: AppColors.brownColor,
-                                    borderWidth: 1,
-                                    borderRadius:
-                                        BorderRadius.circular(AppSizes.size30),
-                                    height: 6.h,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(doctorAppointmentProvider.date),
-                                        MethodHelper.widthBox(width: 2.w),
-                                        const Icon(
-                                          Icons.calendar_month,
-                                          color: AppColors.brownColor,
-                                        )
-                                      ],
-                                    ),
+                              GestureDetector(
+                                /// choose new date
+                                onTap: () => doctorAppointmentProvider
+                                    .chooseDateAppointments(context: context),
+                                child: CustomContainer(
+                                  padding: EdgeInsets.all(AppSizes.size10),
+                                  borderColor: AppColors.brownColor,
+                                  borderWidth: 1,
+                                  borderRadius:
+                                      BorderRadius.circular(AppSizes.size30),
+                                  height: 6.h,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(doctorAppointmentProvider.date),
+                                      MethodHelper.widthBox(width: 2.w),
+                                      const Icon(
+                                        Icons.calendar_month,
+                                        color: AppColors.brownColor,
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
@@ -209,6 +202,46 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                     doctorAppointmentProvider.pagingController,
                                 builderDelegate: PagedChildBuilderDelegate<
                                         UpcomingAppointmentInfo>(
+                                    noItemsFoundIndicatorBuilder: (context) =>
+                                        SizedBox(
+                                          height: 60.h,
+                                          child: Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  "No Appointment Found",
+                                                  style: TextSizeHelper
+                                                      .smallHeaderStyle
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .brownColor),
+                                                ),
+                                                MethodHelper.heightBox(
+                                                    height: 5.h),
+                                                SizedBox(
+                                                  height: 5.h,
+                                                  width: 25.w,
+                                                  child: PrimaryBtn(
+                                                      btnText: "Refresh",
+                                                      textStyle: TextSizeHelper
+                                                          .smallTextStyle
+                                                          .copyWith(
+                                                              color: AppColors
+                                                                  .whiteColor),
+                                                      onTap: () async {
+                                                        print("clicked");
+                                                        doctorAppointmentProvider
+                                                            .pagingController
+                                                            .refresh();
+                                                      }),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                     itemBuilder: (context, item, index) =>
                                         CustomContainer(
                                           margin: const EdgeInsets.symmetric(

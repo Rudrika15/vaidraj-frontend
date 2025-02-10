@@ -13,7 +13,7 @@ class MyPatientService {
       required int currentPage,
       required int perPage}) async {
     try {
-      print(ApiHelper.getMyPatients(
+      log(ApiHelper.getMyPatients(
           branchId: branchId, currentPage: currentPage, perPage: perPage));
       Response response = await HttpHelper.get(
         context: context,

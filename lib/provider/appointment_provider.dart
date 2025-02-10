@@ -165,6 +165,7 @@ class AppointmentProvider extends ChangeNotifier {
   /// get todays appointments
   Future<void> getTodaysAppointments({required BuildContext context}) async {
     _isLoading = true;
+    _todaysAppointmentsModel = null;
     _todaysAppointmentsModel =
         await todaysService.getTodaysAppointments(context: context);
     _isLoading = false;
