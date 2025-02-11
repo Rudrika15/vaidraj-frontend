@@ -44,7 +44,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
   DateTime? dateTime;
   GlobalKey<FormState> newForm = GlobalKey<FormState>();
   UpdateUserProfileService service = UpdateUserProfileService();
-  UpdateProfileModel model = UpdateProfileModel();
+
   ////
   Future<void> getUserInfo() async {
     nameController.text = await SharedPrefs.getName();
@@ -81,7 +81,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: Consumer2<LocalizationProvider, GetBrachProvider>(
-            builder: (context, langProvider, branchProvider, child) =>
+            builder: (profileContext, langProvider, branchProvider, child) =>
                 CustomContainer(
                   width: 100.w,
                   backGroundColor: AppColors
@@ -217,7 +217,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                             onTap: () async {
                                               if (isEditing) {
                                                 dateTime = await showDatePicker(
-                                                    context: context,
+                                                    context: profileContext,
                                                     firstDate: DateTime(1950),
                                                     lastDate: DateTime(
                                                         DateTime.now().year +
@@ -366,21 +366,25 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                 if (isEditing) {
                                   // if new user than do this
                                   if (newForm.currentState!.validate()) {
-                                    await service.updateUserProfile(
-                                        context: context,
-                                        branchId: branchSelection.toString(),
-                                        name: nameController.text,
-                                        email: emailController.text,
-                                        address: addressController.text,
-                                        dob: dobController.text);
-                                    if (model.success == true) {
-                                      WidgetHelper.customSnackBar(
-                                          context: context,
-                                          title: "User Account Created");
-                                      setState(() {
-                                        isEditing = false;
-                                      });
-                                    }
+                                    await service
+                                        .updateUserProfile(
+                                            context: profileContext,
+                                            branchId:
+                                                branchSelection.toString(),
+                                            name: nameController.text,
+                                            email: emailController.text,
+                                            address: addressController.text,
+                                            dob: dobController.text)
+                                        .then((value) {
+                                      if (value?.success == true) {
+                                        WidgetHelper.customSnackBar(
+                                            context: profileContext,
+                                            title: "User Account Created");
+                                        setState(() {
+                                          isEditing = false;
+                                        });
+                                      }
+                                    });
                                   }
                                 } else {
                                   setState(() {
@@ -397,8 +401,8 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                             btnText: "Logout",
                             backGroundColor: AppColors.errorColor,
                             onTap: () => showDialog(
-                              context: context,
-                              builder: (context) => CustomAlertBox(
+                              context: profileContext,
+                              builder: (profileContext) => CustomAlertBox(
                                 content: "Do You Really Want To Logout?",
                                 heading: "Are You Sure?",
                                 secondBtnText: "LogOut",
