@@ -30,7 +30,8 @@ class ProfilePage extends StatefulWidget {
 
 class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
   TextEditingController nameController = TextEditingController();
-
+  String? role;
+  bool isLoading = true;
   TextEditingController emailController = TextEditingController();
 
   TextEditingController numberController = TextEditingController();
@@ -47,13 +48,16 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
 
   ////
   Future<void> getUserInfo() async {
+    role = await SharedPrefs.getRole();
     nameController.text = await SharedPrefs.getName();
     emailController.text = await SharedPrefs.getEmail();
     numberController.text = await SharedPrefs.getMobileNumber();
     branchSelection = int.parse(await SharedPrefs.getBranchId());
     dobController.text = await SharedPrefs.getDOB();
     addressController.text = await SharedPrefs.getAddress();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -82,344 +86,387 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
         backgroundColor: AppColors.whiteColor,
         body: Consumer2<LocalizationProvider, GetBrachProvider>(
             builder: (profileContext, langProvider, branchProvider, child) =>
-                CustomContainer(
-                  width: 100.w,
-                  backGroundColor: AppColors
-                      .whiteColor, // A white background to separate content
-                  padding: EdgeInsets.only(top: 5.h),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CustomContainer(
+                isLoading
+                    ? const Center(
+                        child: Loader(),
+                      )
+                    : CustomContainer(
+                        width: 100.w,
+                        backGroundColor: AppColors
+                            .whiteColor, // A white background to separate content
+                        padding: EdgeInsets.only(top: 5.h),
+                        child: SingleChildScrollView(
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Avatar with border and gradient
-                              CircleAvatar(
-                                radius: 55,
-                                backgroundColor: Colors.transparent,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        AppColors.greenColor,
-                                        AppColors.backgroundColor
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(50),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 8.0,
-                                        spreadRadius: 2.0,
+                              CustomContainer(
+                                child: Column(
+                                  children: [
+                                    // Avatar with border and gradient
+                                    CircleAvatar(
+                                      radius: 55,
+                                      backgroundColor: Colors.transparent,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              AppColors.greenColor,
+                                              AppColors.backgroundColor
+                                            ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.2),
+                                              blurRadius: 8.0,
+                                              spreadRadius: 2.0,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            MethodHelper.getInitials(
+                                                name: nameController.text),
+                                            style: TextSizeHelper
+                                                .mediumHeaderStyle
+                                                .copyWith(
+                                              color: AppColors.whiteColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      MethodHelper.getInitials(
-                                          name: nameController.text),
-                                      style: TextSizeHelper.mediumHeaderStyle
-                                          .copyWith(
-                                        color: AppColors.whiteColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                              MethodHelper.heightBox(height: 4.h),
+                                    MethodHelper.heightBox(height: 4.h),
 
-                              Form(
-                                  key: newForm,
-                                  child: CustomContainer(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10.w),
-                                      child: Column(
-                                        children: [
-                                          CustomTextFieldWidget(
-                                            enabled: isEditing,
-                                            decoration: MethodHelper
-                                                .brownUnderLineBorder(
-                                                    hintText: langProvider
-                                                        .translate("name"),
-                                                    prefixIcon: Icons
-                                                        .person_outline_sharp),
-                                            controller: nameController,
-                                            keyboardType: TextInputType.text,
-                                            maxLength: 30,
-                                            validator: (value) {
-                                              if (value?.isEmpty == true) {
-                                                return langProvider
-                                                    .translate("nameReq");
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          MethodHelper.heightBox(height: 1.h),
-                                          CustomTextFieldWidget(
-                                            enabled: isEditing,
-                                            decoration: MethodHelper
-                                                .brownUnderLineBorder(
-                                                    hintText:
-                                                        langProvider.translate(
-                                                            "contactNumber"),
-                                                    prefixIcon: Icons.phone),
-                                            controller: numberController,
-                                            keyboardType: TextInputType.number,
-                                            maxLength: 10,
-                                            validator: (value) {
-                                              if (value?.isEmpty == true) {
-                                                return langProvider
-                                                    .translate("numberReq");
-                                              }
-                                              if (value?.contains(
-                                                      RegExp(r"[ ,-.]")) ??
-                                                  true) {
-                                                return langProvider.translate(
-                                                    "mobileNotValid");
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          MethodHelper.heightBox(height: 1.h),
-                                          CustomTextFieldWidget(
-                                            enabled: isEditing,
-                                            decoration: MethodHelper
-                                                .brownUnderLineBorder(
-                                                    hintText: langProvider
-                                                        .translate("email"),
-                                                    prefixIcon:
-                                                        Icons.email_outlined),
-                                            controller: emailController,
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            maxLength: 40,
-                                            validator: (value) {
-                                              if (value?.isEmpty == true) {
-                                                return langProvider
-                                                    .translate("email");
-                                              } else {
-                                                if (!RegExp(
-                                                        r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
-                                                    .hasMatch(value ?? "")) {
-                                                  return langProvider.translate(
-                                                      "emailNotValid");
-                                                }
-                                                ;
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              if (isEditing) {
-                                                dateTime = await showDatePicker(
-                                                    context: profileContext,
-                                                    firstDate: DateTime(1950),
-                                                    lastDate: DateTime(
-                                                        DateTime.now().year +
-                                                            1));
-                                                if (dob != null) {
-                                                  dobController.text =
-                                                      DateFormat('yyyy-MM-dd')
-                                                          .format(dateTime!);
-                                                }
-                                              }
-                                            },
-                                            child: CustomTextFieldWidget(
-                                                enabled: false,
-                                                decoration: MethodHelper
-                                                    .brownUnderLineBorder(
-                                                        hintText: langProvider
-                                                            .translate(
-                                                                "dateOfBirth"),
-                                                        prefixIcon: Icons
-                                                            .cake_outlined),
-                                                suffix: const Icon(
-                                                  Icons.date_range_outlined,
-                                                  color: AppColors.greenColor,
-                                                ),
-                                                validator: (value) {
-                                                  if (value?.isEmpty == true) {
-                                                    return langProvider
-                                                        .translate(
-                                                            "dateOfBirthReq");
-                                                  }
-                                                  return null;
-                                                },
-                                                keyboardType:
-                                                    TextInputType.none,
-                                                controller: dobController),
-                                          ),
-                                          MethodHelper.heightBox(height: 1.h),
-                                          branchProvider.isLoading
-                                              ? const Center(child: Loader())
-                                              : CustomDropDownWidget(
+                                    Form(
+                                        key: newForm,
+                                        child: CustomContainer(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.w),
+                                            child: Column(
+                                              children: [
+                                                CustomTextFieldWidget(
+                                                  enabled: isEditing,
                                                   decoration: MethodHelper
                                                       .brownUnderLineBorder(
-                                                    prefixIcon: Icons
-                                                        .storefront_outlined,
-                                                    prefixColor:
-                                                        AppColors.greenColor,
-                                                    hintText:
-                                                        langProvider.translate(
-                                                            "selectBranch"),
-                                                  ),
-                                                  value: branchSelection,
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  items: branchProvider
-                                                              .getBranchModel
-                                                              ?.data
-                                                              ?.isNotEmpty ==
-                                                          true
-                                                      ? List<
-                                                          DropdownMenuItem<
-                                                              Object?>>.generate(
-                                                          branchProvider
-                                                                  .getBranchModel
-                                                                  ?.data
-                                                                  ?.length ??
-                                                              0,
-                                                          (index) {
-                                                            return DropdownMenuItem(
-                                                              value: branchProvider
-                                                                  .getBranchModel
-                                                                  ?.data?[index]
-                                                                  .id,
-                                                              child: Text(
-                                                                branchProvider
-                                                                        .getBranchModel
-                                                                        ?.data?[
-                                                                            index]
-                                                                        .branchName ??
-                                                                    "-",
-                                                                style: TextSizeHelper
-                                                                    .smallHeaderStyle,
-                                                              ),
-                                                            );
-                                                          },
-                                                        )
-                                                      : [
-                                                          DropdownMenuItem(
-                                                            child: Text(
-                                                              "No Branch Found",
-                                                              style: TextSizeHelper
-                                                                  .smallHeaderStyle,
-                                                            ),
-                                                          )
-                                                        ],
-                                                  onChanged: !isEditing
-                                                      ? null
-                                                      : (value) {
-                                                          setState(() {
-                                                            branchSelection =
-                                                                value as int;
-                                                          });
-                                                        },
+                                                          hintText: langProvider
+                                                              .translate(
+                                                                  "name"),
+                                                          prefixIcon: Icons
+                                                              .person_outline_sharp),
+                                                  controller: nameController,
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  maxLength: 30,
                                                   validator: (value) {
-                                                    if (value == null) {
+                                                    if (value?.isEmpty ==
+                                                        true) {
                                                       return langProvider
-                                                          .translate(
-                                                              "branchReq");
+                                                          .translate("nameReq");
                                                     }
                                                     return null;
                                                   },
                                                 ),
-                                          MethodHelper.heightBox(height: 1.h),
-                                          CustomTextFieldWidget(
-                                            enabled: isEditing,
-                                            decoration: MethodHelper
-                                                .brownUnderLineBorder(
-                                                    hintText: langProvider
-                                                        .translate("address"),
-                                                    prefixIcon: Icons
-                                                        .location_on_outlined),
-                                            controller: addressController,
-                                            minLines: 2,
-                                            keyboardType: TextInputType.text,
-                                            validator: (value) {
-                                              if (value?.isEmpty == true) {
-                                                return langProvider
-                                                    .translate("addressReq");
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ],
-                                      )))
+                                                MethodHelper.heightBox(
+                                                    height: 1.h),
+                                                CustomTextFieldWidget(
+                                                  enabled: isEditing,
+                                                  decoration: MethodHelper
+                                                      .brownUnderLineBorder(
+                                                          hintText: langProvider
+                                                              .translate(
+                                                                  "contactNumber"),
+                                                          prefixIcon:
+                                                              Icons.phone),
+                                                  controller: numberController,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  maxLength: 10,
+                                                  validator: (value) {
+                                                    if (value?.isEmpty ==
+                                                        true) {
+                                                      return langProvider
+                                                          .translate(
+                                                              "numberReq");
+                                                    }
+                                                    if (value?.contains(RegExp(
+                                                            r"[ ,-.]")) ??
+                                                        true) {
+                                                      return langProvider
+                                                          .translate(
+                                                              "mobileNotValid");
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                                MethodHelper.heightBox(
+                                                    height: 1.h),
+                                                CustomTextFieldWidget(
+                                                  enabled: isEditing,
+                                                  decoration: MethodHelper
+                                                      .brownUnderLineBorder(
+                                                          hintText: langProvider
+                                                              .translate(
+                                                                  "email"),
+                                                          prefixIcon: Icons
+                                                              .email_outlined),
+                                                  controller: emailController,
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  maxLength: 40,
+                                                  validator: (value) {
+                                                    if (value?.isEmpty ==
+                                                        true) {
+                                                      return langProvider
+                                                          .translate("email");
+                                                    } else {
+                                                      if (!RegExp(
+                                                              r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
+                                                          .hasMatch(
+                                                              value ?? "")) {
+                                                        return langProvider
+                                                            .translate(
+                                                                "emailNotValid");
+                                                      }
+                                                      ;
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    if (isEditing) {
+                                                      dateTime =
+                                                          await showDatePicker(
+                                                              context:
+                                                                  profileContext,
+                                                              firstDate:
+                                                                  DateTime(
+                                                                      1950),
+                                                              lastDate: DateTime(
+                                                                  DateTime.now()
+                                                                          .year +
+                                                                      1));
+                                                      if (dob != null) {
+                                                        dobController
+                                                            .text = DateFormat(
+                                                                'yyyy-MM-dd')
+                                                            .format(dateTime!);
+                                                      }
+                                                    }
+                                                  },
+                                                  child: CustomTextFieldWidget(
+                                                      enabled: false,
+                                                      decoration: MethodHelper
+                                                          .brownUnderLineBorder(
+                                                              hintText: langProvider
+                                                                  .translate(
+                                                                      "dateOfBirth"),
+                                                              prefixIcon: Icons
+                                                                  .cake_outlined),
+                                                      suffix: const Icon(
+                                                        Icons
+                                                            .date_range_outlined,
+                                                        color: AppColors
+                                                            .greenColor,
+                                                      ),
+                                                      validator: (value) {
+                                                        if (value?.isEmpty ==
+                                                            true) {
+                                                          return langProvider
+                                                              .translate(
+                                                                  "dateOfBirthReq");
+                                                        }
+                                                        return null;
+                                                      },
+                                                      keyboardType:
+                                                          TextInputType.none,
+                                                      controller:
+                                                          dobController),
+                                                ),
+                                                MethodHelper.heightBox(
+                                                    height: 1.h),
+                                                if (role != 'admin') ...[
+                                                  branchProvider.isLoading
+                                                      ? const Center(
+                                                          child: Loader())
+                                                      : CustomDropDownWidget(
+                                                          decoration: MethodHelper
+                                                              .brownUnderLineBorder(
+                                                            prefixIcon: Icons
+                                                                .storefront_outlined,
+                                                            prefixColor:
+                                                                AppColors
+                                                                    .greenColor,
+                                                            hintText: langProvider
+                                                                .translate(
+                                                                    "selectBranch"),
+                                                          ),
+                                                          value:
+                                                              branchSelection,
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          items: branchProvider
+                                                                      .getBranchModel
+                                                                      ?.data
+                                                                      ?.isNotEmpty ==
+                                                                  true
+                                                              ? List<
+                                                                  DropdownMenuItem<
+                                                                      Object?>>.generate(
+                                                                  branchProvider
+                                                                          .getBranchModel
+                                                                          ?.data
+                                                                          ?.length ??
+                                                                      0,
+                                                                  (index) {
+                                                                    return DropdownMenuItem(
+                                                                      value: branchProvider
+                                                                          .getBranchModel
+                                                                          ?.data?[
+                                                                              index]
+                                                                          .id,
+                                                                      child:
+                                                                          Text(
+                                                                        branchProvider.getBranchModel?.data?[index].branchName ??
+                                                                            "-",
+                                                                        style: TextSizeHelper
+                                                                            .smallHeaderStyle,
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                )
+                                                              : [
+                                                                  DropdownMenuItem(
+                                                                    child: Text(
+                                                                      "No Branch Found",
+                                                                      style: TextSizeHelper
+                                                                          .smallHeaderStyle,
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                          onChanged: !isEditing
+                                                              ? null
+                                                              : (value) {
+                                                                  setState(() {
+                                                                    branchSelection =
+                                                                        value
+                                                                            as int;
+                                                                  });
+                                                                },
+                                                          validator: (value) {
+                                                            if (value == null) {
+                                                              return langProvider
+                                                                  .translate(
+                                                                      "branchReq");
+                                                            }
+                                                            return null;
+                                                          },
+                                                        )
+                                                ],
+                                                MethodHelper.heightBox(
+                                                    height: 1.h),
+                                                CustomTextFieldWidget(
+                                                  enabled: isEditing,
+                                                  decoration: MethodHelper
+                                                      .brownUnderLineBorder(
+                                                          hintText: langProvider
+                                                              .translate(
+                                                                  "address"),
+                                                          prefixIcon: Icons
+                                                              .location_on_outlined),
+                                                  controller: addressController,
+                                                  minLines: 2,
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  validator: (value) {
+                                                    if (value?.isEmpty ==
+                                                        true) {
+                                                      return langProvider
+                                                          .translate(
+                                                              "addressReq");
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ],
+                                            )))
+                                  ],
+                                ),
+                              ),
+
+                              MethodHelper.heightBox(height: 2.h),
+                              // Submit Button
+                              SizedBox(
+                                width: 30.w,
+                                child: PrimaryBtn(
+                                    btnText: isEditing ? "Submit" : "Edit",
+                                    backGroundColor: AppColors.brownColor,
+                                    onTap: () async {
+                                      if (isEditing) {
+                                        // if new user than do this
+                                        if (newForm.currentState!.validate()) {
+                                          await service
+                                              .updateUserProfile(
+                                                  context: profileContext,
+                                                  branchId: branchSelection
+                                                      .toString(),
+                                                  name: nameController.text,
+                                                  email: emailController.text,
+                                                  address:
+                                                      addressController.text,
+                                                  dob: dobController.text)
+                                              .then((value) {
+                                            if (value?.success == true) {
+                                              WidgetHelper.customSnackBar(
+                                                  context: profileContext,
+                                                  title:
+                                                      "User Account Created");
+                                              setState(() {
+                                                isEditing = false;
+                                              });
+                                            }
+                                          });
+                                        }
+                                      } else {
+                                        setState(() {
+                                          isEditing = true;
+                                        });
+                                      }
+                                    }),
+                              ),
+                              MethodHelper.heightBox(height: 1.h),
+                              // Logout Button
+                              SizedBox(
+                                width: 30.w,
+                                child: PrimaryBtn(
+                                  btnText: "Logout",
+                                  backGroundColor: AppColors.errorColor,
+                                  onTap: () => showDialog(
+                                    context: profileContext,
+                                    builder: (profileContext) => CustomAlertBox(
+                                      content: "Do You Really Want To Logout?",
+                                      heading: "Are You Sure?",
+                                      secondBtnText: "LogOut",
+                                      color: AppColors.errorColor,
+                                      onPressedSecondBtn: () async {
+                                        await SharedPrefs.clearShared();
+                                        pushRemoveUntil(
+                                            context, MobileVerification());
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
-
-                        MethodHelper.heightBox(height: 2.h),
-                        // Submit Button
-                        SizedBox(
-                          width: 30.w,
-                          child: PrimaryBtn(
-                              btnText: isEditing ? "Submit" : "Edit",
-                              backGroundColor: AppColors.brownColor,
-                              onTap: () async {
-                                if (isEditing) {
-                                  // if new user than do this
-                                  if (newForm.currentState!.validate()) {
-                                    await service
-                                        .updateUserProfile(
-                                            context: profileContext,
-                                            branchId:
-                                                branchSelection.toString(),
-                                            name: nameController.text,
-                                            email: emailController.text,
-                                            address: addressController.text,
-                                            dob: dobController.text)
-                                        .then((value) {
-                                      if (value?.success == true) {
-                                        WidgetHelper.customSnackBar(
-                                            context: profileContext,
-                                            title: "User Account Created");
-                                        setState(() {
-                                          isEditing = false;
-                                        });
-                                      }
-                                    });
-                                  }
-                                } else {
-                                  setState(() {
-                                    isEditing = true;
-                                  });
-                                }
-                              }),
-                        ),
-                        MethodHelper.heightBox(height: 1.h),
-                        // Logout Button
-                        SizedBox(
-                          width: 30.w,
-                          child: PrimaryBtn(
-                            btnText: "Logout",
-                            backGroundColor: AppColors.errorColor,
-                            onTap: () => showDialog(
-                              context: profileContext,
-                              builder: (profileContext) => CustomAlertBox(
-                                content: "Do You Really Want To Logout?",
-                                heading: "Are You Sure?",
-                                secondBtnText: "LogOut",
-                                color: AppColors.errorColor,
-                                onPressedSecondBtn: () async {
-                                  await SharedPrefs.clearShared();
-                                  pushRemoveUntil(
-                                      context, MobileVerification());
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )),
+                      )),
       ),
     );
   }
