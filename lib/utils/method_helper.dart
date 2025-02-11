@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vaidraj/constants/color.dart';
 
@@ -92,5 +95,48 @@ class MethodHelper {
       path: phoneNumber,
     );
     await launchUrl(launchUri);
+  }
+
+  // Request storage permission
+  static Future<bool> requestStoragePermission(BuildContext context) async {
+    // Check for Permission.storage status (Normal storage for Android < 12)
+    var status = await Permission.storage.status;
+    print('status on init = ${status.isGranted}');
+    if (status.isGranted) {
+      print("Storage permission is already granted.");
+      return true;
+    }
+
+    // If not granted, check if Android version is >= 12 and request Permission.manageExternalStorage
+    if (Platform.isAndroid && status.isDenied) {
+      var isGranted = await Permission.manageExternalStorage.request();
+      if (isGranted.isGranted) {
+        print("MANAGE_EXTERNAL_STORAGE permission granted.");
+        return true;
+      } else {
+        print("MANAGE_EXTERNAL_STORAGE permission denied.");
+        return false;
+      }
+    }
+
+    // For older Android versions, request normal storage permission
+    if (status.isDenied) {
+      status = await Permission.storage.request();
+      if (status.isGranted) {
+        print("Storage permission granted.");
+        return true;
+      } else {
+        print("Storage permission denied.");
+        return false;
+      }
+    }
+
+    // Handle the case when permission is permanently denied
+    if (status.isPermanentlyDenied) {
+      await openAppSettings();
+      return false;
+    }
+
+    return false;
   }
 }

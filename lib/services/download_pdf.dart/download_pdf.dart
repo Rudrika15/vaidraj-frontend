@@ -6,59 +6,15 @@ import 'package:http/src/response.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../utils/api_helper/api_helper.dart';
 import '../../utils/http_helper/http_helper.dart';
+import '../../utils/method_helper.dart';
 import '../../utils/widget_helper/widget_helper.dart';
 
 class DownloadPdfService {
   Future<void> downloadPdf(
       BuildContext context, int prescriptionId, String disease) async {
     try {
-      // Request storage permission
-      Future<bool> _requestStoragePermission(BuildContext context) async {
-        // Check for Permission.storage status (Normal storage for Android < 12)
-        var status = await Permission.storage.status;
-
-        if (status.isGranted) {
-          print("Storage permission is already granted.");
-          return true;
-        }
-
-        // If not granted, check if Android version is >= 12 and request Permission.manageExternalStorage
-        if (Platform.isAndroid &&
-            await Permission.manageExternalStorage.isDenied) {
-          bool isGranted =
-              await Permission.manageExternalStorage.request().isGranted;
-          if (isGranted) {
-            print("MANAGE_EXTERNAL_STORAGE permission granted.");
-            return true;
-          } else {
-            print("MANAGE_EXTERNAL_STORAGE permission denied.");
-            return false;
-          }
-        }
-
-        // For older Android versions, request normal storage permission
-        if (status.isDenied) {
-          status = await Permission.storage.request();
-          if (status.isGranted) {
-            print("Storage permission granted.");
-            return true;
-          } else {
-            print("Storage permission denied.");
-            return false;
-          }
-        }
-
-        // Handle the case when permission is permanently denied
-        if (status.isPermanentlyDenied) {
-          await openAppSettings();
-          return false;
-        }
-
-        return false;
-      }
-
       // Check if permission is granted before proceeding with the download
-      if (await _requestStoragePermission(context)) {
+      if (await MethodHelper.requestStoragePermission(context)) {
         Response response = await HttpHelper.get(
           context: context,
           uri: ApiHelper.getPrescriptionPdf(prescriptionId: prescriptionId),
