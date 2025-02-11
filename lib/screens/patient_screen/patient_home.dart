@@ -280,7 +280,7 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
                         onTap: () async {
                           _pagingController.refresh();
                         },
-                        child: CustomContainer(
+                        child: const CustomContainer(
                           shape: BoxShape.circle,
                           child: Icon(
                             Icons.refresh_outlined,
