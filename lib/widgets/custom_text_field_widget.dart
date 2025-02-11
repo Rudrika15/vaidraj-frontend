@@ -30,6 +30,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        textAlignVertical: TextAlignVertical.bottom,
         validator: validator,
         controller: controller,
         maxLength: maxLength,

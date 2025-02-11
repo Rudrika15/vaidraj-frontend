@@ -320,10 +320,14 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                     GestureDetector(
                                       onTap: () async {
                                         dob = await showDatePicker(
+                                            keyboardType:
+                                                TextInputType.datetime,
                                             context: context,
                                             firstDate: DateTime(1950),
                                             lastDate: DateTime(
-                                                DateTime.now().year + 1));
+                                                DateTime.now().year,
+                                                DateTime.now().month,
+                                                DateTime.now().day));
                                         if (dob != null) {
                                           dobController.text =
                                               DateFormat('yyyy-MM-dd')
@@ -421,7 +425,6 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                               prefixIcon:
                                                   Icons.location_on_outlined),
                                       controller: addressController,
-                                      minLines: 2,
                                       keyboardType: TextInputType.text,
                                       validator: (value) {
                                         if (value?.isEmpty == true) {
