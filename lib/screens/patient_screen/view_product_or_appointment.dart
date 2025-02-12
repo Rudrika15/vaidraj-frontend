@@ -205,6 +205,7 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                                 context,
                                 WebViewScreen(
                                   uri: articles?.url ?? "",
+                                  diseaseName: widget.title,
                                 )),
                             child: CustomContainer(
                               width: 90.w,

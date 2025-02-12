@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewScreen extends StatefulWidget {
-  const WebViewScreen({super.key, required this.uri});
+  const WebViewScreen(
+      {super.key, required this.uri, required this.diseaseName});
   final String uri;
+  final String diseaseName;
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
 }
@@ -57,7 +60,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(backgroundColor: AppColors.whiteColor),
+      appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
+        title: Text(
+          widget.diseaseName,
+          overflow: TextOverflow.ellipsis,
+          style: TextSizeHelper.mediumHeaderStyle
+              .copyWith(color: AppColors.brownColor),
+        ),
+      ),
       body: isInit
           ? const Center(
               child: Loader(),

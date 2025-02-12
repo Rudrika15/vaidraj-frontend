@@ -160,6 +160,7 @@ class _RenderSpecialityState extends State<RenderAllArticle>
                     context,
                     WebViewScreen(
                       uri: item.url ?? "",
+                      diseaseName: item.disease?.displayName ?? "",
                     )),
                 child: CustomContainer(
                   width: 90.w,
