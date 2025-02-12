@@ -89,19 +89,21 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
   Widget build(BuildContext context) {
     return PopScope(
       // will send user to my property page on back btn press
-      canPop: false,
+      canPop: widget.fromPage ? true : false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
           return;
         }
         String role = await SharedPrefs.getRole();
-        pushRemoveUntil(
-            context,
-            HomeScreen(
-              isAdmin: role == "admin",
-              isDoctor: role == "doctor",
-              screenIndex: 1,
-            ));
+        if (!widget.fromPage) {
+          pushRemoveUntil(
+              context,
+              HomeScreen(
+                isAdmin: role == "admin",
+                isDoctor: role == "doctor",
+                screenIndex: 0,
+              ));
+        }
       },
       child: Consumer3<LocalizationProvider, AllDiseaseProvider,
           AppointmentProvider>(

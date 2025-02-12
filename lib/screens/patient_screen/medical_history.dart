@@ -41,7 +41,7 @@ class _MedicalHistoryScreenState extends State<MedicalHistoryScreen>
             HomeScreen(
               isAdmin: role == "admin",
               isDoctor: role == "doctor",
-              screenIndex: 2,
+              screenIndex: 0,
             ));
       },
       child: Consumer<LocalizationProvider>(

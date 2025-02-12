@@ -74,7 +74,7 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
             HomeScreen(
               isAdmin: role == "admin",
               isDoctor: role == "doctor",
-              screenIndex: 6,
+              screenIndex: 0,
             ));
       },
       child: Consumer2<LocalizationProvider, GetBrachProvider>(
