@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
+import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/models/update_user_profile_model.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
@@ -409,9 +410,10 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                               ),
 
                               MethodHelper.heightBox(height: 2.h),
+
                               // Submit Button
                               SizedBox(
-                                width: 25.w,
+                                height: 5.h,
                                 child: PrimaryBtn(
                                     btnText: isEditing ? "Submit" : "Edit",
                                     backGroundColor: AppColors.brownColor,
@@ -451,10 +453,13 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                               MethodHelper.heightBox(height: 1.h),
                               // Logout Button
                               SizedBox(
-                                width: 25.w,
+                                height: 5.h,
+                                // width: 25.w,
                                 child: PrimaryBtn(
                                   btnText: "Logout",
-                                  backGroundColor: AppColors.errorColor,
+                                  textStyle: TextSizeHelper.smallHeaderStyle
+                                      .copyWith(color: AppColors.errorColor),
+                                  backGroundColor: AppColors.whiteColor,
                                   onTap: () => showDialog(
                                     context: profileContext,
                                     builder: (profileContext) => CustomAlertBox(
