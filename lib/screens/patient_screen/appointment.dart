@@ -292,13 +292,26 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                   paddingMethod(
                     GestureDetector(
                       onTap: () async {
-                        dob = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1960),
-                            lastDate: DateTime(DateTime.now().year - 18));
-                        if (dob != null) {
-                          dobController.text =
-                              DateFormat('yyyy-MM-dd').format(dob!);
+                        /// for birth date
+                        /// if making appointment for other than and only can select birthdate
+                        if (isForOther) {
+                          dob = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime(1960),
+                              lastDate: DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day,
+                              ));
+                          if (dob != null) {
+                            dobController.text =
+                                DateFormat('yyyy-MM-dd').format(dob!);
+                          }
+                        } else {
+                          WidgetHelper.customSnackBar(
+                              context: context,
+                              title: "Only Available If Appoint is For Other!!",
+                              isError: true);
                         }
                       },
                       child: CustomTextFieldWidget(
@@ -341,6 +354,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                   MethodHelper.heightBox(height: 2.h),
                   paddingMethod(
                     GestureDetector(
+                      //// for appointment date
                       onTap: () async {
                         dob = await showDatePicker(
                             context: context,

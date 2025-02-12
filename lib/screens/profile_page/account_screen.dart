@@ -250,8 +250,11 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                                       1950),
                                                               lastDate: DateTime(
                                                                   DateTime.now()
-                                                                          .year +
-                                                                      1));
+                                                                      .year,
+                                                                  DateTime.now()
+                                                                      .month,
+                                                                  DateTime.now()
+                                                                      .day));
                                                       if (dob != null) {
                                                         dobController
                                                             .text = DateFormat(
