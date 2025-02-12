@@ -46,7 +46,8 @@ class AboutUsScreen extends StatelessWidget with NavigateHelper {
                   child: Transform(
                     alignment: Alignment.center,
                     transform: Matrix4.rotationY(math.pi),
-                    child: const Image(
+                    child: Image(
+                      height: 20.h,
                       image: AssetImage(AppStrings.logoHerb),
                       fit: BoxFit.fitHeight,
                     ),

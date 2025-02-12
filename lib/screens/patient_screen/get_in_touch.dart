@@ -110,7 +110,8 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
                       child: Transform(
                         alignment: Alignment.center,
                         transform: Matrix4.rotationY(math.pi),
-                        child: const Image(
+                        child: Image(
+                          height: 20.h,
                           image: AssetImage(AppStrings.logoHerb),
                           fit: BoxFit.fitHeight,
                         ),
@@ -132,20 +133,14 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
                             ),
                             MethodHelper.heightBox(height: 2.h),
                             const ContactInfoRender(
-                              icon: Icons.phone,
-                              info: AppStrings.mobile,
+                              icon: Icons.phone_rounded,
+                              info:
+                                  '${AppStrings.mobile} , ${AppStrings.mobile2}',
                             ),
                             const ContactInfoRender(
                               icon: Icons.phone,
-                              info: AppStrings.mobile2,
-                            ),
-                            const ContactInfoRender(
-                              icon: Icons.phone,
-                              info: AppStrings.mobile3,
-                            ),
-                            const ContactInfoRender(
-                              icon: Icons.phone,
-                              info: AppStrings.mobile4,
+                              info:
+                                  '${AppStrings.mobile3} , ${AppStrings.mobile4}',
                             ),
                           ],
                         ),
@@ -377,7 +372,7 @@ class LogoWithInfoContainer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Expanded(
-              flex: 2,
+              flex: 1,
               child: CustomContainer(
                   margin: EdgeInsets.symmetric(horizontal: AppSizes.size20),
                   boxShadow: [
@@ -389,7 +384,7 @@ class LogoWithInfoContainer extends StatelessWidget {
                   ],
                   child: VaidrajLogo())),
           Expanded(
-              flex: 3,
+              flex: 2,
               child: CustomContainer(
                 child: Column(children: children),
               ))
@@ -400,25 +395,30 @@ class LogoWithInfoContainer extends StatelessWidget {
 }
 
 class ContactInfoRender extends StatelessWidget {
-  const ContactInfoRender({super.key, required this.icon, required this.info});
-  final IconData icon;
+  const ContactInfoRender({super.key, this.icon, required this.info});
+  final IconData? icon;
   final String info;
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Icon(
-          icon,
-          color: AppColors.greenColor,
-        ),
+        icon != null
+            ? Icon(
+                icon,
+                color: AppColors.greenColor,
+              )
+            : MethodHelper.widthBox(width: 25),
         MethodHelper.widthBox(width: AppSizes.size10),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(info),
+              Text(
+                info,
+                style: TextSizeHelper.xSmallTextStyle,
+              ),
             ],
           ),
         )
