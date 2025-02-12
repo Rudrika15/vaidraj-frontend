@@ -258,7 +258,10 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
                     : _selectedNavTabIndex == 2
                         ? navTabNames[1]
                         : navTabNames[2]
-            : langProvider.translate(drawerOptions[_selectedTabIndex]['text']),
+            : _selectedTabIndex == 0
+                ? "Hello $userName"
+                : langProvider
+                    .translate(drawerOptions[_selectedTabIndex]['text']),
         style: TextSizeHelper.mediumTextStyle
             .copyWith(color: AppColors.brownColor),
       ),

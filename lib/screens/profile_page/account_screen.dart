@@ -73,18 +73,20 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: role == "admin" || role == "doctor" ? false : true,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         String role = await SharedPrefs.getRole();
-        pushRemoveUntil(
-          context,
-          HomeScreen(
-            isAdmin: role == "admin",
-            isDoctor: role == "doctor",
-            screenIndex: 2,
-          ),
-        );
+        if (role == "admin" || role == "doctor") {
+          pushRemoveUntil(
+            context,
+            HomeScreen(
+              isAdmin: role == "admin",
+              isDoctor: role == "doctor",
+              screenIndex: 2,
+            ),
+          );
+        }
       },
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,

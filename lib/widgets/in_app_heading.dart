@@ -22,7 +22,7 @@ class InScreenHeading extends StatelessWidget {
         children: [
           Text(
             heading,
-            style: TextSizeHelper.mediumHeaderStyle
+            style: TextSizeHelper.smallHeaderStyle
                 .copyWith(color: AppColors.brownColor),
           ),
           GreenDividerLine(endIndent: endIndent ?? 70.w, indent: indent ?? 1.w)

@@ -40,12 +40,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 onPressedSecondBtn: () => SystemChannels.platform
                     .invokeMethod('SystemNavigator.pop')));
       },
-      child: ListView(
+      child: Column(
         children: const [
           InScreenHeading(heading: "AppointMent"),
 
           /// render appointment
-          RenderTodaysAppointments()
+          Expanded(child: RenderTodaysAppointments())
         ],
       ),
     );

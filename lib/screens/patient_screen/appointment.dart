@@ -497,12 +497,13 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                       ),
                       controller: subjectController,
                       keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value?.isEmpty == true) {
-                          return langProvider.translate("subjectReq");
-                        }
-                        return null;
-                      },
+                      validator: (value) => null,
+                      // validator: (value) {
+                      //   if (value?.isEmpty == true) {
+                      //     return langProvider.translate("subjectReq");
+                      //   }
+                      //   return null;
+                      // },
                     ),
                   ),
                   MethodHelper.heightBox(height: 2.h),
@@ -513,12 +514,13 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                       ),
                       controller: messageController,
                       keyboardType: TextInputType.text,
-                      validator: (value) {
-                        if (value?.isEmpty == true) {
-                          return langProvider.translate("messageReq");
-                        }
-                        return null;
-                      },
+                      validator: (value) => null,
+                      // validator: (value) {
+                      //   if (value?.isEmpty == true) {
+                      //     return langProvider.translate("messageReq");
+                      //   }
+                      //   return null;
+                      // },
                     ),
                   ),
                   MethodHelper.heightBox(height: 2.h),
