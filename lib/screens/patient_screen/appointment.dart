@@ -429,7 +429,11 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                             child: Loader(),
                           )
                         : CustomDropDownWidget(
-                            value: !widget.fromPage ? null : diseaseId as int,
+                            value: !widget.fromPage
+                                ? null
+                                : diseaseId != null
+                                    ? diseaseId
+                                    : null,
                             alignment: Alignment.centerLeft,
                             prefixIcon: Icons.storefront_outlined,
                             decoration: MethodHelper.greenUnderLineBorder(
