@@ -36,7 +36,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
 
   TextEditingController numberController = TextEditingController();
 
-  int branchSelection = 0;
+  int? branchSelection;
   String? dob;
   TextEditingController dobController = TextEditingController();
 
@@ -64,6 +64,10 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
   void initState() {
     super.initState();
     getUserInfo();
+    var branchProvider = Provider.of<GetBrachProvider>(context, listen: false);
+    if (branchProvider.getBranchModel == null) {
+      branchProvider.getBranch(context: context);
+    }
   }
 
   @override
@@ -310,8 +314,8 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                                 .translate(
                                                                     "selectBranch"),
                                                           ),
-                                                          value:
-                                                              branchSelection,
+                                                          value: branchSelection
+                                                              as int,
                                                           alignment: Alignment
                                                               .centerLeft,
                                                           items: branchProvider
