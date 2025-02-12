@@ -343,7 +343,6 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                         hintText: langProvider.translate("address"),
                       ),
                       controller: addressController,
-                      minLines: 2,
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value?.isEmpty == true) {
@@ -525,7 +524,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                   ),
                   MethodHelper.heightBox(height: 2.h),
                   SizedBox(
-                    width: 50.w,
+                    width: 25.w,
                     child: appointmentProvider.isLoading
                         ? const Center(
                             child: Loader(),

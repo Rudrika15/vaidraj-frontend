@@ -284,7 +284,7 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
                               ),
                               MethodHelper.heightBox(height: 3.h),
                               SizedBox(
-                                width: 50.w,
+                                width: 25.w,
                                 child: PrimaryBtn(
                                     btnText: langProvider.translate("submit"),
                                     onTap: () async {

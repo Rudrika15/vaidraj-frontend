@@ -223,7 +223,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                                       hintText: "Add Note..."))),
                               MethodHelper.heightBox(height: 10.h),
                               SizedBox(
-                                width: 50.w,
+                                width: 25.w,
                                 child: prescriptionProvider.isLoading
                                     ? const Center(
                                         child: Loader(),

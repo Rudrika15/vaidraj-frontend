@@ -202,7 +202,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         ),
                         MethodHelper.heightBox(height: 10.h),
                         CustomContainer(
-                          width: 40.w,
+                          width: 25.w,
                           child: PrimaryBtn(
                               btnText: langProvider.translate('submit'),
                               onTap: () async {

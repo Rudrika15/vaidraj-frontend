@@ -65,7 +65,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         title: Text(
           widget.diseaseName,
           overflow: TextOverflow.ellipsis,
-          style: TextSizeHelper.mediumHeaderStyle
+          style: TextSizeHelper.mediumTextStyle
               .copyWith(color: AppColors.brownColor),
         ),
       ),

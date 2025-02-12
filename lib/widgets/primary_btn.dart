@@ -41,7 +41,7 @@ class PrimaryBtn extends StatelessWidget {
         child: Text(
           btnText,
           style: textStyle ??
-              TextSizeHelper.mediumHeaderStyle
+              TextSizeHelper.smallHeaderStyle
                   .copyWith(color: AppColors.whiteColor),
         ),
       ),

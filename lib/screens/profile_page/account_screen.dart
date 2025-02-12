@@ -411,7 +411,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                               MethodHelper.heightBox(height: 2.h),
                               // Submit Button
                               SizedBox(
-                                width: 30.w,
+                                width: 25.w,
                                 child: PrimaryBtn(
                                     btnText: isEditing ? "Submit" : "Edit",
                                     backGroundColor: AppColors.brownColor,
@@ -451,7 +451,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                               MethodHelper.heightBox(height: 1.h),
                               // Logout Button
                               SizedBox(
-                                width: 30.w,
+                                width: 25.w,
                                 child: PrimaryBtn(
                                   btnText: "Logout",
                                   backGroundColor: AppColors.errorColor,

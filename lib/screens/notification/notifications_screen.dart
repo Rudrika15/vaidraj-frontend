@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/feedback/feedback.dart';
 import 'package:vaidraj/utils/method_helper.dart';
@@ -114,6 +115,7 @@ class NotificationWidget extends StatelessWidget with NavigateHelper {
                 btnText: langProvider.translate("call"),
                 onTap: () {
                   // add logic to call
+                  MethodHelper.dialNumber(AppStrings.mobile);
                 },
                 height: 3.h,
                 width: 25.w,
