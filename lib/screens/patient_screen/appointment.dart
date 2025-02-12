@@ -368,7 +368,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                               DateTime.now().day,
                             ));
                         if (dob != null) {
-                          dobController.text =
+                          appointmentDateController.text =
                               DateFormat('yyyy-MM-dd').format(dob!);
                           setState(() {
                             selectedDate =
