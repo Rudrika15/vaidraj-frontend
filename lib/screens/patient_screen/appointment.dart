@@ -358,8 +358,16 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                       onTap: () async {
                         dob = await showDatePicker(
                             context: context,
-                            firstDate: DateTime(DateTime.now().year),
-                            lastDate: DateTime(DateTime.now().year + 1));
+                            firstDate: DateTime(
+                              DateTime.now().year,
+                              DateTime.now().month,
+                              DateTime.now().day,
+                            ),
+                            lastDate: DateTime(
+                              DateTime.now().year + 1,
+                              DateTime.now().month,
+                              DateTime.now().day,
+                            ));
                         if (dob != null) {
                           dobController.text =
                               DateFormat('yyyy-MM-dd').format(dob!);
