@@ -155,10 +155,12 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
                     ],
                   ),
                   MethodHelper.heightBox(height: 1.h),
-                  Text(
-                    'Note : ${item.prescriptions?[0].note}',
-                    style: TextSizeHelper.xSmallTextStyle,
-                  ),
+                  if (item.prescriptions?.isNotEmpty == true &&
+                      item.prescriptions?[0].note != null)
+                    Text(
+                      'Note : ${item.prescriptions?[0].note}',
+                      style: TextSizeHelper.xSmallTextStyle,
+                    ),
                   if (item.prescriptions?[0].otherMedicines?.isNotEmpty == true)
                     Text(
                       'Other Medicines : ${item.prescriptions?[0].otherMedicines}',
