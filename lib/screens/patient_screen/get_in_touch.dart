@@ -22,8 +22,8 @@ import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../widgets/custom_text_field_widget.dart';
 
 class GetInTouchScreen extends StatefulWidget {
-  const GetInTouchScreen({super.key});
-
+  const GetInTouchScreen({super.key, this.fromPage = false});
+  final bool fromPage;
   @override
   State<GetInTouchScreen> createState() => _GetInTouchScreenState();
 }
@@ -61,274 +61,304 @@ class _GetInTouchScreenState extends State<GetInTouchScreen>
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      // will send user to my property page on back btn press
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) {
-          return;
-        }
-        String role = await SharedPrefs.getRole();
-        pushRemoveUntil(
-            context,
-            HomeScreen(
-              isAdmin: role == "admin",
-              isDoctor: role == "doctor",
-              screenIndex: 0,
-            ));
-      },
-      child: Consumer2<LocalizationProvider, GetBrachProvider>(
-        builder: (context, langProvider, branchProvider, child) => SafeArea(
-            child: RefreshIndicator(
-          color: AppColors.brownColor,
-          backgroundColor: AppColors.lightBackGroundColor,
-          onRefresh: () async {
-            branchProvider.resetBranchAddressModel(context: context);
-          },
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Opacity(
-                  opacity: 0.2,
-                  child: Transform(
+    return Consumer2<LocalizationProvider, GetBrachProvider>(
+      builder: (context, langProvider, branchProvider, child) => Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        appBar: widget.fromPage
+            ? AppBar(
+                title: Text(
+                  langProvider.translate('getInTouch'),
+                  style: TextSizeHelper.mediumTextStyle
+                      .copyWith(color: AppColors.brownColor),
+                ),
+                backgroundColor: AppColors.whiteColor,
+                surfaceTintColor: AppColors.whiteColor,
+              )
+            : null,
+        body: PopScope(
+            // will send user to my property page on back btn press
+            canPop: widget.fromPage ? true : false,
+            onPopInvokedWithResult: (didPop, result) async {
+              if (didPop) {
+                return;
+              }
+              String role = await SharedPrefs.getRole();
+              if (!widget.fromPage) {
+                pushRemoveUntil(
+                    context,
+                    HomeScreen(
+                      isAdmin: role == "admin",
+                      isDoctor: role == "doctor",
+                      screenIndex: 0,
+                    ));
+              }
+              ;
+            },
+            child: SafeArea(
+                child: RefreshIndicator(
+              color: AppColors.brownColor,
+              backgroundColor: AppColors.lightBackGroundColor,
+              onRefresh: () async {
+                branchProvider.resetBranchAddressModel(context: context);
+              },
+              child: Stack(
+                children: [
+                  Align(
                     alignment: Alignment.center,
-                    transform: Matrix4.rotationY(math.pi),
-                    child: const Image(
-                      image: AssetImage(AppStrings.logoHerb),
-                      fit: BoxFit.fitHeight,
+                    child: Opacity(
+                      opacity: 0.2,
+                      child: Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.rotationY(math.pi),
+                        child: const Image(
+                          image: AssetImage(AppStrings.logoHerb),
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SafeArea(
-                  child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: AppSizes.size30),
-                child: Column(
-                  children: [
-                    LogoWithInfoContainer(
+                  SafeArea(
+                      child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: AppSizes.size30),
+                    child: Column(
                       children: [
-                        const ContactInfoRender(
-                            icon: Icons.email, info: AppStrings.email),
-                        const ContactInfoRender(
-                          icon: Icons.email,
-                          info: AppStrings.email2,
+                        LogoWithInfoContainer(
+                          children: [
+                            const ContactInfoRender(
+                                icon: Icons.email, info: AppStrings.email),
+                            const ContactInfoRender(
+                              icon: Icons.email,
+                              info: AppStrings.email2,
+                            ),
+                            MethodHelper.heightBox(height: 2.h),
+                            const ContactInfoRender(
+                              icon: Icons.phone,
+                              info: AppStrings.mobile,
+                            ),
+                            const ContactInfoRender(
+                              icon: Icons.phone,
+                              info: AppStrings.mobile2,
+                            ),
+                            const ContactInfoRender(
+                              icon: Icons.phone,
+                              info: AppStrings.mobile3,
+                            ),
+                            const ContactInfoRender(
+                              icon: Icons.phone,
+                              info: AppStrings.mobile4,
+                            ),
+                          ],
+                        ),
+                        MethodHelper.heightBox(height: 5.h),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSizes.size20,
+                          ),
+                          child: Text(
+                            langProvider.translate("getInTouchPara"),
+                            style: TextSizeHelper.smallTextStyle,
+                          ),
                         ),
                         MethodHelper.heightBox(height: 2.h),
-                        const ContactInfoRender(
-                          icon: Icons.phone,
-                          info: AppStrings.mobile,
-                        ),
-                        const ContactInfoRender(
-                          icon: Icons.phone,
-                          info: AppStrings.mobile2,
-                        ),
-                        const ContactInfoRender(
-                          icon: Icons.phone,
-                          info: AppStrings.mobile3,
-                        ),
-                        const ContactInfoRender(
-                          icon: Icons.phone,
-                          info: AppStrings.mobile4,
-                        ),
-                      ],
-                    ),
-                    MethodHelper.heightBox(height: 5.h),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSizes.size20,
-                      ),
-                      child: Text(
-                        langProvider.translate("getInTouchPara"),
-                        style: TextSizeHelper.smallTextStyle,
-                      ),
-                    ),
-                    MethodHelper.heightBox(height: 2.h),
-                    ///// render branch address fetching from server
-                    branchProvider.isLoading
-                        ? const Center(
-                            child: Loader(),
-                          )
-                        : branchProvider.addressModel?.data?.isEmpty == true
-                            ? Text(langProvider.translate('noDataFound'))
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  for (BranchAddress address
-                                      in branchProvider.addressModel?.data ??
-                                          []) ...[
-                                    AddressRender(
-                                        text: address.displayAddress ??
-                                            "Coming Soon")
-                                  ]
-                                ],
-                              ),
-                    InScreenHeading(
-                      heading: langProvider.translate('contact'),
-                      endIndent: 70.w,
-                    ),
-                    CustomContainer(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: AppSizes.size20),
-                        child: Form(
-                          key: contactFormKey,
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomTextFieldWidget(
-                                      decoration:
-                                          MethodHelper.greenUnderLineBorder(
-                                              hintText: langProvider
-                                                  .translate('firstName')),
-                                      controller: firstNameController,
-                                      keyboardType: TextInputType.text,
-                                      maxLength: 30,
-                                      validator: (value) {
-                                        if (value?.isEmpty == true) {
-                                          return langProvider
-                                              .translate('firstNameReq');
-                                        }
-                                        return null;
-                                      },
-                                    ),
+                        ///// render branch address fetching from server
+                        branchProvider.isLoading
+                            ? const Center(
+                                child: Loader(),
+                              )
+                            : branchProvider.addressModel?.data?.isEmpty == true
+                                ? Text(langProvider.translate('noDataFound'))
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      for (BranchAddress address
+                                          in branchProvider
+                                                  .addressModel?.data ??
+                                              []) ...[
+                                        AddressRender(
+                                            text: address.displayAddress ??
+                                                "Coming Soon")
+                                      ]
+                                    ],
                                   ),
-                                  MethodHelper.widthBox(width: AppSizes.size10),
-                                  Expanded(
-                                    child: CustomTextFieldWidget(
-                                      decoration:
-                                          MethodHelper.greenUnderLineBorder(
-                                              hintText: langProvider
-                                                  .translate('lastName')),
-                                      controller: lastNameController,
-                                      keyboardType: TextInputType.text,
-                                      maxLength: 30,
-                                      validator: (value) {
-                                        if (value?.isEmpty == true) {
-                                          return langProvider
-                                              .translate('lastNameReq');
-                                        }
-                                        return null;
-                                      },
-                                    ),
+                        InScreenHeading(
+                          heading: langProvider.translate('contact'),
+                          endIndent: 70.w,
+                        ),
+                        CustomContainer(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: AppSizes.size20),
+                            child: Form(
+                              key: contactFormKey,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextFieldWidget(
+                                          decoration:
+                                              MethodHelper.greenUnderLineBorder(
+                                                  hintText: langProvider
+                                                      .translate('firstName')),
+                                          controller: firstNameController,
+                                          keyboardType: TextInputType.text,
+                                          maxLength: 30,
+                                          validator: (value) {
+                                            if (value?.isEmpty == true) {
+                                              return langProvider
+                                                  .translate('firstNameReq');
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      MethodHelper.widthBox(
+                                          width: AppSizes.size10),
+                                      Expanded(
+                                        child: CustomTextFieldWidget(
+                                          decoration:
+                                              MethodHelper.greenUnderLineBorder(
+                                                  hintText: langProvider
+                                                      .translate('lastName')),
+                                          controller: lastNameController,
+                                          keyboardType: TextInputType.text,
+                                          maxLength: 30,
+                                          validator: (value) {
+                                            if (value?.isEmpty == true) {
+                                              return langProvider
+                                                  .translate('lastNameReq');
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              MethodHelper.heightBox(height: 1.h),
-                              CustomTextFieldWidget(
-                                decoration: MethodHelper.greenUnderLineBorder(
-                                    hintText: langProvider.translate('email')),
-                                controller: emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                maxLength: 40,
-                                validator: (value) {
-                                  if (value?.isEmpty == true) {
-                                    return langProvider.translate("emailReq");
-                                  } else {
-                                    if (!RegExp(
-                                            r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
-                                        .hasMatch(value ?? "")) {
-                                      return langProvider
-                                          .translate('emailNotValid');
-                                    }
-                                  }
-                                  return null;
-                                },
-                              ),
-                              MethodHelper.heightBox(height: 1.h),
-                              CustomTextFieldWidget(
-                                decoration: MethodHelper.greenUnderLineBorder(
-                                    hintText: langProvider
-                                        .translate("contactNumber")),
-                                controller: contactNumberController,
-                                keyboardType: TextInputType.number,
-                                maxLength: 10,
-                                validator: (value) {
-                                  if (value?.isEmpty == true) {
-                                    return langProvider.translate("numberReq");
-                                  }
-                                  return null;
-                                },
-                              ),
-                              MethodHelper.heightBox(height: 1.h),
-                              CustomTextFieldWidget(
-                                  decoration: MethodHelper.greenUnderLineBorder(
-                                      hintText:
-                                          langProvider.translate('subject')),
-                                  maxLines: 2,
-                                  validator: (value) {
-                                    if (value?.isEmpty == true) {
-                                      return langProvider
-                                          .translate('subjectReq');
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  controller: subjectController),
-                              MethodHelper.heightBox(height: 1.h),
-                              CustomTextFieldWidget(
-                                decoration: MethodHelper.greenUnderLineBorder(
-                                    hintText:
-                                        langProvider.translate("message")),
-                                controller: messageController,
-                                minLines: 2,
-                                keyboardType: TextInputType.text,
-                                validator: (value) {
-                                  if (value?.isEmpty == true) {
-                                    return langProvider.translate("messageReq");
-                                  }
-                                  return null;
-                                },
-                              ),
-                              MethodHelper.heightBox(height: 3.h),
-                              SizedBox(
-                                width: 25.w,
-                                child: PrimaryBtn(
-                                    btnText: langProvider.translate("submit"),
-                                    onTap: () async {
-                                      if (contactFormKey.currentState!
-                                          .validate()) {
-                                        bool success =
-                                            await service.ContactVaidraj(
-                                                context: context,
-                                                firstName:
-                                                    firstNameController.text,
-                                                lastName:
-                                                    lastNameController.text,
-                                                email: emailController.text,
-                                                mobile: contactNumberController
-                                                    .text,
-                                                subject: subjectController.text,
-                                                message:
-                                                    messageController.text);
-                                        if (success) {
-                                          WidgetHelper.customSnackBar(
-                                              context: context,
-                                              title: langProvider
-                                                  .translate('messageSent'));
-
-                                          /// clean controllers after success
-                                          firstNameController.clear();
-                                          lastNameController.clear();
-                                          emailController.clear();
-                                          contactNumberController.clear();
-                                          subjectController.clear();
-                                          messageController.clear();
+                                  MethodHelper.heightBox(height: 1.h),
+                                  CustomTextFieldWidget(
+                                    decoration:
+                                        MethodHelper.greenUnderLineBorder(
+                                            hintText: langProvider
+                                                .translate('email')),
+                                    controller: emailController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    maxLength: 40,
+                                    validator: (value) {
+                                      if (value?.isEmpty == true) {
+                                        return langProvider
+                                            .translate("emailReq");
+                                      } else {
+                                        if (!RegExp(
+                                                r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
+                                            .hasMatch(value ?? "")) {
+                                          return langProvider
+                                              .translate('emailNotValid');
                                         }
                                       }
-                                    }),
-                              )
-                            ],
-                          ),
-                        ))
-                  ],
-                ),
-              ))
-            ],
-          ),
-        )),
+                                      return null;
+                                    },
+                                  ),
+                                  MethodHelper.heightBox(height: 1.h),
+                                  CustomTextFieldWidget(
+                                    decoration:
+                                        MethodHelper.greenUnderLineBorder(
+                                            hintText: langProvider
+                                                .translate("contactNumber")),
+                                    controller: contactNumberController,
+                                    keyboardType: TextInputType.number,
+                                    maxLength: 10,
+                                    validator: (value) {
+                                      if (value?.isEmpty == true) {
+                                        return langProvider
+                                            .translate("numberReq");
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  MethodHelper.heightBox(height: 1.h),
+                                  CustomTextFieldWidget(
+                                      decoration:
+                                          MethodHelper.greenUnderLineBorder(
+                                              hintText: langProvider
+                                                  .translate('subject')),
+                                      maxLines: 2,
+                                      validator: (value) {
+                                        if (value?.isEmpty == true) {
+                                          return langProvider
+                                              .translate('subjectReq');
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.text,
+                                      controller: subjectController),
+                                  MethodHelper.heightBox(height: 1.h),
+                                  CustomTextFieldWidget(
+                                    decoration:
+                                        MethodHelper.greenUnderLineBorder(
+                                            hintText: langProvider
+                                                .translate("message")),
+                                    controller: messageController,
+                                    minLines: 2,
+                                    keyboardType: TextInputType.text,
+                                    validator: (value) {
+                                      if (value?.isEmpty == true) {
+                                        return langProvider
+                                            .translate("messageReq");
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  MethodHelper.heightBox(height: 3.h),
+                                  SizedBox(
+                                    width: 25.w,
+                                    child: PrimaryBtn(
+                                        btnText:
+                                            langProvider.translate("submit"),
+                                        onTap: () async {
+                                          if (contactFormKey.currentState!
+                                              .validate()) {
+                                            bool success =
+                                                await service.ContactVaidraj(
+                                                    context: context,
+                                                    firstName:
+                                                        firstNameController
+                                                            .text,
+                                                    lastName:
+                                                        lastNameController.text,
+                                                    email: emailController.text,
+                                                    mobile:
+                                                        contactNumberController
+                                                            .text,
+                                                    subject:
+                                                        subjectController.text,
+                                                    message:
+                                                        messageController.text);
+                                            if (success) {
+                                              WidgetHelper.customSnackBar(
+                                                  context: context,
+                                                  title: langProvider.translate(
+                                                      'messageSent'));
+
+                                              /// clean controllers after success
+                                              firstNameController.clear();
+                                              lastNameController.clear();
+                                              emailController.clear();
+                                              contactNumberController.clear();
+                                              subjectController.clear();
+                                              messageController.clear();
+                                            }
+                                          }
+                                        }),
+                                  )
+                                ],
+                              ),
+                            ))
+                      ],
+                    ),
+                  ))
+                ],
+              ),
+            ))),
       ),
     );
   }

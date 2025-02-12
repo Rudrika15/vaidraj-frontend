@@ -144,12 +144,10 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                         PrimaryBtn(
                           btnText: langProvider.translate("sendEmail"),
                           onTap: () {
-                            pushRemoveUntil(
+                            push(
                                 context,
-                                HomeScreen(
-                                  isDoctor: false,
-                                  isAdmin: false,
-                                  screenIndex: 7,
+                                GetInTouchScreen(
+                                  fromPage: true,
                                 ));
                           },
                           height: 3.h,
