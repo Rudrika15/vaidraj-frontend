@@ -388,7 +388,6 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                           prefixIcon: Icons
                                                               .location_on_outlined),
                                                   controller: addressController,
-                                                  minLines: 2,
                                                   keyboardType:
                                                       TextInputType.text,
                                                   validator: (value) {
