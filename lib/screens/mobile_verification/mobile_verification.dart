@@ -141,8 +141,11 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                           return;
                         }
                         if (mobileVerProvider
-                                .verifyMobileNumberModel?.data?.role ==
-                            "doctor") {
+                                    .verifyMobileNumberModel?.data?.role ==
+                                "doctor" ||
+                            mobileVerProvider
+                                    .verifyMobileNumberModel?.data?.role ==
+                                "manager") {
                           push(
                               context, const SignInSignUp(UserStatus: "STAFF"));
                           return;

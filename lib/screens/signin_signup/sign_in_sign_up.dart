@@ -174,15 +174,15 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   },
                                 ),
                                 MethodHelper.heightBox(height: 2.h),
-                                GestureDetector(
-                                  onTap: () {
-                                    // add logic for forgot password
-                                  },
-                                  child: Text(
-                                    langProvider.translate("forgotPass"),
-                                    style: TextSizeHelper.smallTextStyle,
-                                  ),
-                                )
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     // add logic for forgot password
+                                //   },
+                                //   child: Text(
+                                //     langProvider.translate("forgotPass"),
+                                //     style: TextSizeHelper.smallTextStyle,
+                                //   ),
+                                // )
                               ],
                             )))
                     : widget.UserStatus == "PATIENT"
