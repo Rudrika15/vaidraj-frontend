@@ -32,7 +32,6 @@ void main() async {
       ChangeNotifierProvider(create: (_) => AppointmentProvider()),
       ChangeNotifierProvider(create: (_) => MedicalHistoryProvider()),
       ChangeNotifierProvider(create: (_) => PrescriptionStateProvider()),
-      ChangeNotifierProvider(create: (_) => MyPatientsProvider()),
     ],
     child: const MyApp(),
   ));

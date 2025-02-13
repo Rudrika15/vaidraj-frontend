@@ -20,6 +20,9 @@ class MyPatientService {
         uri: ApiHelper.getMyPatients(
             branchId: branchId, currentPage: currentPage, perPage: perPage),
       );
+      log(ApiHelper.getMyPatients(
+          branchId: branchId, currentPage: currentPage, perPage: perPage));
+      log(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {

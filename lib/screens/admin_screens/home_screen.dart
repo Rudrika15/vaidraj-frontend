@@ -6,6 +6,7 @@ import 'package:vaidraj/models/todays_appointment_model.dart';
 import 'package:vaidraj/provider/appointment_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
 import '../../constants/sizes.dart';
@@ -42,7 +43,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       },
       child: Column(
         children: const [
-          InScreenHeading(heading: "AppointMent"),
+          InScreenHeading(heading: "Appointment"),
 
           /// render appointment
           Expanded(child: RenderTodaysAppointments())
@@ -62,12 +63,18 @@ class RenderTodaysAppointments extends StatefulWidget {
 
 class _RenderTodaysAppointmentsState extends State<RenderTodaysAppointments>
     with NavigateHelper {
+  String? role;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getRole();
     var provider = Provider.of<AppointmentProvider>(context, listen: false);
     provider.getTodaysAppointments(context: context);
+  }
+
+  Future<void> getRole() async {
+    role = await SharedPrefs.getRole();
   }
 
   @override
@@ -185,49 +192,60 @@ class _RenderTodaysAppointmentsState extends State<RenderTodaysAppointments>
                                 "Address : ${appointment?.address}",
                                 style: TextSizeHelper.xSmallTextStyle,
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  PrimaryBtn(
-                                    btnText: "Prescription",
-                                    onTap: () async {
-                                      print(
-                                          "appointmentID => ${appointment?.id} ");
-                                      Provider.of<PrescriptionStateProvider>(
-                                              context,
-                                              listen: false)
-                                          .emptyDiseaseListAfterSuccess();
-                                      await Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) => PrescriptionPage(
-                                            isCreating: true,
-                                            appointmentId: appointment?.id ?? 0,
-                                            name: appointment?.name ?? "",
-                                            pId: -1,
-                                            diseaseId:
-                                                appointment?.diseaseId ?? 0),
-                                      ))
-                                          .then((value) {
-                                        if (value == true && value != null) {
-                                          appointmentProvider
-                                              .getTodaysAppointments(
-                                                  context: context);
-                                        } else {
+                              if (role == "doctor") ...[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      height: 3.h,
+                                      width: 25.w,
+                                      child: PrimaryBtn(
+                                        btnText: "Prescription",
+                                        onTap: () async {
                                           print(
-                                              "Nothing changed in todays appointment page");
-                                        }
-                                      });
-                                    },
-                                    height: 3.h,
-                                    width: 25.w,
-                                    borderRadius: BorderRadius.circular(5),
-                                    backGroundColor: AppColors.whiteColor,
-                                    borderColor: AppColors.brownColor,
-                                    textStyle: TextSizeHelper.xSmallTextStyle
-                                        .copyWith(color: AppColors.brownColor),
-                                  )
-                                ],
-                              )
+                                              "appointmentID => ${appointment?.id} ");
+                                          Provider.of<PrescriptionStateProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .emptyDiseaseListAfterSuccess();
+                                          await Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                PrescriptionPage(
+                                                    isCreating: true,
+                                                    appointmentId:
+                                                        appointment?.id ?? 0,
+                                                    name:
+                                                        appointment?.name ?? "",
+                                                    pId: -1,
+                                                    diseaseId: appointment
+                                                            ?.diseaseId ??
+                                                        0),
+                                          ))
+                                              .then((value) {
+                                            if (value == true &&
+                                                value != null) {
+                                              appointmentProvider
+                                                  .getTodaysAppointments(
+                                                      context: context);
+                                            } else {
+                                              print(
+                                                  "Nothing changed in todays appointment page");
+                                            }
+                                          });
+                                        },
+                                        borderRadius: BorderRadius.circular(5),
+                                        backGroundColor: AppColors.whiteColor,
+                                        borderColor: AppColors.brownColor,
+                                        textStyle: TextSizeHelper
+                                            .xSmallTextStyle
+                                            .copyWith(
+                                                color: AppColors.brownColor),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ]
                             ],
                           ),
                         );

@@ -29,7 +29,7 @@ class UpdateUserProfileService {
         if (data['success'] == true) {
           UpdateProfileModel model = UpdateProfileModel.fromJson(data);
           //// store the updated data
-          SharedPrefs.saveRole("patient");
+          SharedPrefs.saveRole(model.data?.role ?? "");
           SharedPrefs.saveName(model.data?.name ?? "");
           SharedPrefs.saveMobileNumber(model.data?.mobileNo ?? "");
           SharedPrefs.saveBranchId(model.data?.branchId.toString() ?? "");

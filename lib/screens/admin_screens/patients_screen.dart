@@ -7,7 +7,7 @@ import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/models/my_patients_model.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
-import 'package:vaidraj/provider/my_patients_provider.dart';
+import 'package:vaidraj/services/my_patient_service/my_patient_service.dart';
 import 'package:vaidraj/utils/border_helper/border_helper.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -32,22 +32,101 @@ class AdminPatientsScreen extends StatefulWidget {
 class _AdminPatientsScreenState extends State<AdminPatientsScreen>
     with NavigateHelper {
   String? role;
+  bool isLoading = false;
+  String? branchId;
+  String searchQuery = "";
+  final PagingController<int, PatientsInfo> pagingController =
+      PagingController(firstPageKey: 1);
+  final MyPatientService service = MyPatientService();
+  MyPatientsModel? _patientsModel;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadRole();
-    var patientProvider =
-        Provider.of<MyPatientsProvider>(context, listen: false);
+    // var patientProvider =
+    //     Provider.of<MyPatientsProvider>(context, listen: false);
     var branchProvider = Provider.of<GetBrachProvider>(context, listen: false);
+    loadRole();
     if (mounted) {
-      patientProvider.initPaginController(context: context);
+      initPaginController(context: context);
       branchProvider.getBranch(context: context);
+    }
+  }
+
+  void initPaginController({
+    required BuildContext context,
+  }) {
+    pagingController.addPageRequestListener((pageKey) {
+      fetchPage(
+        pageKey: pageKey,
+        context: context,
+        branchId: branchId ?? "0",
+      );
+    });
+  }
+
+  /// Function to filter the patients based on the search query
+  List<PatientsInfo> filterPatients(List<PatientsInfo> patients) {
+    return patients.where((patient) {
+      // Filter logic: Check if search query matches any field (e.g., patient's name)
+      return patient.appointment?.name
+              ?.toLowerCase()
+              .contains(searchQuery.toLowerCase()) ??
+          false;
+    }).toList();
+  }
+
+  Future<void> fetchPage({
+    required int pageKey,
+    required BuildContext context,
+    required String branchId,
+  }) async {
+    try {
+      print("Fetching page: $pageKey");
+
+      // Fetch the list of patients from the service
+      _patientsModel = await service.getPatients(
+        context: context,
+        currentPage: pageKey,
+        branchId: branchId,
+        perPage: 5,
+      );
+
+      final patients = _patientsModel?.data?.data ?? [];
+      final isLastPage = patients.length < 5;
+
+      List<PatientsInfo> dataToAppend;
+
+      // If search query exists, filter patients
+      if (searchQuery.isNotEmpty) {
+        dataToAppend = filterPatients(patients);
+      } else {
+        dataToAppend = patients;
+      }
+
+      // Append data based on whether it is the last page
+      if (isLastPage) {
+        pagingController.appendLastPage(dataToAppend);
+      } else {
+        final nextPageKey = pageKey + 1;
+        pagingController.appendPage(dataToAppend, nextPageKey);
+      }
+    } catch (error) {
+      pagingController.error = error;
     }
   }
 
   Future<void> loadRole() async {
     role = await SharedPrefs.getRole();
+    print("role ============>  $role");
+    if (role == "doctor" || role == "manager") {
+      String s = await SharedPrefs.getBranchId();
+      setState(() {
+        branchId = s;
+      });
+
+      print("branch id == $branchId");
+    }
     print('$role');
   }
 
@@ -69,11 +148,11 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
               screenIndex: 1,
             ));
       },
-      child: Consumer2<GetBrachProvider, MyPatientsProvider>(
-        builder: (context, brachProvider, myPatientProvider, child) =>
-            RefreshIndicator(
+      child: Consumer<GetBrachProvider>(
+        builder: (context, brachProvider, child) => RefreshIndicator(
           onRefresh: () async {
-            myPatientProvider.pagingController.refresh();
+            loadRole();
+            pagingController.refresh();
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -81,9 +160,9 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomSearchBar(
-                  onSubmitted: (value) =>
-                      Provider.of<MyPatientsProvider>(context, listen: false)
-                          .setSearchQuery = value),
+                  onSubmitted: (value) => setState(() {
+                        searchQuery = value;
+                      })),
               if (role == "admin")
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -93,6 +172,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                             child: Loader(),
                           )
                         : CustomDropDownWidget(
+                            hintText: "Select Branch",
                             // value: myPatientProvider.branchId,
                             decoration: BorderHelper.dropDownOutlinedBorder(
                                 suffixIcon: Icons.keyboard_arrow_down),
@@ -128,7 +208,10 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                                     )
                                   ],
                             onChanged: (value) {
-                              myPatientProvider.setBranchId = "$value";
+                              setState(() {
+                                branchId = "$value";
+                                pagingController.refresh();
+                              });
                             },
                             validator: (value) {
                               if (value == null) {
@@ -148,7 +231,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                           height: 2.h,
                         ),
                     shrinkWrap: true,
-                    pagingController: myPatientProvider.pagingController,
+                    pagingController: pagingController,
                     builderDelegate: PagedChildBuilderDelegate<PatientsInfo>(
                       noItemsFoundIndicatorBuilder: (context) => SizedBox(
                         height: 60.h,
@@ -172,8 +255,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                                         .copyWith(color: AppColors.whiteColor),
                                     onTap: () async {
                                       print("clicked");
-                                      myPatientProvider.pagingController
-                                          .refresh();
+                                      pagingController.refresh();
                                     }),
                               )
                             ],
@@ -224,7 +306,7 @@ class MyPatientsListTile extends StatelessWidget with NavigateHelper {
             .copyWith(color: AppColors.brownColor),
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: role == "admin"
+      subtitle: role == "admin" || role == "manager"
           ? Text(
               contactNumber,
               style: TextSizeHelper.smallTextStyle,

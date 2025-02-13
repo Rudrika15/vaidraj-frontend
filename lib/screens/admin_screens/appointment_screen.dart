@@ -89,7 +89,7 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomContainer(
-                          height: 8.h,
+                          // height: 8.h,
                           padding: EdgeInsets.symmetric(
                               horizontal: 5.w, vertical: 1.h),
                           child: Row(
@@ -101,6 +101,7 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                     )
                                   : role == "admin"
                                       ? CustomDropDownWidget(
+                                          hintText: "Select Branch",
                                           decoration: BorderHelper
                                               .dropDownOutlinedBorder(
                                                   suffixIcon: Icons
@@ -315,70 +316,73 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                 style: TextSizeHelper
                                                     .xSmallTextStyle,
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  PrimaryBtn(
-                                                    btnText: "Prescription",
-                                                    onTap: () {
-                                                      print(
-                                                          "appointmentID => ${item.id} ");
-                                                      Provider.of<PrescriptionStateProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .emptyDiseaseListAfterSuccess();
+                                              if (role == "doctor") ...[
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    PrimaryBtn(
+                                                      btnText: "Prescription",
+                                                      onTap: () {
+                                                        print(
+                                                            "appointmentID => ${item.id} ");
+                                                        Provider.of<PrescriptionStateProvider>(
+                                                                context,
+                                                                listen: false)
+                                                            .emptyDiseaseListAfterSuccess();
 
-                                                      /// this will wait for value if i have updated somthing in forward page
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(
-                                                              builder: (context) => PrescriptionPage(
-                                                                  isCreating:
-                                                                      item.status !=
-                                                                          "completed",
-                                                                  pId: item.prescriptions?.isNotEmpty ==
-                                                                          true
-                                                                      ? (item.prescriptions?[0].id) ??
-                                                                          -1
-                                                                      : -1,
-                                                                  appointmentId:
-                                                                      item.id ??
-                                                                          0,
-                                                                  previousPrescriptionDisease: item.status ==
-                                                                          "completed"
-                                                                      ? (item
-                                                                          .prescriptions?[0]
-                                                                          .medicines)
-                                                                      : null,
-                                                                  name: item.name ?? "",
-                                                                  diseaseId: item.diseaseId ?? 0)))
-                                                          .then((value) {
-                                                        if (value == true) {
-                                                          doctorAppointmentProvider
-                                                              .pagingController
-                                                              .refresh();
-                                                        } else {
-                                                          print("not updated");
-                                                        }
-                                                      });
-                                                    },
-                                                    height: 3.h,
-                                                    width: 25.w,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                    backGroundColor:
-                                                        AppColors.whiteColor,
-                                                    borderColor:
-                                                        AppColors.brownColor,
-                                                    textStyle: TextSizeHelper
-                                                        .xSmallTextStyle
-                                                        .copyWith(
-                                                            color: AppColors
-                                                                .brownColor),
-                                                  )
-                                                ],
-                                              )
+                                                        /// this will wait for value if i have updated somthing in forward page
+                                                        Navigator.of(context)
+                                                            .push(MaterialPageRoute(
+                                                                builder: (context) => PrescriptionPage(
+                                                                    isCreating:
+                                                                        item.status !=
+                                                                            "completed",
+                                                                    pId: item.prescriptions?.isNotEmpty ==
+                                                                            true
+                                                                        ? (item.prescriptions?[0].id) ??
+                                                                            -1
+                                                                        : -1,
+                                                                    appointmentId:
+                                                                        item.id ??
+                                                                            0,
+                                                                    previousPrescriptionDisease: item.status ==
+                                                                            "completed"
+                                                                        ? (item
+                                                                            .prescriptions?[0]
+                                                                            .medicines)
+                                                                        : null,
+                                                                    name: item.name ?? "",
+                                                                    diseaseId: item.diseaseId ?? 0)))
+                                                            .then((value) {
+                                                          if (value == true) {
+                                                            doctorAppointmentProvider
+                                                                .pagingController
+                                                                .refresh();
+                                                          } else {
+                                                            print(
+                                                                "not updated");
+                                                          }
+                                                        });
+                                                      },
+                                                      height: 3.h,
+                                                      width: 25.w,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      backGroundColor:
+                                                          AppColors.whiteColor,
+                                                      borderColor:
+                                                          AppColors.brownColor,
+                                                      textStyle: TextSizeHelper
+                                                          .xSmallTextStyle
+                                                          .copyWith(
+                                                              color: AppColors
+                                                                  .brownColor),
+                                                    )
+                                                  ],
+                                                )
+                                              ]
                                             ],
                                           ),
                                         ))))
