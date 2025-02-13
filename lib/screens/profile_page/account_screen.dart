@@ -248,25 +248,30 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                 GestureDetector(
                                                   onTap: () async {
                                                     if (isEditing) {
-                                                      dateTime =
-                                                          await showDatePicker(
-                                                              context:
-                                                                  profileContext,
-                                                              firstDate:
-                                                                  DateTime(
-                                                                      1950),
-                                                              lastDate: DateTime(
-                                                                  DateTime.now()
-                                                                      .year,
-                                                                  DateTime.now()
-                                                                      .month,
-                                                                  DateTime.now()
-                                                                      .day));
-                                                      if (dob != null) {
-                                                        dobController
-                                                            .text = DateFormat(
-                                                                'yyyy-MM-dd')
-                                                            .format(dateTime!);
+                                                      dateTime = await showDatePicker(
+                                                          initialDate:
+                                                              DateTime.parse(
+                                                                  dobController
+                                                                      .text),
+                                                          context:
+                                                              profileContext,
+                                                          firstDate:
+                                                              DateTime(1950),
+                                                          lastDate: DateTime(
+                                                              DateTime.now()
+                                                                  .year,
+                                                              DateTime.now()
+                                                                  .month,
+                                                              DateTime.now()
+                                                                  .day));
+                                                      if (dateTime != null) {
+                                                        setState(() {
+                                                          dobController
+                                                              .text = DateFormat(
+                                                                  'yyyy-MM-dd')
+                                                              .format(
+                                                                  dateTime!);
+                                                        });
                                                       }
                                                     }
                                                   },
