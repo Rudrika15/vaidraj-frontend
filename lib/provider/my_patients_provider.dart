@@ -5,22 +5,15 @@ import '../models/my_patients_model.dart';
 import '../services/my_patient_service/my_patient_service.dart';
 
 class MyPatientsProvider extends ChangeNotifier {
-  MyPatientsProvider() {
-    loadBranchId();
-  }
-
   /// loader
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   /// branchId
-  String _branchId = "0";
+  String _branchId = "";
   String get branchId => _branchId;
-  void loadBranchId() async {
-    _isLoading = true;
+  void initBranchId() async {
     _branchId = await SharedPrefs.getBranchId();
-    print("setting branchId to ==> $_branchId");
-    _isLoading = false;
     notifyListeners();
   }
 
@@ -53,14 +46,17 @@ class MyPatientsProvider extends ChangeNotifier {
 
   void initPaginController({required BuildContext context}) {
     pagingController.addPageRequestListener((pageKey) {
-      fetchPage(pageKey: pageKey, context: context, branchId: _branchId);
+      fetchPage(
+          pageKey: pageKey,
+          context: context,
+          branchId: _branchId == "" ? null : _branchId);
     });
   }
 
   Future<void> fetchPage({
     required int pageKey,
     required BuildContext context,
-    required String branchId,
+    String? branchId,
   }) async {
     try {
       // Fetch the list of patients from the service

@@ -45,7 +45,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
         Provider.of<MyPatientsProvider>(context, listen: false);
     var branchProvider = Provider.of<GetBrachProvider>(context, listen: false);
     loadRole();
-    patientProvider.loadBranchId();
+    patientProvider.initBranchId();
     patientProvider.initPaginController(context: context);
     patientProvider.pagingController.refresh();
     if (mounted) {
@@ -143,10 +143,8 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                                     )
                                   ],
                             onChanged: (value) {
-                              setState(() {
-                                branchId = "$value";
-                                myPatientProvider.pagingController.refresh();
-                              });
+                              myPatientProvider.setBranchId = value.toString();
+                              myPatientProvider.pagingController.refresh();
                             },
                             validator: (value) {
                               if (value == null) {
@@ -242,7 +240,7 @@ class MyPatientsListTile extends StatelessWidget with NavigateHelper {
             .copyWith(color: AppColors.brownColor),
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: role == "admin"
+      subtitle: role == "admin" || role == "manager"
           ? Text(
               contactNumber,
               style: TextSizeHelper.smallTextStyle,

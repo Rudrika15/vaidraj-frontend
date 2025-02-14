@@ -257,7 +257,8 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                             ] else ...[
                               Expanded(child: SizedBox())
                             ],
-                            if (MethodHelper.isToday(item?.date ?? ""))
+                            if (MethodHelper.isToday(item?.date ?? "") &&
+                                item?.status == "completed")
                               IconButton(
                                   onPressed: () {},
                                   icon: Icon(

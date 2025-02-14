@@ -418,7 +418,9 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                         child: SizedBox())
                                                   ],
                                                   if (MethodHelper.isToday(
-                                                      item.date ?? ""))
+                                                          item.date ?? "") &&
+                                                      item.status ==
+                                                          "completed")
                                                     IconButton(
                                                         padding:
                                                             EdgeInsets.all(0),
