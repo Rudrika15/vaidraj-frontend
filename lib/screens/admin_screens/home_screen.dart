@@ -159,11 +159,17 @@ class _RenderTodaysAppointmentsState extends State<RenderTodaysAppointments>
                                 ],
                               ),
                               Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "${appointment?.status}".toUpperCase(),
                                     style: TextSizeHelper.xSmallHeaderStyle
                                         .copyWith(color: AppColors.errorColor),
+                                  ),
+                                  Text(
+                                    "Age : ${MethodHelper.calculateAge(birthDateString: appointment?.dob ?? "")}",
+                                    style: TextSizeHelper.xSmallHeaderStyle,
                                   ),
                                 ],
                               ),
@@ -174,10 +180,6 @@ class _RenderTodaysAppointmentsState extends State<RenderTodaysAppointments>
                               ),
                               Text(
                                 "Disease : ${appointment?.diseases?.diseaseName}",
-                                style: TextSizeHelper.xSmallTextStyle,
-                              ),
-                              Text(
-                                "Date of Birth : ${appointment?.dob}",
                                 style: TextSizeHelper.xSmallTextStyle,
                               ),
                               Text(

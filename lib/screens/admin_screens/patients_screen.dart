@@ -95,6 +95,11 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomSearchBar(
+                  trailing: [
+                    IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+                  ],
+                  onChange: (value) =>
+                      myPatientProvider.onSearchChanged(query: value),
                   onSubmitted: (value) => setState(() {
                         myPatientProvider.setSearchQuery = value;
                       })),
@@ -127,6 +132,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                                           brachProvider.getBranchModel
                                                   ?.data?[index].branchName ??
                                               "-",
+                                          overflow: TextOverflow.ellipsis,
                                           style:
                                               TextSizeHelper.smallHeaderStyle,
                                         ),
@@ -202,6 +208,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                             userId: item.appointment?.userId ?? 0,
                             contactNumber: item.appointment?.contact ?? "",
                             role: role,
+                            birthDate: item.appointment?.dob ?? "",
                             name: item.appointment?.name ?? "");
                       },
                     )),
@@ -215,17 +222,18 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
 }
 
 class MyPatientsListTile extends StatelessWidget with NavigateHelper {
-  const MyPatientsListTile({
-    super.key,
-    required this.userId,
-    required this.role,
-    required this.name,
-    required this.contactNumber,
-  });
+  const MyPatientsListTile(
+      {super.key,
+      required this.userId,
+      required this.role,
+      required this.name,
+      required this.contactNumber,
+      required this.birthDate});
   final int userId;
   final String? role;
   final String name;
   final String contactNumber;
+  final String birthDate;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -240,13 +248,25 @@ class MyPatientsListTile extends StatelessWidget with NavigateHelper {
             .copyWith(color: AppColors.brownColor),
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: role == "admin" || role == "manager"
-          ? Text(
-              contactNumber,
-              style: TextSizeHelper.smallTextStyle,
-              overflow: TextOverflow.ellipsis,
-            )
-          : null,
+      subtitle: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Age : ${MethodHelper.calculateAge(birthDateString: birthDate).toString()}",
+            style: TextSizeHelper.smallTextStyle,
+            overflow: TextOverflow.ellipsis,
+          ),
+          role == "admin" || role == "manager"
+              ? Text(
+                  contactNumber,
+                  style: TextSizeHelper.smallTextStyle,
+                  overflow: TextOverflow.ellipsis,
+                )
+              : SizedBox.shrink(),
+        ],
+      ),
       trailing: GestureDetector(
         onTap: () => push(
             context,

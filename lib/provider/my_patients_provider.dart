@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
@@ -100,5 +102,22 @@ class MyPatientsProvider extends ChangeNotifier {
               .contains(_searchQuery.toLowerCase()) ??
           false;
     }).toList();
+  }
+
+  /// Every time the user types, the previous timer is canceled and a new timer is started. If the user stops typing for 500ms, the timer triggers and updates the search query.
+  Timer? _debounceTimer;
+  Timer? get debounceTimer => _debounceTimer;
+  void onSearchChanged({required String query}) {
+    // Cancel the previous timer if any
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer?.cancel();
+    }
+    // Set up a new timer to wait for user to stop typing
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      // This will be executed after the debounce delay
+
+      _searchQuery = query; // Update the search query
+      print(_searchQuery);
+    });
   }
 }

@@ -153,4 +153,27 @@ class MethodHelper {
         date.month == today.month &&
         date.day == today.day;
   }
+
+  /// calculate age by birthdate
+  static int 
+  calculateAge({required String birthDateString}) {
+    // Parse the date string into a DateTime object
+    print(birthDateString);
+    DateTime birthDate = DateFormat('yyyy-MM-dd').parse(birthDateString);
+
+    // Get the current date
+    DateTime currentDate = DateTime.now();
+
+    // Calculate the difference in years
+    int age = currentDate.year - birthDate.year;
+
+    // Adjust if the birth date hasn't occurred yet this year
+    if (currentDate.month < birthDate.month ||
+        (currentDate.month == birthDate.month &&
+            currentDate.day < birthDate.day)) {
+      age--;
+    }
+    print(age);
+    return age;
+  }
 }

@@ -129,6 +129,7 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                                 ?.data?[index]
                                                                 .branchName ??
                                                             "-",
+                                                            overflow: TextOverflow.ellipsis,
                                                         style: TextSizeHelper
                                                             .smallHeaderStyle,
                                                       ),
@@ -283,6 +284,9 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                 ],
                                               ),
                                               Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Text(
                                                     "${item.status}"
@@ -296,6 +300,11 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                                     .greenColor
                                                                 : AppColors
                                                                     .errorColor),
+                                                  ),
+                                                  Text(
+                                                    "Age : ${MethodHelper.calculateAge(birthDateString: item.dob ?? "")}",
+                                                    style: TextSizeHelper
+                                                        .xSmallHeaderStyle,
                                                   ),
                                                 ],
                                               ),

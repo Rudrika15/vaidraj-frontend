@@ -142,12 +142,14 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Expanded(
-                                flex: 2,
-                                child: Text(
-                                  "Patient : ${item?.name}",
-                                  style: TextSizeHelper.xSmallHeaderStyle,
-                                )),
+                            Text(
+                              "Patient : ${item?.name}",
+                              style: TextSizeHelper.xSmallHeaderStyle,
+                            ),
+                            Text(
+                              "Age : ${MethodHelper.calculateAge(birthDateString: item?.dob ?? "")}",
+                              style: TextSizeHelper.xSmallHeaderStyle,
+                            ),
                           ],
                         ),
                         MethodHelper.heightBox(height: 1.h),
