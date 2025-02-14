@@ -428,6 +428,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                             child: Loader(),
                           )
                         : CustomDropDownWidget(
+                            hintText: langProvider.translate("disease"),
                             value: !widget.fromPage
                                 ? null
                                 : diseaseId != null
@@ -435,8 +436,8 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                     : null,
                             alignment: Alignment.centerLeft,
                             prefixIcon: Icons.storefront_outlined,
-                            decoration: MethodHelper.greenUnderLineBorder(
-                                hintText: langProvider.translate("disease")),
+                            decoration:
+                                MethodHelper.greenUnderLineBorder(hintText: ""),
                             items: diseasesProvider.diseasesModelForAppointment
                                         ?.data?.data?.isNotEmpty ==
                                     true

@@ -250,8 +250,6 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                                               prescriptionProvider
                                                   .emptyDiseaseListAfterSuccess();
                                               Navigator.pop(context, true);
-                                            } else {
-                                              Navigator.pop(context, false);
                                             }
                                           });
                                         }),

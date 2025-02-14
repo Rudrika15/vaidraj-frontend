@@ -4,12 +4,16 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
-import 'package:vaidraj/models/medical_history_model.dart';
+import 'package:vaidraj/models/medical_history_model.dart' as m;
+import 'package:vaidraj/models/product_model.dart';
 import 'package:vaidraj/services/medical_history/medical_history_service.dart';
+import 'package:vaidraj/services/product_service/product_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
+import '../../models/upcoming_appointment_model.dart';
 import '../../provider/prescription_provider.dart';
 import '../../widgets/primary_btn.dart';
 import 'prescription_page.dart';
@@ -25,10 +29,12 @@ class PatientsHistoryScreen extends StatefulWidget {
 
 class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
     with NavigateHelper {
-  MedicalHistoryListModel? patientsHistoryModel;
+  m.MedicalHistoryListModel? patientsHistoryModel;
+  ProductModel? productModel;
+  final ProductService productService = ProductService();
   final MedicalHistoryService service = MedicalHistoryService();
   bool isLoading = true; // Track loading state
-
+  String? role;
   @override
   void initState() {
     super.initState();
@@ -38,10 +44,12 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
   // Fetch data asynchronously
   Future<void> initModel() async {
     try {
+      role = await SharedPrefs.getRole();
       isLoading = true;
       patientsHistoryModel = null;
       patientsHistoryModel =
           await service.getMedicalHistoryById(context: context, id: widget.id);
+      productModel = await productService.getAllProduct(context: context);
       print("data collected");
     } catch (error) {
       // Handle error gracefully, maybe show an error message
@@ -94,7 +102,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                     patientsHistoryModel?.data?.data?.appointments?.length ?? 0,
                 itemBuilder: (context, index) {
                   print(index);
-                  Appointments? item =
+                  m.Appointments? item =
                       patientsHistoryModel?.data?.data?.appointments?[index];
                   return CustomContainer(
                     margin:
@@ -143,25 +151,54 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                           ],
                         ),
                         MethodHelper.heightBox(height: 1.h),
+                        if (item?.status == "completed") ...[
+                          Text(
+                            "Prescriptions :-",
+                            style: TextSizeHelper.xSmallHeaderStyle,
+                          ),
+                          for (m.Prescriptions p
+                              in item?.prescriptions ?? []) ...[
+                            for (Medicines m in p.medicines ?? []) ...[
+                              Divider(
+                                thickness: 0.5,
+                              ),
+                              Text(
+                                "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
+                                style: TextSizeHelper.xSmallTextStyle,
+                              ),
+                              Text(
+                                "Timing  : ${m.time ?? "Not Found"}",
+                                style: TextSizeHelper.xSmallTextStyle,
+                              ),
+                              Text(
+                                "How To Take? : ${m.toBeTaken ?? "Not Found"}",
+                                style: TextSizeHelper.xSmallTextStyle,
+                              ),
+                            ]
+                          ],
+                        ],
+                        Divider(
+                          thickness: 0.5,
+                        ),
                         if (item?.prescriptions?.isNotEmpty == true) ...[
                           Text(
-                            'Note : ${item?.prescriptions?[0].note}',
+                            'Note : ${item?.prescriptions?[0].note ?? "Not Provided"}',
                             style: TextSizeHelper.xSmallTextStyle,
                           ),
                           if (item?.prescriptions?[0].otherMedicines
                                   ?.isNotEmpty ==
                               true)
                             Text(
-                              'Other Medicines : ${item?.prescriptions?[0].otherMedicines}',
+                              'Other Medicines : ${item?.prescriptions?[0].otherMedicines ?? "Not Provided"}',
                               style: TextSizeHelper.xSmallTextStyle,
                             ),
                         ] else ...[
                           Text(
-                            'Subject : ${item?.subject}',
+                            'Subject : ${item?.subject ?? "Not Provided"}',
                             style: TextSizeHelper.xSmallTextStyle,
                           ),
                           Text(
-                            'Message : ${item?.message}',
+                            'Message : ${item?.message ?? "Not Provided"}',
                             style: TextSizeHelper.xSmallTextStyle,
                           ),
                         ],
@@ -169,50 +206,64 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            PrimaryBtn(
-                              btnText: "Prescription",
-                              onTap: () {
-                                print("appointmentID => ${item?.id} ");
-                                Provider.of<PrescriptionStateProvider>(context,
-                                        listen: false)
-                                    .emptyDiseaseListAfterSuccess();
-                                    /// this will wait for value if i have updated somthing in forward page
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) => PrescriptionPage(
-                                            isCreating: item?.status !=
-                                                "completed",
-                                            appointmentId: item?.id ?? 0,
-                                            name: item?.name ?? "",
-                                            pId: item?.prescriptions
-                                                        ?.isNotEmpty ==
-                                                    true
-                                                ? (item?.prescriptions?[0]
-                                                        .id) ??
-                                                    0
-                                                : -1,
-                                            previousPrescriptionDisease:
-                                                item?.status == "completed"
-                                                    ? (item?.prescriptions?[0]
-                                                        .medicines)
-                                                    : null,
-                                            diseaseId: item?.diseaseId ?? 0)))
-                                    .then((value) {
-                                  if (value == true) {
-                                    initModel();
-                                  } else {
-                                    print("not updated");
-                                  }
-                                });
-                              },
-                              height: 3.h,
-                              width: 25.w,
-                              borderRadius: BorderRadius.circular(5),
-                              backGroundColor: AppColors.whiteColor,
-                              borderColor: AppColors.brownColor,
-                              textStyle: TextSizeHelper.xSmallTextStyle
-                                  .copyWith(color: AppColors.brownColor),
-                            )
+                            if (item?.status != "completed" &&
+                                role != "manger") ...[
+                              PrimaryBtn(
+                                btnText: "Prescription",
+                                onTap: () {
+                                  print("appointmentID => ${item?.id} ");
+                                  Provider.of<PrescriptionStateProvider>(
+                                          context,
+                                          listen: false)
+                                      .emptyDiseaseListAfterSuccess();
+
+                                  /// this will wait for value if i have updated somthing in forward page
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => PrescriptionPage(
+                                              isCreating:
+                                                  item?.status != "completed",
+                                              appointmentId: item?.id ?? 0,
+                                              name: item?.name ?? "",
+                                              pId: item?.prescriptions
+                                                          ?.isNotEmpty ==
+                                                      true
+                                                  ? (item?.prescriptions?[0]
+                                                          .id) ??
+                                                      0
+                                                  : -1,
+                                              previousPrescriptionDisease:
+                                                  item?.status == "completed"
+                                                      ? (item?.prescriptions?[0]
+                                                          .medicines)
+                                                      : null,
+                                              diseaseId: item?.diseaseId ?? 0)))
+                                      .then((value) {
+                                    if (value == true) {
+                                      initModel();
+                                    } else {
+                                      print("not updated");
+                                    }
+                                  });
+                                },
+                                height: 3.h,
+                                width: 25.w,
+                                borderRadius: BorderRadius.circular(5),
+                                backGroundColor: AppColors.whiteColor,
+                                borderColor: AppColors.brownColor,
+                                textStyle: TextSizeHelper.xSmallTextStyle
+                                    .copyWith(color: AppColors.brownColor),
+                              )
+                            ] else ...[
+                              Expanded(child: SizedBox())
+                            ],
+                            if (MethodHelper.isToday(item?.date ?? ""))
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: AppColors.errorColor,
+                                  ))
                           ],
                         )
                       ],

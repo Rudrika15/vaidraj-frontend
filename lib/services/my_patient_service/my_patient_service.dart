@@ -13,22 +13,21 @@ class MyPatientService {
       required int currentPage,
       required int perPage}) async {
     try {
-      log(ApiHelper.getMyPatients(
-          branchId: branchId, currentPage: currentPage, perPage: perPage));
-      Response response = await HttpHelper.get(
+      Response? response = await HttpHelper.get(
         context: context,
         uri: ApiHelper.getMyPatients(
             branchId: branchId, currentPage: currentPage, perPage: perPage),
       );
       log(ApiHelper.getMyPatients(
           branchId: branchId, currentPage: currentPage, perPage: perPage));
-      log(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        Map<String, dynamic> data = jsonDecode(response.body);
+      if (response?.statusCode == 200 || response?.statusCode == 201) {
+        Map<String, dynamic> data = jsonDecode(response!.body);
         if (data['success'] == true) {
           MyPatientsModel model = MyPatientsModel.fromJson(data);
           return model;
         }
+      } else {
+        log("error");
       }
       return null;
     } catch (e) {

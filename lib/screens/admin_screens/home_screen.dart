@@ -192,7 +192,7 @@ class _RenderTodaysAppointmentsState extends State<RenderTodaysAppointments>
                                 "Address : ${appointment?.address}",
                                 style: TextSizeHelper.xSmallTextStyle,
                               ),
-                              if (role == "doctor") ...[
+                              if (role != "manager") ...[
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

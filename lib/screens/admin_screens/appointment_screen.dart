@@ -316,16 +316,49 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                 style: TextSizeHelper
                                                     .xSmallTextStyle,
                                               ),
-                                              if (role == "doctor") ...[
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
+                                              if (item.status ==
+                                                  "completed") ...[
+                                                Text(
+                                                  "Prescriptions :-",
+                                                  style: TextSizeHelper
+                                                      .xSmallHeaderStyle,
+                                                ),
+                                                for (Prescriptions p
+                                                    in item.prescriptions ??
+                                                        []) ...[
+                                                  for (Medicines m
+                                                      in p.medicines ?? []) ...[
+                                                    Divider(
+                                                      thickness: 0.5,
+                                                    ),
+                                                    Text(
+                                                      "Medicine  : ${m.products?.productName ?? "Not Found"}",
+                                                      style: TextSizeHelper
+                                                          .xSmallTextStyle,
+                                                    ),
+                                                    Text(
+                                                      "Timing  : ${m.time ?? "Not Found"}",
+                                                      style: TextSizeHelper
+                                                          .xSmallTextStyle,
+                                                    ),
+                                                    Text(
+                                                      "How To Take? : ${m.toBeTaken ?? "Not Found"}",
+                                                      style: TextSizeHelper
+                                                          .xSmallTextStyle,
+                                                    ),
+                                                  ]
+                                                ],
+                                              ],
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  if (item.status !=
+                                                          "completed" &&
+                                                      role != "manger") ...[
                                                     PrimaryBtn(
                                                       btnText: "Prescription",
                                                       onTap: () {
-                                                        print(
-                                                            "appointmentID => ${item.id} ");
                                                         Provider.of<PrescriptionStateProvider>(
                                                                 context,
                                                                 listen: false)
@@ -335,24 +368,24 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                         Navigator.of(context)
                                                             .push(MaterialPageRoute(
                                                                 builder: (context) => PrescriptionPage(
-                                                                    isCreating:
-                                                                        item.status !=
-                                                                            "completed",
-                                                                    pId: item.prescriptions?.isNotEmpty ==
-                                                                            true
-                                                                        ? (item.prescriptions?[0].id) ??
-                                                                            -1
-                                                                        : -1,
+                                                                    isCreating: item.status !=
+                                                                        "completed",
                                                                     appointmentId:
                                                                         item.id ??
                                                                             0,
+                                                                    name: item.name ??
+                                                                        "",
+                                                                    pId: item.prescriptions?.isNotEmpty ==
+                                                                            true
+                                                                        ? (item.prescriptions?[0].id) ??
+                                                                            0
+                                                                        : -1,
                                                                     previousPrescriptionDisease: item.status ==
                                                                             "completed"
                                                                         ? (item
                                                                             .prescriptions?[0]
                                                                             .medicines)
                                                                         : null,
-                                                                    name: item.name ?? "",
                                                                     diseaseId: item.diseaseId ?? 0)))
                                                             .then((value) {
                                                           if (value == true) {
@@ -380,9 +413,25 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                               color: AppColors
                                                                   .brownColor),
                                                     )
+                                                  ] else ...[
+                                                    const Expanded(
+                                                        child: SizedBox())
                                                   ],
-                                                )
-                                              ]
+                                                  if (MethodHelper.isToday(
+                                                      item.date ?? ""))
+                                                    IconButton(
+                                                        padding:
+                                                            EdgeInsets.all(0),
+                                                        onPressed: () {
+                                                          /// logic to delete the prescriptions
+                                                        },
+                                                        icon: const Icon(
+                                                          Icons.delete,
+                                                          color: AppColors
+                                                              .errorColor,
+                                                        ))
+                                                ],
+                                              )
                                             ],
                                           ),
                                         ))))

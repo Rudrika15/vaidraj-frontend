@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vaidraj/constants/color.dart';
@@ -138,5 +139,18 @@ class MethodHelper {
     }
 
     return false;
+  }
+
+  static bool isToday(String dateString) {
+    // Parse the given date string into a DateTime object
+    DateTime date = DateFormat('yyyy-MM-dd').parse(dateString);
+
+    // Get the current date (only year, month, and day, no time)
+    DateTime today = DateTime.now();
+
+    // Compare the year, month, and day of the date and today's date
+    return date.year == today.year &&
+        date.month == today.month &&
+        date.day == today.day;
   }
 }
