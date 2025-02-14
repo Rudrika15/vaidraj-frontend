@@ -128,8 +128,10 @@ class RenderUpcomingAppointment extends StatelessWidget {
           return Center(child: Text('Failed to load appointments'));
         }
 
-        List<UpcomingAppointmentInfo> appointments =
-            snapshot.data?.data?.data ?? [];
+        List<UpcomingAppointmentInfo> appointments = snapshot.data?.data?.data
+                ?.where((e) => e.status != "completed")
+                .toList() ??
+            [];
 
         return snapshot.data?.data?.data?.isEmpty == true
             ? SizedBox(
