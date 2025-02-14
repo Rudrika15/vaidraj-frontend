@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/medical_history_model.dart';
+import 'package:vaidraj/models/patient_medical_history_adminside.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
 import 'package:vaidraj/utils/http_helper/http_helper.dart';
 import 'package:http/src/response.dart';
@@ -31,8 +32,8 @@ class MedicalHistoryService {
     }
   }
 
-  Future<MedicalHistoryListModel?> getMedicalHistoryById(
-      {required BuildContext context, required int id}) async {
+  Future<PatientMedicalHistoryModel?> getMedicalHistoryById(
+      {required BuildContext context, required String id}) async {
     try {
       Response response = await HttpHelper.get(
           context: context,
@@ -46,8 +47,8 @@ class MedicalHistoryService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {
-          MedicalHistoryListModel model =
-              MedicalHistoryListModel.fromJson(data);
+          PatientMedicalHistoryModel model =
+              PatientMedicalHistoryModel.fromJson(data);
           return model;
         }
       }

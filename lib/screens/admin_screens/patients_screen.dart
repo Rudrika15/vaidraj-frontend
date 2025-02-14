@@ -271,7 +271,6 @@ class MyPatientsListTile extends StatelessWidget with NavigateHelper {
         onTap: () => push(
             context,
             PatientsHistoryScreen(
-              id: userId,
               name: name,
             )),
         child: CustomContainer(
