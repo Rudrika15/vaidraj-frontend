@@ -146,26 +146,26 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   obscureText: showPassword,
                                   controller: passwordController,
                                   decoration: MethodHelper.brownUnderLineBorder(
+                                      suffix: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              showPassword = !showPassword;
+                                            });
+                                          },
+                                          icon: showPassword
+                                              ? const Icon(
+                                                  Icons.visibility_off,
+                                                  color: AppColors.greenColor,
+                                                )
+                                              : const Icon(
+                                                  Icons.visibility,
+                                                  color: AppColors.errorColor,
+                                                )),
                                       hintText:
                                           langProvider.translate("password"),
                                       prefixIcon: Icons.password),
                                   maxLines: 1,
                                   keyboardType: TextInputType.text,
-                                  suffix: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          showPassword = !showPassword;
-                                        });
-                                      },
-                                      icon: showPassword
-                                          ? const Icon(
-                                              Icons.visibility_off,
-                                              color: AppColors.greenColor,
-                                            )
-                                          : const Icon(
-                                              Icons.visibility,
-                                              color: AppColors.errorColor,
-                                            )),
                                   validator: (value) {
                                     if (value?.isEmpty ?? true) {
                                       return;
