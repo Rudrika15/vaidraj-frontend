@@ -133,10 +133,11 @@ class RenderUpcomingAppointment extends StatelessWidget {
                 .toList() ??
             [];
 
-        return snapshot.data?.data?.data?.isEmpty == true
+        return appointments.isEmpty == true
             ? SizedBox(
                 height: 10.h,
-                child: const ContainerForNoDataFound(title: "No Data Found"))
+                child: const ContainerForNoDataFound(
+                    title: "No Appointment Found"))
             : SizedBox(
                 height: 20.h,
                 child: ListView.separated(

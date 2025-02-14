@@ -155,10 +155,9 @@ class MethodHelper {
   }
 
   /// calculate age by birthdate
-  static int 
-  calculateAge({required String birthDateString}) {
+  static int calculateAge({required String birthDateString}) {
     // Parse the date string into a DateTime object
-    print(birthDateString);
+
     DateTime birthDate = DateFormat('yyyy-MM-dd').parse(birthDateString);
 
     // Get the current date
@@ -173,7 +172,7 @@ class MethodHelper {
             currentDate.day < birthDate.day)) {
       age--;
     }
-    print(age);
+
     return age;
   }
 }
