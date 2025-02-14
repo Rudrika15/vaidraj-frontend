@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
             isAdmin: true,
           ));
       return;
-    } else if (token == true && role == "doctor") {
+    } else if (token == true && role == "doctor" || role == "manager") {
       pushRemoveUntil(
           context,
           const HomeScreen(

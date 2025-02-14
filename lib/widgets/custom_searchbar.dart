@@ -12,6 +12,7 @@ class CustomSearchBar extends StatelessWidget {
     this.leading,
     this.trailing,
     this.onSubmitted,
+    this.onChange
   });
   final double horizontal;
   final double vertical;
@@ -19,17 +20,19 @@ class CustomSearchBar extends StatelessWidget {
   final Widget? leading;
   final Iterable<Widget>? trailing;
   final void Function(String)? onSubmitted;
+  final void Function(String)? onChange;
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
       padding: EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical),
       child: SearchBar(
         onSubmitted: onSubmitted,
+        onChanged: onChange,
         backgroundColor:
             const WidgetStatePropertyAll(AppColors.lightBackGroundColor),
         hintText: hintText,
         leading: leading,
-        trailing: [],
+        trailing: trailing,
       ),
     );
   }
