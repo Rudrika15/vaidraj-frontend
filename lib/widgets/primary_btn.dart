@@ -35,11 +35,15 @@ class PrimaryBtn extends StatelessWidget {
         elevation: 0,
         color: backGroundColor ?? AppColors.brownColor,
         shape: RoundedRectangleBorder(
-            side: BorderSide(color: borderColor ?? AppColors.brownColor,width: borderWidth ?? 1),
+            side: BorderSide(
+                color: borderColor ?? AppColors.brownColor,
+                width: borderWidth ?? 1),
             borderRadius:
                 borderRadius ?? BorderRadius.circular(AppSizes.size20)),
         child: Text(
           btnText,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: textStyle ??
               TextSizeHelper.smallHeaderStyle
                   .copyWith(color: AppColors.whiteColor),
