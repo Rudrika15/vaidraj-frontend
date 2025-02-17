@@ -119,15 +119,15 @@ class PrescriptionStateProvider extends ChangeNotifier {
   Future<void> getAllProducts({required BuildContext context}) async {
     _isLoading = true;
     _productModel = await productService.getAllProduct(context: context);
-    if (_productModel != null) {
-      _productModel?.data?.data?.forEach((e) {
-        e.diseaseProducts?.forEach((d) {
-          if (d.diseases?.diseaseName == _selectedDisease) {
-            _productToShow.add(e);
-          }
-        });
-      });
-    }
+    // if (_productModel != null) {
+    //   _productModel?.data?.data?.forEach((e) {
+    //     e.diseaseProducts?.forEach((d) {
+    //       if (d.diseases?.id == _selectedDiseaseId) {
+    _productToShow.addAll(_productModel?.data?.data ?? []);
+    //       }
+    //     });
+    //   });
+    // }
     _isLoading = false;
     notifyListeners();
   }
@@ -150,10 +150,13 @@ class PrescriptionStateProvider extends ChangeNotifier {
     _productToShow.clear();
 
     // Filter products by disease ID
-    final newList = _productModel?.data?.data
-            ?.where((e) => e.diseaseId == _selectedDiseaseId)
-            .toList() ??
-        [];
+    List<Product> newList = [];
+    _productModel?.data?.data?.forEach((e) {
+      if (e.diseaseProducts?.any((d) => d.diseaseId == _selectedDiseaseId) ??
+          false) {
+        newList.add(e);
+      }
+    });
 
     print('Products that can be added to $_selectedDisease: ${newList.length}');
 
