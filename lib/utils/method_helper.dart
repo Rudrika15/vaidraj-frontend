@@ -62,7 +62,8 @@ class MethodHelper {
         prefixIcon,
         color: prefixColor ?? AppColors.greenColor,
       ),
-      suffix: suffix,
+      suffixIcon:suffix ,
+      // suffix: suffix,
     );
   }
 

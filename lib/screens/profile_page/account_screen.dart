@@ -313,6 +313,8 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                       : CustomDropDownWidget(
                                                           decoration: MethodHelper
                                                               .brownUnderLineBorder(
+                                                            suffix: const Icon(Icons
+                                                                .keyboard_arrow_down),
                                                             prefixIcon: Icons
                                                                 .storefront_outlined,
                                                             prefixColor:

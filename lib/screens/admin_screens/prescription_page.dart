@@ -133,7 +133,9 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                                         prefixIcon: Icons.storefront_outlined,
                                         decoration:
                                             MethodHelper.greenUnderLineBorder(
-                                                hintText: "Disease"),
+                                                hintText: "Disease",
+                                                suffix: const Icon(
+                                                    Icons.keyboard_arrow_down)),
                                         items: diseasesProvider
                                                     .diseasesModelForAppointment
                                                     ?.data
@@ -217,6 +219,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                                   validator: (value) {},
                                   keyboardType: TextInputType.text,
                                   controller: otherMedicineController,
+                  
                                   decoration: MethodHelper.greenUnderLineBorder(
                                       hintText: "Other Notes (if Any)"))),
                               paddingMethod(CustomTextFieldWidget(

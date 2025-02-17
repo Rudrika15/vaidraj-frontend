@@ -436,8 +436,9 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                     : null,
                             alignment: Alignment.centerLeft,
                             prefixIcon: Icons.storefront_outlined,
-                            decoration:
-                                MethodHelper.greenUnderLineBorder(hintText: ""),
+                            decoration: MethodHelper.greenUnderLineBorder(
+                                hintText: "",
+                                suffix: const Icon(Icons.keyboard_arrow_down)),
                             items: diseasesProvider.diseasesModelForAppointment
                                         ?.data?.data?.isNotEmpty ==
                                     true

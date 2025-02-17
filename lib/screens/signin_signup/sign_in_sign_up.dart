@@ -365,6 +365,8 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                                 .translate("selectBranch"),
                                             prefixIcon:
                                                 Icons.storefront_outlined,
+                                            suffixIcon:
+                                                Icons.keyboard_arrow_down,
                                             items: branchProvider.getBranchModel
                                                         ?.data?.isNotEmpty ==
                                                     true
