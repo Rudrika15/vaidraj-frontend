@@ -20,8 +20,10 @@ import '../../widgets/primary_btn.dart';
 import 'prescription_page.dart';
 
 class PatientsHistoryScreen extends StatefulWidget {
-  const PatientsHistoryScreen({super.key, required this.name});
+  const PatientsHistoryScreen(
+      {super.key, required this.number, required this.name});
 
+  final String number;
   final String name;
   @override
   State<PatientsHistoryScreen> createState() => _RenderPatientsHistoryState();
@@ -29,7 +31,7 @@ class PatientsHistoryScreen extends StatefulWidget {
 
 class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
     with NavigateHelper {
-  PatientMedicalHistoryModel? patientsHistoryModel;
+  PatientWiseMedicalHistoryModel? patientsHistoryModel;
   ProductModel? productModel;
   final ProductService productService = ProductService();
   final MedicalHistoryService service = MedicalHistoryService();
@@ -47,8 +49,8 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
       role = await SharedPrefs.getRole();
       isLoading = true;
       patientsHistoryModel = null;
-      patientsHistoryModel = await service.getMedicalHistoryById(
-          context: context, id: widget.name);
+      patientsHistoryModel = await service.getPatientWiseMedicalHistory(
+          context: context, number: widget.number);
       productModel = await productService.getAllProduct(context: context);
       print("data collected");
     } catch (error) {
@@ -100,175 +102,203 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
                 itemCount: patientsHistoryModel?.data?.data?.length ?? 0,
                 itemBuilder: (context, index) {
-                  AdminSidePatientMedicalHistory? item =
+                  PatientHistoryInfo? item =
                       patientsHistoryModel?.data?.data?[index];
                   return CustomContainer(
                     margin:
                         const EdgeInsets.symmetric(vertical: AppSizes.size10),
-                    padding: const EdgeInsets.all(AppSizes.size10),
-                    width: 80.w,
-                    borderColor: AppColors.brownColor,
-                    borderRadius: BorderRadius.circular(AppSizes.size10),
-                    borderWidth: 1,
+                    width: 90.w,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                flex: 2,
-                                child: Text(
-                                  item?.appointment?.status?.toUpperCase() ??
-                                      "",
-                                  style: TextSizeHelper.smallHeaderStyle
-                                      .copyWith(
-                                          color: item?.appointment?.status ==
-                                                  'completed'
-                                              ? AppColors.greenColor
-                                              : AppColors.errorColor),
-                                )),
-                            MethodHelper.widthBox(width: 2.w),
-                            Text(
-                              item?.appointment?.date ?? "",
-                              style: TextSizeHelper.xSmallHeaderStyle,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Patient : ${item?.appointment?.name}",
-                              style: TextSizeHelper.xSmallHeaderStyle,
-                            ),
-                            // Text(
-                            //   "Age : ${MethodHelper.calculateAge(birthDateString: item?.appointment?.dob ?? "")}",
-                            //   style: TextSizeHelper.xSmallHeaderStyle,
-                            // ),
-                          ],
-                        ),
-                        MethodHelper.heightBox(height: 1.h),
-                        if (item?.appointment?.status == "completed") ...[
-                          Text(
-                            "Prescriptions :-",
-                            style: TextSizeHelper.xSmallHeaderStyle,
-                          ),
-                          // for (m.Prescriptions p
-                          //     in item?.appointment.prescriptions ?? []) ...[
-                          //   for (Medicines m in p.medicines ?? []) ...[
-                          //     Divider(
-                          //       thickness: 0.5,
-                          //     ),
-                          //     Text(
-                          //       "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
-                          //       style: TextSizeHelper.xSmallTextStyle,
-                          //     ),
-                          //     Text(
-                          //       "Timing  : ${m.time ?? "Not Found"}",
-                          //       style: TextSizeHelper.xSmallTextStyle,
-                          //     ),
-                          //     Text(
-                          //       "How To Take? : ${m.toBeTaken ?? "Not Found"}",
-                          //       style: TextSizeHelper.xSmallTextStyle,
-                          //     ),
-                          //   ]
-                          // ],
-                        ],
-                        Divider(
-                          thickness: 0.5,
-                        ),
-                        // if (item?.prescriptions?.isNotEmpty == true) ...[
-                        //   Text(
-                        //     'Note : ${item?.prescriptions?[0].note ?? "Not Provided"}',
-                        //     style: TextSizeHelper.xSmallTextStyle,
-                        //   ),
-                        //   if (item?.prescriptions?[0].otherMedicines
-                        //           ?.isNotEmpty ==
-                        //       true)
-                        //     Text(
-                        //       'Other Medicines : ${item?.prescriptions?[0].otherMedicines ?? "Not Provided"}',
-                        //       style: TextSizeHelper.xSmallTextStyle,
-                        //     ),
-                        // ] else ...[
-                        //   Text(
-                        //     'Subject : ${item?.subject ?? "Not Provided"}',
-                        //     style: TextSizeHelper.xSmallTextStyle,
-                        //   ),
-                        //   Text(
-                        //     'Message : ${item?.message ?? "Not Provided"}',
-                        //     style: TextSizeHelper.xSmallTextStyle,
-                        //   ),
-                        // ],
-                        MethodHelper.heightBox(height: 1.h),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.end,
-                        //   children: [
-                        //     if (item?.status != "completed" &&
-                        //         role != "manger") ...[
-                        //       PrimaryBtn(
-                        //         btnText: "Prescription",
-                        //         onTap: () {
-                        //           print("appointmentID => ${item?.id} ");
-                        //           Provider.of<PrescriptionStateProvider>(
-                        //                   context,
-                        //                   listen: false)
-                        //               .emptyDiseaseListAfterSuccess();
+                        if (item?.appointments?.isNotEmpty == true)
+                          for (Appointments a in item?.appointments ?? []) ...[
+                            CustomContainer(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: AppSizes.size10),
+                              padding: const EdgeInsets.all(AppSizes.size10),
+                              width: 80.w,
+                              borderColor: AppColors.brownColor,
+                              borderRadius:
+                                  BorderRadius.circular(AppSizes.size10),
+                              borderWidth: 1,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            a.status ?? "",
+                                            style: TextSizeHelper
+                                                .smallHeaderStyle
+                                                .copyWith(
+                                                    color: a.status ==
+                                                            'completed'
+                                                        ? AppColors.greenColor
+                                                        : AppColors.errorColor),
+                                          )),
+                                      MethodHelper.widthBox(width: 2.w),
+                                      Text(
+                                        a.date ?? "",
+                                        style: TextSizeHelper.xSmallHeaderStyle,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Patient : ${a.name}",
+                                        style: TextSizeHelper.xSmallHeaderStyle,
+                                      ),
+                                      Text(
+                                        "Age : ${MethodHelper.calculateAge(birthDateString: a.dob ?? "")}",
+                                        style: TextSizeHelper.xSmallHeaderStyle,
+                                      ),
+                                    ],
+                                  ),
+                                  MethodHelper.heightBox(height: 1.h),
+                                  if (a.status == "completed") ...[
+                                    Text(
+                                      "Prescriptions :-",
+                                      style: TextSizeHelper.xSmallHeaderStyle,
+                                    ),
+                                    for (PatientWisePrescriptions p
+                                        in a.prescriptions ?? []) ...[
+                                      for (PatientWiseMedicines m
+                                          in p.medicines ?? []) ...[
+                                        Divider(
+                                          thickness: 0.5,
+                                        ),
+                                        Text(
+                                          "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
+                                          style: TextSizeHelper.xSmallTextStyle,
+                                        ),
+                                        Text(
+                                          "Timing  : ${m.time ?? "Not Found"}",
+                                          style: TextSizeHelper.xSmallTextStyle,
+                                        ),
+                                        Text(
+                                          "How To Take? : ${m.toBeTaken ?? "Not Found"}",
+                                          style: TextSizeHelper.xSmallTextStyle,
+                                        ),
+                                      ]
+                                    ],
+                                  ] else ...[
+                                    Text(
+                                      "Subject  : ${a.subject ?? "Not Found"}",
+                                      style: TextSizeHelper.xSmallTextStyle,
+                                    ),
+                                    Text(
+                                      "Message  : ${a.message ?? "Not Found"}",
+                                      style: TextSizeHelper.xSmallTextStyle,
+                                    ),
+                                  ],
+                                  Divider(
+                                    thickness: 0.5,
+                                  ),
+                                  if (a.prescriptions?.isNotEmpty == true) ...[
+                                    Text(
+                                      'Note : ${a.prescriptions?[0].note ?? "Not Provided"}',
+                                      style: TextSizeHelper.xSmallTextStyle,
+                                    ),
+                                    if (a.prescriptions?[0].otherMedicines
+                                            ?.isNotEmpty ==
+                                        true)
+                                      Text(
+                                        'Other Medicines : ${a.prescriptions?[0].otherMedicines ?? "Not Provided"}',
+                                        style: TextSizeHelper.xSmallTextStyle,
+                                      ),
+                                  ] else ...[
+                                    Text(
+                                      'Subject : ${a.subject ?? "Not Provided"}',
+                                      style: TextSizeHelper.xSmallTextStyle,
+                                    ),
+                                    Text(
+                                      'Message : ${a.message ?? "Not Provided"}',
+                                      style: TextSizeHelper.xSmallTextStyle,
+                                    ),
+                                  ],
+                                  MethodHelper.heightBox(height: 1.h),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      if (a.status != "completed" &&
+                                          role != "manger") ...[
+                                        PrimaryBtn(
+                                          btnText: "Prescription",
+                                          onTap: () {
+                                            Provider.of<PrescriptionStateProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .emptyDiseaseListAfterSuccess();
 
-                        //           /// this will wait for value if i have updated somthing in forward page
-                        //           Navigator.of(context)
-                        //               .push(MaterialPageRoute(
-                        //                   builder: (context) => PrescriptionPage(
-                        //                       isCreating:
-                        //                           item?.appointment?.status != "completed",
-                        //                       appointmentId: item?.id ?? 0,
-                        //                       name: item?.appointment?.name ?? "",
-                        //                       pId: item?.appointment?.prescriptions
-                        //                                   ?.isNotEmpty ==
-                        //                               true
-                        //                           ? (item?.appointment?.prescriptions?[0]
-                        //                                   .id) ??
-                        //                               0
-                        //                           : -1,
-                        //                       previousPrescriptionDisease:
-                        //                           item?.appointment?.status == "completed"
-                        //                               ? (item?.appointment?.prescriptions?[0]
-                        //                                   .medicines)
-                        //                               : null,
-                        //                       diseaseId: item?.appointment?.diseaseId ?? 0)))
-                        //               .then((value) {
-                        //             if (value == true) {
-                        //               initModel();
-                        //             } else {
-                        //               print("not updated");
-                        //             }
-                        //           });
-                        //         },
-                        //         height: 3.h,
-                        //         width: 25.w,
-                        //         borderRadius: BorderRadius.circular(5),
-                        //         backGroundColor: AppColors.whiteColor,
-                        //         borderColor: AppColors.brownColor,
-                        //         textStyle: TextSizeHelper.xSmallTextStyle
-                        //             .copyWith(color: AppColors.brownColor),
-                        //       )
-                        //     ] else ...[
-                        //       Expanded(child: SizedBox())
-                        //     ],
-                        //     if (MethodHelper.isToday(item?.appointment?.date ?? "") &&
-                        //         item?.appointment?.status == "completed")
-                        //       IconButton(
-                        //           onPressed: () {},
-                        //           icon: Icon(
-                        //             Icons.delete,
-                        //             color: AppColors.errorColor,
-                        //           ))
-                        //   ],
-                        // )
+                                            /// this will wait for value if i have updated somthing in forward page
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                                    builder: (context) => PrescriptionPage(
+                                                        isCreating: a.status !=
+                                                            "completed",
+                                                        appointmentId:
+                                                            item?.id ?? 0,
+                                                        name: a.name ?? "",
+                                                        pId: a.prescriptions
+                                                                    ?.isNotEmpty ==
+                                                                true
+                                                            ? (a
+                                                                    .prescriptions?[
+                                                                        0]
+                                                                    .id) ??
+                                                                0
+                                                            : -1,
+                                                        diseaseId:
+                                                            a.diseaseId ?? 0)))
+                                                .then((value) {
+                                              if (value == true) {
+                                                initModel();
+                                              } else {
+                                                print("not updated");
+                                              }
+                                            });
+                                          },
+                                          height: 3.h,
+                                          width: 25.w,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          backGroundColor: AppColors.whiteColor,
+                                          borderColor: AppColors.brownColor,
+                                          textStyle: TextSizeHelper
+                                              .xSmallTextStyle
+                                              .copyWith(
+                                                  color: AppColors.brownColor),
+                                        )
+                                      ] else ...[
+                                        Expanded(child: SizedBox())
+                                      ],
+                                      if (MethodHelper.isToday(a.date ?? "") &&
+                                          a.status == "completed")
+                                        IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.delete,
+                                              color: AppColors.errorColor,
+                                            ))
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ]
                       ],
                     ),
                   );

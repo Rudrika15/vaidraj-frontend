@@ -32,23 +32,23 @@ class MedicalHistoryService {
     }
   }
 
-  Future<PatientMedicalHistoryModel?> getMedicalHistoryById(
-      {required BuildContext context, required String id}) async {
+  Future<PatientWiseMedicalHistoryModel?> getPatientWiseMedicalHistory(
+      {required BuildContext context, required String number}) async {
     try {
       Response response = await HttpHelper.get(
           context: context,
-          uri: ApiHelper.getMedicalHistoryById(
-            id: id.toString(),
+          uri: ApiHelper.getPatientWiseMedicalHistory(
+            mobileNumber: number,
           ));
       log(ApiHelper.getMedicalHistoryById(
-        id: id.toString(),
+        id: number,
       ));
       log(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {
-          PatientMedicalHistoryModel model =
-              PatientMedicalHistoryModel.fromJson(data);
+          PatientWiseMedicalHistoryModel model =
+              PatientWiseMedicalHistoryModel.fromJson(data);
           return model;
         }
       }

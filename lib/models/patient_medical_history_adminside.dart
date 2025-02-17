@@ -1,11 +1,11 @@
-class PatientMedicalHistoryModel {
+class PatientWiseMedicalHistoryModel {
   bool? success;
   String? message;
   Data? data;
 
-  PatientMedicalHistoryModel({this.success, this.message, this.data});
+  PatientWiseMedicalHistoryModel({this.success, this.message, this.data});
 
-  PatientMedicalHistoryModel.fromJson(Map<String, dynamic> json) {
+  PatientWiseMedicalHistoryModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -23,138 +23,117 @@ class PatientMedicalHistoryModel {
 }
 
 class Data {
+  List<PatientHistoryInfo>? data;
   int? currentPage;
-  List<AdminSidePatientMedicalHistory>? data;
-  String? firstPageUrl;
-  int? from;
   int? lastPage;
-  String? lastPageUrl;
-  List<Links>? links;
-  String? nextPageUrl;
-  String? path;
   int? perPage;
-  String? prevPageUrl;
-  int? to;
   int? total;
 
-  Data(
-      {this.currentPage,
-      this.data,
-      this.firstPageUrl,
-      this.from,
-      this.lastPage,
-      this.lastPageUrl,
-      this.links,
-      this.nextPageUrl,
-      this.path,
-      this.perPage,
-      this.prevPageUrl,
-      this.to,
-      this.total});
+  Data({this.data, this.currentPage, this.lastPage, this.perPage, this.total});
 
   Data.fromJson(Map<String, dynamic> json) {
-    currentPage = json['current_page'];
     if (json['data'] != null) {
-      data = <AdminSidePatientMedicalHistory>[];
+      data = <PatientHistoryInfo>[];
       json['data'].forEach((v) {
-        data!.add(new AdminSidePatientMedicalHistory.fromJson(v));
+        data!.add(new PatientHistoryInfo.fromJson(v));
       });
     }
-    firstPageUrl = json['first_page_url'];
-    from = json['from'];
+    currentPage = json['current_page'];
     lastPage = json['last_page'];
-    lastPageUrl = json['last_page_url'];
-    if (json['links'] != null) {
-      links = <Links>[];
-      json['links'].forEach((v) {
-        links!.add(new Links.fromJson(v));
-      });
-    }
-    nextPageUrl = json['next_page_url'];
-    path = json['path'];
     perPage = json['per_page'];
-    prevPageUrl = json['prev_page_url'];
-    to = json['to'];
     total = json['total'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['current_page'] = this.currentPage;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['first_page_url'] = this.firstPageUrl;
-    data['from'] = this.from;
+    data['current_page'] = this.currentPage;
     data['last_page'] = this.lastPage;
-    data['last_page_url'] = this.lastPageUrl;
-    if (this.links != null) {
-      data['links'] = this.links!.map((v) => v.toJson()).toList();
-    }
-    data['next_page_url'] = this.nextPageUrl;
-    data['path'] = this.path;
     data['per_page'] = this.perPage;
-    data['prev_page_url'] = this.prevPageUrl;
-    data['to'] = this.to;
     data['total'] = this.total;
     return data;
   }
 }
 
-class AdminSidePatientMedicalHistory {
+class PatientHistoryInfo {
   int? id;
-  int? appointmentId;
-  int? doctorId;
-  String? diseaseId;
-  String? note;
-  String? otherMedicines;
+  int? branchId;
+  String? name;
+  String? email;
+  String? emailVerifiedAt;
+  String? address;
+  String? mobileNo;
+  String? dob;
+  String? formToken;
+  String? role;
+  String? language;
   String? createdAt;
   String? updatedAt;
-  Appointment? appointment;
+  List<Appointments>? appointments;
 
-  AdminSidePatientMedicalHistory(
+  PatientHistoryInfo(
       {this.id,
-      this.appointmentId,
-      this.doctorId,
-      this.diseaseId,
-      this.note,
-      this.otherMedicines,
+      this.branchId,
+      this.name,
+      this.email,
+      this.emailVerifiedAt,
+      this.address,
+      this.mobileNo,
+      this.dob,
+      this.formToken,
+      this.role,
+      this.language,
       this.createdAt,
       this.updatedAt,
-      this.appointment});
+      this.appointments});
 
-  AdminSidePatientMedicalHistory.fromJson(Map<String, dynamic> json) {
+  PatientHistoryInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    appointmentId = json['appointment_id'];
-    doctorId = json['doctor_id'];
-    diseaseId = json['disease_id'];
-    note = json['note'];
-    otherMedicines = json['other_medicines'];
+    branchId = json['branch_id'];
+    name = json['name'];
+    email = json['email'];
+    emailVerifiedAt = json['email_verified_at'];
+    address = json['address'];
+    mobileNo = json['mobile_no'];
+    dob = json['dob'];
+    formToken = json['form_token'];
+    role = json['role'];
+    language = json['language'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    appointment = json['appointment'] != null
-        ? new Appointment.fromJson(json['appointment'])
-        : null;
+    if (json['appointments'] != null) {
+      appointments = <Appointments>[];
+      json['appointments'].forEach((v) {
+        appointments!.add(new Appointments.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['appointment_id'] = this.appointmentId;
-    data['doctor_id'] = this.doctorId;
-    data['disease_id'] = this.diseaseId;
-    data['note'] = this.note;
-    data['other_medicines'] = this.otherMedicines;
+    data['branch_id'] = this.branchId;
+    data['name'] = this.name;
+    data['email'] = this.email;
+    data['email_verified_at'] = this.emailVerifiedAt;
+    data['address'] = this.address;
+    data['mobile_no'] = this.mobileNo;
+    data['dob'] = this.dob;
+    data['form_token'] = this.formToken;
+    data['role'] = this.role;
+    data['language'] = this.language;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
-    if (this.appointment != null) {
-      data['appointment'] = this.appointment!.toJson();
+    if (this.appointments != null) {
+      data['appointments'] = this.appointments!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Appointment {
+class Appointments {
   int? id;
   String? name;
   String? email;
@@ -170,10 +149,9 @@ class Appointment {
   String? status;
   String? createdAt;
   String? updatedAt;
-  Diseases? diseases;
-  User? user;
+  List<PatientWisePrescriptions>? prescriptions;
 
-  Appointment(
+  Appointments(
       {this.id,
       this.name,
       this.email,
@@ -189,10 +167,9 @@ class Appointment {
       this.status,
       this.createdAt,
       this.updatedAt,
-      this.diseases,
-      this.user});
+      this.prescriptions});
 
-  Appointment.fromJson(Map<String, dynamic> json) {
+  Appointments.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     email = json['email'];
@@ -208,10 +185,12 @@ class Appointment {
     status = json['status'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    diseases = json['diseases'] != null
-        ? new Diseases.fromJson(json['diseases'])
-        : null;
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    if (json['prescriptions'] != null) {
+      prescriptions = <PatientWisePrescriptions>[];
+      json['prescriptions'].forEach((v) {
+        prescriptions!.add(new PatientWisePrescriptions.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -231,69 +210,72 @@ class Appointment {
     data['status'] = this.status;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
-    if (this.diseases != null) {
-      data['diseases'] = this.diseases!.toJson();
-    }
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    if (this.prescriptions != null) {
+      data['prescriptions'] =
+          this.prescriptions!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-class Diseases {
+class PatientWisePrescriptions {
   int? id;
-  String? diseaseName;
-  String? description;
-  String? diseaseNameHindi;
-  String? descriptionHindi;
-  String? foodPlan;
-  String? foodPlanHindi;
-  String? url;
-  String? thumbnail;
+  int? appointmentId;
+  int? doctorId;
+  String? diseaseId;
+  String? note;
+  String? otherMedicines;
   String? createdAt;
   String? updatedAt;
+  User? user;
+  List<PatientWiseMedicines>? medicines;
 
-  Diseases(
+  PatientWisePrescriptions(
       {this.id,
-      this.diseaseName,
-      this.description,
-      this.diseaseNameHindi,
-      this.descriptionHindi,
-      this.foodPlan,
-      this.foodPlanHindi,
-      this.url,
-      this.thumbnail,
+      this.appointmentId,
+      this.doctorId,
+      this.diseaseId,
+      this.note,
+      this.otherMedicines,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.user,
+      this.medicines});
 
-  Diseases.fromJson(Map<String, dynamic> json) {
+  PatientWisePrescriptions.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    diseaseName = json['disease_name'];
-    description = json['description'];
-    diseaseNameHindi = json['disease_name_hindi'];
-    descriptionHindi = json['description_hindi'];
-    foodPlan = json['food_plan'];
-    foodPlanHindi = json['food_plan_hindi'];
-    url = json['url'];
-    thumbnail = json['thumbnail'];
+    appointmentId = json['appointment_id'];
+    doctorId = json['doctor_id'];
+    diseaseId = json['disease_id'];
+    note = json['note'];
+    otherMedicines = json['other_medicines'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    if (json['medicines'] != null) {
+      medicines = <PatientWiseMedicines>[];
+      json['medicines'].forEach((v) {
+        medicines!.add(new PatientWiseMedicines.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['disease_name'] = this.diseaseName;
-    data['description'] = this.description;
-    data['disease_name_hindi'] = this.diseaseNameHindi;
-    data['description_hindi'] = this.descriptionHindi;
-    data['food_plan'] = this.foodPlan;
-    data['food_plan_hindi'] = this.foodPlanHindi;
-    data['url'] = this.url;
-    data['thumbnail'] = this.thumbnail;
+    data['appointment_id'] = this.appointmentId;
+    data['doctor_id'] = this.doctorId;
+    data['disease_id'] = this.diseaseId;
+    data['note'] = this.note;
+    data['other_medicines'] = this.otherMedicines;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    if (this.user != null) {
+      data['user'] = this.user!.toJson();
+    }
+    if (this.medicines != null) {
+      data['medicines'] = this.medicines!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
@@ -363,24 +345,43 @@ class User {
   }
 }
 
-class Links {
-  String? url;
-  String? label;
-  bool? active;
+class PatientWiseMedicines {
+  int? id;
+  int? prescriptionId;
+  String? productId;
+  String? time;
+  String? toBeTaken;
+  String? createdAt;
+  String? updatedAt;
 
-  Links({this.url, this.label, this.active});
+  PatientWiseMedicines(
+      {this.id,
+      this.prescriptionId,
+      this.productId,
+      this.time,
+      this.toBeTaken,
+      this.createdAt,
+      this.updatedAt});
 
-  Links.fromJson(Map<String, dynamic> json) {
-    url = json['url'];
-    label = json['label'];
-    active = json['active'];
+  PatientWiseMedicines.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    prescriptionId = json['prescription_id'];
+    productId = json['product_id'];
+    time = json['time'];
+    toBeTaken = json['to_be_taken'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['label'] = this.label;
-    data['active'] = this.active;
+    data['id'] = this.id;
+    data['prescription_id'] = this.prescriptionId;
+    data['product_id'] = this.productId;
+    data['time'] = this.time;
+    data['to_be_taken'] = this.toBeTaken;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }

@@ -15,6 +15,8 @@ class ApiHelper {
   static String getMedicalHistory(
           {required int currentPage, int? perPage = 5}) =>
       "$baseUrl/medicalHistory?current_page=$currentPage&per_page=$perPage";
+  static String getPatientWiseMedicalHistory({required String mobileNumber}) =>
+      "$baseUrl/medicalHistory?contact=$mobileNumber";
   static String getMedicalHistoryById({required String id}) =>
       "$baseUrl/medicalHistory?patient_name=$id";
   static String contact = "$baseUrl/contact";

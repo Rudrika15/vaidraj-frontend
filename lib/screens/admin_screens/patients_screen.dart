@@ -7,7 +7,6 @@ import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/models/my_patients_model.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
-import 'package:vaidraj/services/my_patient_service/my_patient_service.dart';
 import 'package:vaidraj/utils/border_helper/border_helper.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -272,6 +271,7 @@ class MyPatientsListTile extends StatelessWidget with NavigateHelper {
             context,
             PatientsHistoryScreen(
               name: name,
+              number: contactNumber,
             )),
         child: CustomContainer(
           padding: const EdgeInsets.symmetric(
