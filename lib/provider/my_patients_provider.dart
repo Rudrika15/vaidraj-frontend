@@ -55,17 +55,18 @@ class MyPatientsProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> fetchPage({
-    required int pageKey,
-    required BuildContext context,
-    String? branchId,
-  }) async {
+  Future<void> fetchPage(
+      {required int pageKey,
+      required BuildContext context,
+      String? branchId,
+      String? searchQuery}) async {
     try {
       // Fetch the list of patients from the service
       _patientsModel = await service.getPatients(
         context: context,
         currentPage: pageKey,
         branchId: branchId,
+        searchQuery: _searchQuery,
         perPage: 8,
       );
 
@@ -116,7 +117,7 @@ class MyPatientsProvider extends ChangeNotifier {
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       // This will be executed after the debounce delay
 
-      _searchQuery = query; // Update the search query
+      setSearchQuery = query; // Update the search query
       print(_searchQuery);
     });
   }

@@ -8,6 +8,7 @@ import 'package:vaidraj/models/medical_history_model.dart' as m;
 import 'package:vaidraj/models/patient_medical_history_adminside.dart';
 import 'package:vaidraj/models/product_model.dart';
 import 'package:vaidraj/services/medical_history/medical_history_service.dart';
+import 'package:vaidraj/services/prescription_service/prescription_service.dart';
 import 'package:vaidraj/services/product_service/product_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -16,6 +17,7 @@ import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../models/upcoming_appointment_model.dart';
 import '../../provider/prescription_provider.dart';
+import '../../utils/widget_helper/widget_helper.dart';
 import '../../widgets/primary_btn.dart';
 import 'prescription_page.dart';
 
@@ -37,6 +39,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
   final MedicalHistoryService service = MedicalHistoryService();
   bool isLoading = true; // Track loading state
   String? role;
+  PrescriptionService prescriptionService = PrescriptionService();
   @override
   void initState() {
     super.initState();
@@ -66,7 +69,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: AppColors.whiteColor,
         body: Center(
           child:
@@ -94,7 +97,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
         ),
         body: patientsHistoryModel?.data?.data?.isEmpty == true ||
                 patientsHistoryModel?.data?.total == 0
-            ? Center(
+            ? const Center(
                 child: Text('No Data Found'),
               )
             : ListView.builder(
@@ -135,7 +138,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                       Expanded(
                                           flex: 2,
                                           child: Text(
-                                            a.status ?? "",
+                                            a.status?.toUpperCase() ?? "",
                                             style: TextSizeHelper
                                                 .smallHeaderStyle
                                                 .copyWith(
@@ -177,7 +180,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                         in a.prescriptions ?? []) ...[
                                       for (PatientWiseMedicines m
                                           in p.medicines ?? []) ...[
-                                        Divider(
+                                        const Divider(
                                           thickness: 0.5,
                                         ),
                                         Text(
@@ -204,7 +207,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                       style: TextSizeHelper.xSmallTextStyle,
                                     ),
                                   ],
-                                  Divider(
+                                  const Divider(
                                     thickness: 0.5,
                                   ),
                                   if (a.prescriptions?.isNotEmpty == true) ...[
@@ -219,15 +222,6 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                         'Other Medicines : ${a.prescriptions?[0].otherMedicines ?? "Not Provided"}',
                                         style: TextSizeHelper.xSmallTextStyle,
                                       ),
-                                  ] else ...[
-                                    Text(
-                                      'Subject : ${a.subject ?? "Not Provided"}',
-                                      style: TextSizeHelper.xSmallTextStyle,
-                                    ),
-                                    Text(
-                                      'Message : ${a.message ?? "Not Provided"}',
-                                      style: TextSizeHelper.xSmallTextStyle,
-                                    ),
                                   ],
                                   MethodHelper.heightBox(height: 1.h),
                                   Row(
@@ -250,7 +244,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                                         isCreating: a.status !=
                                                             "completed",
                                                         appointmentId:
-                                                            item?.id ?? 0,
+                                                            a.id ?? 0,
                                                         name: a.name ?? "",
                                                         pId: a.prescriptions
                                                                     ?.isNotEmpty ==
@@ -283,13 +277,49 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                                   color: AppColors.brownColor),
                                         )
                                       ] else ...[
-                                        Expanded(child: SizedBox())
+                                        const Expanded(child: SizedBox())
                                       ],
                                       if (MethodHelper.isToday(a.date ?? "") &&
                                           a.status == "completed")
                                         IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(
+                                            onPressed: () {
+                                              //// delete prescription if needed
+                                              if (a.prescriptions?.isNotEmpty ==
+                                                  true) {
+                                                prescriptionService
+                                                    .deletePrescription(
+                                                        context: context,
+                                                        prescriptionId:
+                                                            a.prescriptions?[0]
+                                                                    .id ??
+                                                                -1)
+                                                    .then((success) {
+                                                  if (success) {
+                                                    isLoading = true;
+                                                    initModel();
+
+                                                    WidgetHelper.customSnackBar(
+                                                      context: context,
+                                                      title:
+                                                          "Successfully Deleted",
+                                                    );
+                                                  } else {
+                                                    WidgetHelper.customSnackBar(
+                                                        context: context,
+                                                        title:
+                                                            "Failed To Delete!!",
+                                                        isError: true);
+                                                  }
+                                                });
+                                              } else {
+                                                WidgetHelper.customSnackBar(
+                                                    context: context,
+                                                    title:
+                                                        "Something is Not Right!!",
+                                                    isError: true);
+                                              }
+                                            },
+                                            icon: const Icon(
                                               Icons.delete,
                                               color: AppColors.errorColor,
                                             ))

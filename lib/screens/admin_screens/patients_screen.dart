@@ -95,10 +95,16 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
             children: [
               CustomSearchBar(
                   trailing: [
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+                    IconButton(
+                        onPressed: () {
+                          myPatientProvider.setSearchQuery = searchQuery;
+                        },
+                        icon: const Icon(Icons.search))
                   ],
-                  onChange: (value) =>
-                      myPatientProvider.onSearchChanged(query: value),
+                  onChange: (value) {
+                    myPatientProvider.onSearchChanged(query: value);
+                    searchQuery = value;
+                  },
                   onSubmitted: (value) => setState(() {
                         myPatientProvider.setSearchQuery = value;
                       })),

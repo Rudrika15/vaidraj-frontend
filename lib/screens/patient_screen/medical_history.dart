@@ -178,6 +178,9 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
                                               ),
                                             ],
                                           ),
+                                          const Divider(
+                                            thickness: 0.5,
+                                          ),
                                           Text(
                                             "Prescriptions :-",
                                             style: TextSizeHelper
@@ -185,9 +188,6 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
                                           ),
                                           for (PatientWiseMedicines m
                                               in pp.medicines ?? []) ...[
-                                            Divider(
-                                              thickness: 0.5,
-                                            ),
                                             Text(
                                               "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
                                               style: TextSizeHelper
@@ -212,11 +212,14 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
                                                   .xSmallTextStyle,
                                             ),
                                           if (pp.otherMedicines != "")
-                                            Text(
-                                              'Other Medicines : ${pp.otherMedicines}',
-                                              style: TextSizeHelper
-                                                  .xSmallTextStyle,
+                                            const Divider(
+                                              thickness: 0.5,
                                             ),
+                                          Text(
+                                            'Other Medicines : ${pp.otherMedicines}',
+                                            style:
+                                                TextSizeHelper.xSmallTextStyle,
+                                          ),
                                           MethodHelper.heightBox(height: 1.h),
                                           Row(
                                             mainAxisAlignment:

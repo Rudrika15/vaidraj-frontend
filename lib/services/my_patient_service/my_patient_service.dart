@@ -12,7 +12,8 @@ class MyPatientService {
       {required BuildContext context,
       required String? branchId,
       required int currentPage,
-      required int perPage}) async {
+      required int perPage,
+      String? searchQuery}) async {
     try {
       String branch = await SharedPrefs.getBranchId();
       Response? response = await HttpHelper.get(
@@ -20,7 +21,8 @@ class MyPatientService {
         uri: ApiHelper.getMyPatients(
             branchId: branchId ?? branch,
             currentPage: currentPage,
-            perPage: perPage),
+            perPage: perPage,
+            searchQuery: searchQuery ?? ""),
       );
       log(ApiHelper.getMyPatients(
           branchId: branchId ?? branch,

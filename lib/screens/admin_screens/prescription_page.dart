@@ -46,6 +46,10 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print("prescription id => ${widget.pId}");
+    print("appointment id => ${widget.appointmentId}");
+    print("disease id => ${widget.diseaseId}");
+    print("isCreating id => ${widget.isCreating}");
     initPage();
   }
 

@@ -4,10 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
+import 'package:vaidraj/models/prescription_model.dart';
 import 'package:vaidraj/models/upcoming_appointment_model.dart';
 import 'package:vaidraj/provider/appointment_provider.dart';
 import 'package:vaidraj/screens/admin_screens/prescription_page.dart';
+import 'package:vaidraj/services/prescription_service/prescription_service.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import '../../constants/text_size.dart';
 import '../../provider/get_brach_provider.dart';
@@ -30,6 +33,7 @@ class AdminAppointmentScreen extends StatefulWidget {
 class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
     with NavigateHelper {
   String? role;
+  PrescriptionService prescriptionService = PrescriptionService();
   // String? branchId;
 
   Future<void> loadRole() async {
@@ -129,7 +133,8 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                                 ?.data?[index]
                                                                 .branchName ??
                                                             "-",
-                                                            overflow: TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         style: TextSizeHelper
                                                             .smallHeaderStyle,
                                                       ),
@@ -327,6 +332,9 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                               ),
                                               if (item.status ==
                                                   "completed") ...[
+                                                const Divider(
+                                                  thickness: 0.5,
+                                                ),
                                                 Text(
                                                   "Prescriptions :-",
                                                   style: TextSizeHelper
@@ -337,7 +345,7 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                         []) ...[
                                                   for (Medicines m
                                                       in p.medicines ?? []) ...[
-                                                    Divider(
+                                                    const Divider(
                                                       thickness: 0.5,
                                                     ),
                                                     Text(
@@ -435,6 +443,49 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                             EdgeInsets.all(0),
                                                         onPressed: () {
                                                           /// logic to delete the prescriptions
+                                                          if (item.prescriptions
+                                                                  ?.isNotEmpty ==
+                                                              true) {
+                                                            prescriptionService
+                                                                .deletePrescription(
+                                                                    context:
+                                                                        context,
+                                                                    prescriptionId:
+                                                                        item.prescriptions?[0].id ??
+                                                                            -1)
+                                                                .then(
+                                                                    (success) {
+                                                              if (success) {
+                                                                doctorAppointmentProvider
+                                                                    .pagingController
+                                                                    .refresh();
+                                                                WidgetHelper
+                                                                    .customSnackBar(
+                                                                  context:
+                                                                      context,
+                                                                  title:
+                                                                      "Successfully Deleted",
+                                                                );
+                                                              } else {
+                                                                WidgetHelper.customSnackBar(
+                                                                    context:
+                                                                        context,
+                                                                    title:
+                                                                        "Failed To Delete!!",
+                                                                    isError:
+                                                                        true);
+                                                              }
+                                                            });
+                                                          } else {
+                                                            WidgetHelper
+                                                                .customSnackBar(
+                                                                    context:
+                                                                        context,
+                                                                    title:
+                                                                        "Something is Not Right!!",
+                                                                    isError:
+                                                                        true);
+                                                          }
                                                         },
                                                         icon: const Icon(
                                                           Icons.delete,

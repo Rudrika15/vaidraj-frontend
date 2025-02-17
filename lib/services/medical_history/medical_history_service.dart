@@ -37,9 +37,6 @@ class MedicalHistoryService {
           uri: ApiHelper.getPatientWiseMedicalHistory(
             mobileNumber: number,
           ));
-      log(ApiHelper.getMedicalHistoryById(
-        id: number,
-      ));
       log(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);

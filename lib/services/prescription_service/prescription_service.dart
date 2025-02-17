@@ -105,4 +105,24 @@ class PrescriptionService {
     }
     return false;
   }
+
+  Future<bool> deletePrescription(
+      {required BuildContext context, required int prescriptionId}) async {
+    try {
+      Response response = await HttpHelper.get(
+          context: context,
+          uri: ApiHelper.deletePrescription(prescriptionId: prescriptionId));
+      log(ApiHelper.deletePrescription(prescriptionId: prescriptionId));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        if (data['success'] == true) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      print('error while deleting prescriptionId $prescriptionId error => $e');
+      return false;
+    }
+  }
 }

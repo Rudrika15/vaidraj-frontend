@@ -15,8 +15,8 @@ class ApiHelper {
   static String getMedicalHistory = "$baseUrl/medicalHistory";
   static String getPatientWiseMedicalHistory({required String mobileNumber}) =>
       "$baseUrl/medicalHistory?contact=$mobileNumber";
-  static String getMedicalHistoryById({required String id}) =>
-      "$baseUrl/medicalHistory?patient_name=$id";
+  // static String getMedicalHistoryById({required String id}) =>
+  //     "$baseUrl/medicalHistory?patient_name=$id";
   static String contact = "$baseUrl/contact";
   static String feedback = "$baseUrl/feedback";
   static String updateProfile = "$baseUrl/profileUpdate";
@@ -41,12 +41,15 @@ class ApiHelper {
   static String getMyPatients(
           {required String branchId,
           required int currentPage,
-          required int perPage}) =>
-      "$baseUrl/myPatients?branch_id=$branchId&current_page=$currentPage&per_page=$perPage";
+          required int perPage,
+          String? searchQuery}) =>
+      "$baseUrl/myPatients?branch_id=$branchId&current_page=$currentPage&per_page=$perPage&search=$searchQuery";
   static String getDoctorAppointments(
           {required String branchId,
           required String date,
           required int currentPage,
           required int perPage}) =>
       "$baseUrl/appointments?current_page=$currentPage&per_page=$perPage&date=$date&branch_id=$branchId";
+  static String deletePrescription({required int prescriptionId}) =>
+      "$baseUrl/deletePrescription/$prescriptionId";
 }
