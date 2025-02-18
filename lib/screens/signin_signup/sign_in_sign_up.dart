@@ -155,11 +155,11 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                           icon: showPassword
                                               ? const Icon(
                                                   Icons.visibility_off,
-                                                  color: AppColors.greenColor,
+                                                  color: AppColors.brownColor,
                                                 )
                                               : const Icon(
                                                   Icons.visibility,
-                                                  color: AppColors.errorColor,
+                                                  color: AppColors.brownColor,
                                                 )),
                                       hintText:
                                           langProvider.translate("password"),
