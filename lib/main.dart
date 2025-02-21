@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -14,9 +15,12 @@ import 'package:vaidraj/provider/my_patients_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/screens/splash_screen/splash.dart';
 import 'package:sizer/sizer.dart';
+import 'utils/notification_helper/notification_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await FirebaseMessagingUtils.initNotifications();
   await Hive.initFlutter();
   await Hive.openBox("settings");
   await dotenv.load(fileName: ".env");
