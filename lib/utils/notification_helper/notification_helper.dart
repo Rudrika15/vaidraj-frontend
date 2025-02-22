@@ -42,8 +42,8 @@ class FirebaseMessagingUtils {
     });
 
     final fcmToken = await firebaseMessaging.getToken();
-    await SharedPrefs.saveFCMToken(fcmToken ?? '');
-    print('Firebase FCM Token $fcmToken');
+    // await SharedPrefs.saveFCMToken(fcmToken ?? '');
+    // print('Firebase FCM Token $fcmToken');
   }
 
   static Future<void> initLocalNotifications() async {

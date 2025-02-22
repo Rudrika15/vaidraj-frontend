@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -22,7 +23,9 @@ import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/services/updateFCMToken/update_fcm_token.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/notification_helper/notification_helper.dart';
 import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
@@ -84,11 +87,29 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     // TODO: implement initState
     super.initState();
     getUserName();
-    fcmTokenService.updateFCMToken(context: context);
+    getAndStoreFCMToken();
     if (widget.isAdmin || widget.isDoctor) {
       _selectedNavTabIndex = widget.screenIndex ?? 0;
     } else {
       _selectedTabIndex = widget.screenIndex ?? 0;
+    }
+  }
+
+  Future<void> getAndStoreFCMToken() async {
+    try {
+      // Retrieve the FCM token
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      print('getting => $fcmToken');
+      if (fcmToken != null) {
+        await SharedPrefs.saveFCMToken(fcmToken);
+        await fcmTokenService.updateFCMToken(context: context);
+      } else {
+        print("FCM Token is null");
+      }
+    } catch (e) {
+      print("Error retrieving FCM token: $e");
+      WidgetHelper.customSnackBar(
+          context: context, title: "Failed to Load FCMToken", isError: true);
     }
   }
 
