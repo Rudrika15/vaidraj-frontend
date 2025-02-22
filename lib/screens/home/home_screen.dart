@@ -19,6 +19,7 @@ import 'package:vaidraj/screens/patient_screen/get_in_touch.dart';
 import 'package:vaidraj/screens/patient_screen/medical_history.dart';
 import 'package:vaidraj/screens/patient_screen/patient_home.dart';
 import 'package:vaidraj/screens/patient_screen/specialities.dart';
+import 'package:vaidraj/services/updateFCMToken/update_fcm_token.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
@@ -77,12 +78,13 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     {'icon': Icons.verified_rounded, 'text': "aboutUs"},
     {'icon': Icons.contact_phone, 'text': "getInTouch"},
   ];
-
+  final UpdateFcmTokenService fcmTokenService = UpdateFcmTokenService();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getUserName();
+    fcmTokenService.updateFCMToken(context: context);
     if (widget.isAdmin || widget.isDoctor) {
       _selectedNavTabIndex = widget.screenIndex ?? 0;
     } else {

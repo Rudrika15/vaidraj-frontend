@@ -52,4 +52,5 @@ class ApiHelper {
       "$baseUrl/appointments?current_page=$currentPage&per_page=$perPage&date=$date&branch_id=$branchId";
   static String deletePrescription({required int prescriptionId}) =>
       "$baseUrl/deletePrescription/$prescriptionId";
+  static String updateFCMToken = "$baseUrl/saveToken";
 }

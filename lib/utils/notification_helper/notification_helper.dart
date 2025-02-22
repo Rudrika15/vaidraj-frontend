@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 
 @pragma('vm:entry-point')
 Future<void> onBackGroundMessage(RemoteMessage message) async {
@@ -41,6 +42,7 @@ class FirebaseMessagingUtils {
     });
 
     final fcmToken = await firebaseMessaging.getToken();
+    await SharedPrefs.saveFCMToken(fcmToken ?? '');
     print('Firebase FCM Token $fcmToken');
   }
 

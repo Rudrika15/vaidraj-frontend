@@ -17,6 +17,7 @@ class SharedPrefs {
   static const String addressKey = "ADDRESS";
   static const String emailKey = "EMAIL";
   static const String formTokenKey = "FORMTOKEN";
+  static const String fcmToken = "FCMTOKEN";
 
   // for save token
   static Future<void> saveToken(String token) async {
@@ -77,6 +78,12 @@ class SharedPrefs {
     await prefs.setString(dobKey, dob);
   }
 
+  // save fcm token
+  static Future<void> saveFCMToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(fcmToken, token);
+  }
+
   // to get token
   static Future<String> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -135,6 +142,12 @@ class SharedPrefs {
   static Future<String> getDOB() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(dobKey) ?? '';
+  }
+
+  // get fcm token
+  static Future<String> getFCMToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(fcmToken) ?? "";
   }
 
   // clear token
@@ -201,6 +214,12 @@ class SharedPrefs {
   static Future<bool> clearDOB() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return await prefs.remove(dobKey);
+  }
+
+  // clear fcm token
+  static Future<bool> clearFCMToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.remove(fcmToken);
   }
 
   // business name
