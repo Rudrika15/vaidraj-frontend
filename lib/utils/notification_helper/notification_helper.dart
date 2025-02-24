@@ -77,7 +77,8 @@ class FirebaseMessagingUtils {
   }
 
   static void handleMessage(RemoteMessage? message) {
-    print('dataHandle ${message!.data}');
+    print('dataHandle ${message?.data}');
+    // print('dataHandle ${message.}');
   }
 
   static void showLocalNotification(RemoteMessage remoteMessage) {
