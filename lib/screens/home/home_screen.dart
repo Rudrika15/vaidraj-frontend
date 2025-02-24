@@ -8,6 +8,7 @@ import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/screens/feedback/feedback.dart';
 import 'package:vaidraj/screens/profile_page/account_screen.dart';
 import 'package:vaidraj/screens/admin_screens/home_screen.dart';
 import 'package:vaidraj/screens/admin_screens/patients_screen.dart';
@@ -88,10 +89,44 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     super.initState();
     getUserName();
     getAndStoreFCMToken();
+    setupInteractedMessage();
     if (widget.isAdmin || widget.isDoctor) {
       _selectedNavTabIndex = widget.screenIndex ?? 0;
     } else {
       _selectedTabIndex = widget.screenIndex ?? 0;
+    }
+  }
+
+  Future<void> setupInteractedMessage() async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    if (message.notification?.body ==
+        "How Are You feeling Now Please add feedback") {
+      push(context, const FeedbackScreen());
+    }
+    if (message.notification?.body == "Please Take New Appointment") {
+      push(
+          context,
+          const HomeScreen(
+            isAdmin: false,
+            isDoctor: false,
+            screenIndex: 2,
+          ));
     }
   }
 

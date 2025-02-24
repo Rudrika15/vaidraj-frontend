@@ -77,8 +77,13 @@ class FirebaseMessagingUtils {
   }
 
   static void handleMessage(RemoteMessage? message) {
-    print('dataHandle ${message?.data}');
-    // print('dataHandle ${message.}');
+    if (message != null) {
+      if (message.notification?.body == "Please Take New Appointment") {
+        print('${message.notification?.body}');
+        return;
+      }
+      print('cant handle');
+    }
   }
 
   static void showLocalNotification(RemoteMessage remoteMessage) {
