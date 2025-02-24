@@ -10,7 +10,6 @@ import 'package:vaidraj/services/notifications/get_notifications_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
-import 'package:vaidraj/widgets/icon_btn_widget.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import '../../constants/color.dart';
@@ -59,24 +58,6 @@ class NotificationsScreen extends StatelessWidget {
                       message: notification?.message ?? "",
                       langProvider: langProvider);
                 },
-                // children: [
-                //   NotificationWidget(
-                //     message: "Message",
-                //     langProvider: langProvider,
-                //   ),
-                //   NotificationWidget(
-                //     message: "Message",
-                //     langProvider: langProvider,
-                //   ),
-                //   NotificationWidget(
-                //     message: "Message",
-                //     langProvider: langProvider,
-                //   ),
-                //   NotificationWidget(
-                //     message: "Message",
-                //     langProvider: langProvider,
-                //   ),
-                // ],
               );
             },
           )),
@@ -110,7 +91,38 @@ class NotificationWidget extends StatelessWidget with NavigateHelper {
               Expanded(flex: 8, child: Text(message)),
               MethodHelper.widthBox(width: AppSizes.size10),
               GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        backgroundColor: AppColors.lightBackGroundColor,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            ListTile(
+                              leading: const Icon(
+                                Icons.delete,
+                                color: AppColors.errorColor,
+                              ),
+                              title: Text(
+                                'Delete Message',
+                                style: TextSizeHelper.smallTextStyle
+                                    .copyWith(color: AppColors.errorColor),
+                              ),
+                            ),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.volume_off_rounded,
+                                color: AppColors.brownColor,
+                              ),
+                              title: Text('Mute Notifications',
+                                  style: TextSizeHelper.smallTextStyle),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                   child: const Icon(
                     Icons.more_vert,
                     color: AppColors.brownColor,
