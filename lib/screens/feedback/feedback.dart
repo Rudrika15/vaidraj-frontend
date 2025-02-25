@@ -6,6 +6,7 @@ import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/services/contact_service/feedback_service.dart';
 import 'package:vaidraj/utils/border_helper/border_helper.dart';
 import 'package:vaidraj/utils/method_helper.dart';
+import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_dropdown.dart';
@@ -21,7 +22,7 @@ class FeedbackScreen extends StatefulWidget {
   State<FeedbackScreen> createState() => _FeedbackScreenState();
 }
 
-class _FeedbackScreenState extends State<FeedbackScreen> {
+class _FeedbackScreenState extends State<FeedbackScreen> with NavigateHelper {
   int _selectedSentimentIndex = -1; // No sentiment selected initially
   TextEditingController reasonController = TextEditingController();
   String selectedValue = "";
@@ -206,15 +207,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           child: PrimaryBtn(
                               btnText: langProvider.translate('submit'),
                               onTap: () async {
-                                if (_selectedSentimentIndex == -1 &&
-                                    selectedValue == "" &&
-                                    reasonController.text.isEmpty) {
-                                  WidgetHelper.customSnackBar(
-                                      context: context,
-                                      isError: true,
-                                      title: langProvider
-                                          .translate('provideAction'));
-                                } else {
+                                if (_selectedSentimentIndex != -1 &&
+                                    selectedValue != "" &&
+                                    reasonController.text.isNotEmpty) {
                                   await service
                                       .feedback(
                                           context: context,
@@ -223,14 +218,23 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                           rating: (_selectedSentimentIndex + 1)
                                               .toString())
                                       .then((success) => success
-                                          ? WidgetHelper.customSnackBar(
-                                              context: context,
-                                              title: langProvider
-                                                  .translate('messageSent'))
+                                          ? {
+                                              WidgetHelper.customSnackBar(
+                                                  context: context,
+                                                  title: langProvider.translate(
+                                                      'messageSent')),
+                                              pop(context)
+                                            }
                                           : WidgetHelper.customSnackBar(
                                               context: context,
                                               title: "Somthing Went Wrong",
                                               isError: true));
+                                } else {
+                                  WidgetHelper.customSnackBar(
+                                      context: context,
+                                      isError: true,
+                                      title: langProvider
+                                          .translate('provideAction'));
                                 }
                               }),
                         )
