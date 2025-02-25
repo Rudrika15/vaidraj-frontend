@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vaidraj/provider/add_new_patient_provider.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/appointment_provider.dart';
+import 'package:vaidraj/provider/delete_notification_provider.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/provider/medical_history_provider.dart';
@@ -37,6 +38,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => MedicalHistoryProvider()),
       ChangeNotifierProvider(create: (_) => PrescriptionStateProvider()),
       ChangeNotifierProvider(create: (_) => MyPatientsProvider()),
+      ChangeNotifierProvider(create: (_) => DeleteNotificationProvider()),
     ],
     child: const MyApp(),
   ));

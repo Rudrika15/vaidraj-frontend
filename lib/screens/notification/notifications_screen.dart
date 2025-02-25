@@ -4,11 +4,14 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/models/get_notifications_model.dart';
+import 'package:vaidraj/provider/delete_notification_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/screens/feedback/feedback.dart';
+import 'package:vaidraj/screens/patient_screen/appointment.dart';
 import 'package:vaidraj/services/notifications/get_notifications_service.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
+import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
@@ -21,55 +24,68 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalizationProvider>(
-      builder: (context, langProvider, child) => Scaffold(
-          backgroundColor: AppColors.whiteColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            surfaceTintColor: AppColors.whiteColor,
-            title: Text(
-              langProvider.translate('notification'),
-              style: TextSizeHelper.mediumTextStyle
-                  .copyWith(color: AppColors.brownColor),
-            ),
-          ),
-          body: FutureBuilder(
-            future: service.getNotifications(context),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Loader(),
-                );
-              }
-              if (snapshot.hasError) {
-                return Center(
-                    child: Text(
-                  langProvider.translate('noDataFound'),
-                  style: TextSizeHelper.smallHeaderStyle
+    return Consumer2<LocalizationProvider, DeleteNotificationProvider>(
+      builder: (context, langProvider, deleteNotificationProvider, child) =>
+          Scaffold(
+              backgroundColor: AppColors.whiteColor,
+              appBar: AppBar(
+                backgroundColor: AppColors.whiteColor,
+                surfaceTintColor: AppColors.whiteColor,
+                title: Text(
+                  langProvider.translate('notification'),
+                  style: TextSizeHelper.mediumTextStyle
                       .copyWith(color: AppColors.brownColor),
-                ));
-              }
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data?.data?.length ?? 0,
-                itemBuilder: (context, index) {
-                  Notification1? notification = snapshot.data?.data?[index];
-                  return NotificationWidget(
-                      message: notification?.message ?? "",
-                      langProvider: langProvider);
+                ),
+              ),
+              body: FutureBuilder(
+                future: service.getNotifications(context),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: Loader(),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                        child: Text(
+                      langProvider.translate('noDataFound'),
+                      style: TextSizeHelper.smallHeaderStyle
+                          .copyWith(color: AppColors.brownColor),
+                    ));
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data?.data?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      Notification1? notification = snapshot.data?.data?[index];
+                      return NotificationWidget(
+                          message: notification?.message ?? "",
+                          isAppointmentNotification:
+                              notification?.type == "appointmentReminder",
+                          isGeneral: notification?.type == "general",
+                          messageId: notification?.id ?? 0,
+                          langProvider: langProvider);
+                    },
+                  );
                 },
-              );
-            },
-          )),
+              )),
     );
   }
 }
 
 class NotificationWidget extends StatelessWidget with NavigateHelper {
   const NotificationWidget(
-      {super.key, required this.message, required this.langProvider});
+      {super.key,
+      required this.message,
+      required this.langProvider,
+      required this.messageId,
+      required this.isGeneral,
+      required this.isAppointmentNotification});
   final String message;
   final LocalizationProvider langProvider;
+  final int messageId;
+  final bool isGeneral;
+  final bool isAppointmentNotification;
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
@@ -90,43 +106,48 @@ class NotificationWidget extends StatelessWidget with NavigateHelper {
             children: [
               Expanded(flex: 8, child: Text(message)),
               MethodHelper.widthBox(width: AppSizes.size10),
-              GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => Dialog(
-                        backgroundColor: AppColors.lightBackGroundColor,
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: [
-                            ListTile(
-                              leading: const Icon(
-                                Icons.delete,
-                                color: AppColors.errorColor,
+              if (!isGeneral)
+                GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Dialog(
+                          backgroundColor: AppColors.lightBackGroundColor,
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: [
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.delete,
+                                  color: AppColors.errorColor,
+                                ),
+                                title: Text(
+                                  'Delete Message',
+                                  style: TextSizeHelper.smallTextStyle
+                                      .copyWith(color: AppColors.errorColor),
+                                ),
+                                onTap: () async {
+                                  bool success = await context
+                                      .read<DeleteNotificationProvider>()
+                                      .deleteNotification(
+                                          context: context,
+                                          id: messageId.toString());
+                                  if (success) {
+                                    pop(context);
+                                    WidgetHelper.customSnackBar(
+                                        context: context, title: "Success");
+                                  }
+                                },
                               ),
-                              title: Text(
-                                'Delete Message',
-                                style: TextSizeHelper.smallTextStyle
-                                    .copyWith(color: AppColors.errorColor),
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.volume_off_rounded,
-                                color: AppColors.brownColor,
-                              ),
-                              title: Text('Mute Notifications',
-                                  style: TextSizeHelper.smallTextStyle),
-                            )
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  child: const Icon(
-                    Icons.more_vert,
-                    color: AppColors.brownColor,
-                  ))
+                      );
+                    },
+                    child: const Icon(
+                      Icons.more_vert,
+                      color: AppColors.brownColor,
+                    ))
             ],
           ),
           MethodHelper.heightBox(height: 2.h),
@@ -134,20 +155,41 @@ class NotificationWidget extends StatelessWidget with NavigateHelper {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PrimaryBtn(
-                btnText: langProvider.translate("feedback"),
-                onTap: () {
-                  // add logic to email
-                  push(context, const FeedbackScreen());
-                },
-                height: 3.h,
-                width: 25.w,
-                borderRadius: BorderRadius.circular(5),
-                backGroundColor: AppColors.whiteColor,
-                borderColor: AppColors.brownColor,
-                textStyle: TextSizeHelper.xSmallTextStyle
-                    .copyWith(color: AppColors.brownColor),
-              ),
+              if (!isAppointmentNotification) ...[
+                PrimaryBtn(
+                  btnText: langProvider.translate("feedback"),
+                  onTap: () {
+                    // add logic to email
+                    push(context, const FeedbackScreen());
+                  },
+                  height: 3.h,
+                  width: 25.w,
+                  borderRadius: BorderRadius.circular(5),
+                  backGroundColor: AppColors.whiteColor,
+                  borderColor: AppColors.brownColor,
+                  textStyle: TextSizeHelper.xSmallTextStyle
+                      .copyWith(color: AppColors.brownColor),
+                )
+              ] else ...[
+                PrimaryBtn(
+                  btnText: langProvider.translate("appointment"),
+                  onTap: () {
+                    // add logic to email
+                    push(
+                        context,
+                        const Appointment(
+                          fromPage: true,
+                        ));
+                  },
+                  height: 3.h,
+                  width: 25.w,
+                  borderRadius: BorderRadius.circular(5),
+                  backGroundColor: AppColors.whiteColor,
+                  borderColor: AppColors.brownColor,
+                  textStyle: TextSizeHelper.xSmallTextStyle
+                      .copyWith(color: AppColors.brownColor),
+                )
+              ],
               MethodHelper.widthBox(width: 2.w),
               PrimaryBtn(
                 btnText: langProvider.translate("call"),
