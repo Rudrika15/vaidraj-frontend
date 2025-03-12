@@ -16,6 +16,7 @@ import 'package:vaidraj/provider/my_patients_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/screens/splash_screen/splash.dart';
 import 'package:sizer/sizer.dart';
+import 'provider/delete_account_provider.dart';
 import 'utils/notification_helper/notification_helper.dart';
 
 void main() async {
@@ -39,6 +40,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => PrescriptionStateProvider()),
       ChangeNotifierProvider(create: (_) => MyPatientsProvider()),
       ChangeNotifierProvider(create: (_) => DeleteNotificationProvider()),
+      ChangeNotifierProvider(create: (_) => DeleteUserProvider()),
     ],
     child: const MyApp(),
   ));

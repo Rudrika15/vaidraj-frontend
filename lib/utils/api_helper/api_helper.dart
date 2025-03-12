@@ -55,4 +55,5 @@ class ApiHelper {
   static String updateFCMToken = "$baseUrl/saveToken";
   static String getNotifications = "$baseUrl/getNotification";
   static String deleteNotifications({required String id}) => "$baseUrl/deleteNotification/$id";
+  static String deleteUser = "$baseUrl/deleteUser";
 }

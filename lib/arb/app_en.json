@@ -87,5 +87,9 @@
   "message": "Message",
   "messageReq": "Message Required",
   "provideAction" : "Provide Reaction",
-  "messageSent" : "Message Sent successfully"
+  "messageSent" : "Message Sent successfully",
+  "deleteAcc" : "Delete Account",
+  "delete" : "Delete",
+  "confirmDelAcc" : "Confirm Deletion",
+  "confirmDeleteMessage" : "You are about to delete your account. Before you proceed, please note that this action will permanently delete all your information from our system. This action is irreversible, and your data cannot be recovered once deleted."
 }

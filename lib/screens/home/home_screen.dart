@@ -32,6 +32,7 @@ import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/color.dart';
 import '../../widgets/custom_exit_dialog_widget.dart';
 import '../admin_screens/appointment_screen.dart';
+import '../delete_account_screen/delete_acc_screen.dart';
 import '../mobile_verification/mobile_verification.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -70,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     AllYouTubeVideos(),
     AboutUsScreen(),
     GetInTouchScreen(),
+    DeleteAccountScreen()
   ];
 
   final List<Map<String, dynamic>> drawerOptions = [
@@ -81,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     {'icon': Icons.video_collection, 'text': "videos"},
     {'icon': Icons.verified_rounded, 'text': "aboutUs"},
     {'icon': Icons.contact_phone, 'text': "getInTouch"},
+    {'icon': Icons.delete_forever, 'text': "deleteAcc"},
   ];
   final UpdateFcmTokenService fcmTokenService = UpdateFcmTokenService();
   @override
@@ -206,6 +209,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
             const Divider(),
             ...List.generate(drawerOptions.length, (index) {
               return DrawerOptionWidget(
+                iconColor: index == 8 ? AppColors.errorColor : null,
                 icon: drawerOptions[index]['icon'],
                 text: langProvider.translate(drawerOptions[index]['text']),
                 isSelected: _selectedTabIndex == index,
@@ -456,14 +460,14 @@ class DrawerOptionWidget extends StatelessWidget {
   final IconData icon;
   final String text;
   final VoidCallback onTap;
-
-  const DrawerOptionWidget({
-    super.key,
-    required this.isSelected,
-    required this.icon,
-    required this.text,
-    required this.onTap,
-  });
+  final Color? iconColor;
+  const DrawerOptionWidget(
+      {super.key,
+      required this.isSelected,
+      required this.icon,
+      required this.text,
+      required this.onTap,
+      this.iconColor});
 
   @override
   Widget build(BuildContext context) {
@@ -482,18 +486,23 @@ class DrawerOptionWidget extends StatelessWidget {
           ),
           leading: Icon(
             icon,
-            color: isSelected ? AppColors.greenColor : AppColors.brownColor,
+            color: isSelected
+                ? iconColor ?? AppColors.greenColor
+                : iconColor ?? AppColors.brownColor,
             size: 7.w,
           ),
           title: Text(
             text,
             style: TextSizeHelper.smallHeaderStyle.copyWith(
-              color: isSelected ? AppColors.greenColor : AppColors.brownColor,
+              color: isSelected
+                  ? iconColor ?? AppColors.greenColor
+                  : iconColor ?? AppColors.brownColor,
             ),
           ),
           contentPadding: EdgeInsets.only(right: 0, left: 10.w),
           trailing: isSelected
-              ? VerticalDivider(color: AppColors.greenColor, thickness: 10)
+              ? VerticalDivider(
+                  color: iconColor ?? AppColors.greenColor, thickness: 10)
               : null,
         ),
       ),
