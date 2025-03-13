@@ -23,25 +23,6 @@
           "other_platform_oauth_client": []
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:336532494153:android:6b4a6985af0122ed9b2c98",
-        "android_client_info": {
-          "package_name": "com.vedraj.flipcodesolutions"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDZ6tUjmGz9hSWMlXMsK25zGH5tIHGQnbY"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
     }
   ],
   "configuration_version": "1"
