@@ -37,37 +37,49 @@ class NotificationsScreen extends StatelessWidget {
                       .copyWith(color: AppColors.brownColor),
                 ),
               ),
-              body: FutureBuilder(
-                future: service.getNotifications(context),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: Loader(),
+              body: RefreshIndicator(
+                onRefresh: () async => service.getNotifications(context),
+                child: FutureBuilder(
+                  future: service.getNotifications(context),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Loader(),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                          child: Text(
+                        langProvider.translate('noDataFound'),
+                        style: TextSizeHelper.smallHeaderStyle
+                            .copyWith(color: AppColors.brownColor),
+                      ));
+                    }
+                    if (snapshot.data?.data?.isEmpty == true) {
+                      return Center(
+                          child: Text(
+                        langProvider.translate('noDataFound'),
+                        style: TextSizeHelper.smallHeaderStyle
+                            .copyWith(color: AppColors.brownColor),
+                      ));
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data?.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        Notification1? notification =
+                            snapshot.data?.data?[index];
+                        return NotificationWidget(
+                            message: notification?.message ?? "",
+                            isAppointmentNotification:
+                                notification?.type == "appointmentReminder",
+                            isGeneral: notification?.type == "general",
+                            messageId: notification?.id ?? 0,
+                            langProvider: langProvider);
+                      },
                     );
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                        child: Text(
-                      langProvider.translate('noDataFound'),
-                      style: TextSizeHelper.smallHeaderStyle
-                          .copyWith(color: AppColors.brownColor),
-                    ));
-                  }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data?.data?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      Notification1? notification = snapshot.data?.data?[index];
-                      return NotificationWidget(
-                          message: notification?.message ?? "",
-                          isAppointmentNotification:
-                              notification?.type == "appointmentReminder",
-                          isGeneral: notification?.type == "general",
-                          messageId: notification?.id ?? 0,
-                          langProvider: langProvider);
-                    },
-                  );
-                },
+                  },
+                ),
               )),
     );
   }

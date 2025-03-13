@@ -91,5 +91,6 @@
   "deleteAcc" : "Delete Account",
   "delete" : "Delete",
   "confirmDelAcc" : "Confirm Deletion",
+  "noDataFound" : "No Data Found !!",
   "confirmDeleteMessage" : "You are about to delete your account. Before you proceed, please note that this action will permanently delete all your information from our system. This action is irreversible, and your data cannot be recovered once deleted."
 }
