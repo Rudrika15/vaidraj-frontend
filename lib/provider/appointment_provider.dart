@@ -49,7 +49,8 @@ class AppointmentProvider extends ChangeNotifier {
     DateTime? dob = await showDatePicker(
         context: context,
         firstDate: DateTime(1950),
-        lastDate: DateTime(DateTime.now().year + 1));
+        lastDate: DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day));
     if (dob != null) {
       _date = DateFormat('yyyy-MM-dd').format(dob);
       _doctorAppointment = null;
