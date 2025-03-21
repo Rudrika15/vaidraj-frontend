@@ -314,14 +314,14 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
       title: Text(
         isDoctor || isAdmin
             ? _selectedNavTabIndex == 0
-                ? "Hello $userName"
+                ? "Hello, $userName"
                 : _selectedNavTabIndex == 1
                     ? navTabNames[0]
                     : _selectedNavTabIndex == 2
                         ? navTabNames[1]
                         : navTabNames[2]
             : _selectedTabIndex == 0
-                ? "Hello $userName"
+                ? "Hello, $userName"
                 : langProvider
                     .translate(drawerOptions[_selectedTabIndex]['text']),
         style: TextSizeHelper.mediumTextStyle
@@ -360,7 +360,11 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
             ? null
             : actions.add(IconButton.filledTonal(
                 onPressed: () {
-                  push(context, NotificationsScreen());
+                  push(
+                      context,
+                      NotificationsScreen(
+                        isPatient: !widget.isAdmin && !widget.isDoctor,
+                      ));
                 },
                 style: const ButtonStyle(
                     backgroundColor:
@@ -372,7 +376,11 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
             ? null
             : actions.add(IconButton.filledTonal(
                 onPressed: () {
-                  push(context, NotificationsScreen());
+                  push(
+                      context,
+                      NotificationsScreen(
+                        isPatient: !widget.isAdmin && !widget.isDoctor,
+                      ));
                 },
                 style: const ButtonStyle(
                     backgroundColor:

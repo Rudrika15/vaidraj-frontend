@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
-import 'package:vaidraj/models/prescription_model.dart';
 import 'package:vaidraj/models/upcoming_appointment_model.dart';
 import 'package:vaidraj/provider/appointment_provider.dart';
 import 'package:vaidraj/screens/admin_screens/prescription_page.dart';
@@ -80,10 +79,10 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
       child: Consumer2<AppointmentProvider, GetBrachProvider>(
         builder: (context, doctorAppointmentProvider, brachProvider, child) =>
             doctorAppointmentProvider.isLoading
-                ? Center(
-                    child: Loader(),
-                  )
+                ? const SizedBox.shrink()
                 : RefreshIndicator(
+                    color: AppColors.brownColor,
+                    backgroundColor: AppColors.whiteColor,
                     onRefresh: () async {
                       doctorAppointmentProvider.pagingController.refresh();
                     },
@@ -100,9 +99,7 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               brachProvider.isLoading
-                                  ? Center(
-                                      child: Loader(),
-                                    )
+                                  ? const SizedBox.shrink()
                                   : role == "admin"
                                       ? CustomDropDownWidget(
                                           hintText: "Select Branch",

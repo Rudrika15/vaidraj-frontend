@@ -34,211 +34,37 @@ class PatientHomeScreen extends StatefulWidget {
 }
 
 class _PatientHomeScreenState extends State<PatientHomeScreen> {
-  @override
-  Widget build(BuildContext pContext) {
-    /// this will prevent app from closing accidentetly
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        showDialog(
-            context: context,
-            builder: (context) => CustomAlertBox(
-                content: "Do you really want to exit?",
-                heading: "Exit App",
-                secondBtnText: "Exit",
-                onPressedSecondBtn: () => SystemChannels.platform
-                    .invokeMethod('SystemNavigator.pop')));
-      },
-      child: Consumer<LocalizationProvider>(
-        builder: (context, langProvider, child) => SafeArea(
-            child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Padding(
-
-              //   padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
-              //   child: CustomSearchBar(
-              //     hintText: langProvider.translate("searchHere"),
-              //     horizontal: 0,
-              //   ),
-              // ),
-              InScreenHeading(
-                heading: langProvider.translate("ourSpeciality"),
-              ),
-              //// on lang change will discard the current speciality widget and use a new one
-              StreamBuilder(
-                stream: langProvider.localeStream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: Loader());
-                  } else {
-                    bool isEnglish = snapshot.data == "en";
-                    return isEnglish
-                        ? SpecialitiesRenderWidget()
-                        : SpecialitiesRenderWidget();
-                  }
-                },
-              ),
-              InScreenHeading(heading: langProvider.translate("appointment")),
-
-              /// render appointment
-              RenderUpcomingAppointment(),
-              InScreenHeading(
-                  heading: langProvider.translate("recommendedVideos")),
-              StreamBuilder(
-                stream: langProvider.localeStream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: Loader());
-                  } else {
-                    bool isEnglish = snapshot.data == "en";
-                    return isEnglish
-                        ? RenderYoutubeVideos()
-                        : RenderYoutubeVideos();
-                  }
-                },
-              ),
-            ],
-          ),
-        )),
-      ),
-    );
-  }
-}
-
-class RenderUpcomingAppointment extends StatelessWidget {
-  final UpcomingAppointmentService upcomingAppointmentService =
-      UpcomingAppointmentService();
-
-  RenderUpcomingAppointment({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<UpcomingAppointmentModel?>(
-      future: upcomingAppointmentService.upcomingAppointment(context: context),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-              child: CircularProgressIndicator()); // Show loading spinner
-        }
-
-        if (snapshot.hasError ||
-            !snapshot.hasData ||
-            snapshot.data?.data == null) {
-          return Center(child: Text('Failed to load appointments'));
-        }
-
-        List<UpcomingAppointmentInfo> appointments = snapshot.data?.data?.data
-                ?.where((e) => e.status != "completed")
-                .toList() ??
-            [];
-
-        return appointments.isEmpty == true
-            ? SizedBox(
-                height: 10.h,
-                child: const ContainerForNoDataFound(
-                    title: "No Appointment Found"))
-            : SizedBox(
-                height: 20.h,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSizes.size20),
-                  itemBuilder: (context, index) {
-                    UpcomingAppointmentInfo appointment = appointments[index];
-                    return CustomContainer(
-                      margin:
-                          const EdgeInsets.symmetric(vertical: AppSizes.size10),
-                      padding: const EdgeInsets.all(AppSizes.size10),
-                      width: 80.w,
-                      height: 20.h,
-                      backGroundColor: AppColors.lightBackGroundColor,
-                      borderColor: AppColors.brownColor,
-                      borderRadius: BorderRadius.circular(AppSizes.size10),
-                      borderWidth: 1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  appointment.name ?? 'Unknown',
-                                  style: TextSizeHelper.smallHeaderStyle,
-                                ),
-                              ),
-                              Text(
-                                appointment.date ?? 'No date',
-                                style: TextSizeHelper.smallTextStyle,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "${appointment.status}".toUpperCase(),
-                                style: TextSizeHelper.xSmallHeaderStyle
-                                    .copyWith(
-                                        color: appointment.status == "completed"
-                                            ? AppColors.greenColor
-                                            : AppColors.errorColor),
-                              ),
-                            ],
-                          ),
-                          MethodHelper.heightBox(height: 1.h),
-                          Text(
-                            "Appointment Slot : ${appointment.slot}",
-                            style: TextSizeHelper.xSmallTextStyle,
-                          ),
-                          Text(
-                            "Subject  : ${appointment.subject}",
-                            style: TextSizeHelper.xSmallTextStyle,
-                          ),
-                          Text(
-                            "Message : ${appointment.message}",
-                            style: TextSizeHelper.xSmallTextStyle,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) =>
-                      MethodHelper.widthBox(width: 2.w),
-                  itemCount: appointments.length,
-                ),
-              );
-      },
-    );
-  }
-}
-
-class SpecialitiesRenderWidget extends StatefulWidget {
-  const SpecialitiesRenderWidget({super.key});
-
-  @override
-  State<SpecialitiesRenderWidget> createState() =>
-      _SpecialitiesRenderWidgetState();
-}
-
-class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
-  /// variable
-  final PagingController<int, Diseases> _pagingController =
+  /// Store data to pass to widgets after refresh
+  List<dynamic> _allData = [];
+  bool _isLoading = true;
+  final PagingController<int, Diseases> pagingController =
       PagingController(firstPageKey: 1);
   final AllDiseaseService service = AllDiseaseService();
+
+  /// Load all data in one Future
+  Future<void> loadAllData() async {
+    try {
+      final results = await Future.wait([
+        UpcomingAppointmentService().upcomingAppointment(context: context),
+        YouTubeVideoService().getYouTubeVideo(context),
+      ]);
+      setState(() {
+        _allData = results;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    if (mounted) {
-      _pagingController.addPageRequestListener((pageKey) {
-        fetchPage(pageKey: pageKey, context: context);
-      });
-    } else {
-      print('nope');
-    }
+    initPagination();
+    loadAllData();
   }
 
   Future<void> fetchPage(
@@ -251,16 +77,109 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
       );
       final isLastPage = ((newItems?.data?.data?.length ?? 0) < 5);
       if (isLastPage) {
-        _pagingController.appendLastPage(newItems?.data?.data ?? []);
+        pagingController.appendLastPage(newItems?.data?.data ?? []);
       } else {
         final nextPageKey = pageKey + 1;
-        _pagingController.appendPage(newItems?.data?.data ?? [], nextPageKey);
+        pagingController.appendPage(newItems?.data?.data ?? [], nextPageKey);
       }
     } catch (error) {
-      _pagingController.error = error;
+      pagingController.error = error;
     }
   }
 
+  Future<void> initPagination() async {
+    if (mounted) {
+      pagingController.addPageRequestListener((pageKey) {
+        fetchPage(pageKey: pageKey, context: context);
+      });
+    } else {
+      print('nope');
+    }
+  }
+
+  @override
+  Widget build(BuildContext pContext) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        showDialog(
+            context: context,
+            builder: (context) => CustomAlertBox(
+                content: "Do you really want to exit?",
+                heading: "Exit App",
+                secondBtnText: "Exit",
+                onPressedSecondBtn: () => SystemChannels.platform
+                    .invokeMethod('SystemNavigator.pop')));
+      },
+      child: SafeArea(
+        child: RefreshIndicator(
+          color: AppColors.brownColor,
+          backgroundColor: AppColors.whiteColor,
+          onRefresh: () async {
+            setState(() {
+              _isLoading = true;
+            });
+            await initPagination();
+            await loadAllData();
+          },
+          child: _isLoading
+              ? const Center(child: Loader())
+              : ListView(
+                  children: [
+                    /// Specialities Section
+                    InScreenHeading(
+                        heading: context
+                            .watch<LocalizationProvider>()
+                            .translate("ourSpeciality")),
+                    SpecialitiesRenderWidget(
+                      pagingController: pagingController,
+                    ),
+
+                    /// Appointment Section
+                    InScreenHeading(
+                        heading: context
+                            .watch<LocalizationProvider>()
+                            .translate("appointment")),
+                    RenderUpcomingAppointment(
+                        appointmentData: _allData[0]?.data?.data ?? []),
+
+                    /// Recommended Videos Section
+                    SizedBox(
+                      height: 1.5.h,
+                    ),
+                    InScreenHeading(
+                        heading: context
+                            .watch<LocalizationProvider>()
+                            .translate("recommendedVideos")),
+                    RenderYoutubeVideos(
+                        videoData: _allData[1]?.data?.data ?? []),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    pagingController.dispose();
+  }
+}
+
+class SpecialitiesRenderWidget extends StatefulWidget {
+  SpecialitiesRenderWidget({
+    super.key,
+    required this.pagingController,
+  });
+  PagingController<int, Diseases> pagingController;
+  @override
+  State<SpecialitiesRenderWidget> createState() =>
+      _SpecialitiesRenderWidgetState();
+}
+
+class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -272,7 +191,7 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: AppSizes.size20),
                 scrollDirection: Axis.horizontal,
-                pagingController: _pagingController,
+                pagingController: widget.pagingController,
                 builderDelegate: PagedChildBuilderDelegate<Diseases>(
                   firstPageErrorIndicatorBuilder: (context) =>
                       PrimaryBtn(btnText: "Reload", onTap: () {}),
@@ -281,7 +200,7 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
                       //// will show to let user start controller again
                       child: GestureDetector(
                         onTap: () async {
-                          _pagingController.refresh();
+                          widget.pagingController.refresh();
                         },
                         child: const CustomContainer(
                           shape: BoxShape.circle,
@@ -308,12 +227,95 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
                       width: AppSizes.size10,
                     ))));
   }
+}
+
+class RenderUpcomingAppointment extends StatelessWidget {
+  final List<UpcomingAppointmentInfo> appointmentData;
+  const RenderUpcomingAppointment({super.key, required this.appointmentData});
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _pagingController.dispose();
+  Widget build(BuildContext context) {
+    List<UpcomingAppointmentInfo> appointments =
+        appointmentData.where((e) => e.status != "completed").toList();
+
+    return appointments.isNotEmpty
+        ? SizedBox(
+            height: 20.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
+              itemBuilder: (context, index) {
+                UpcomingAppointmentInfo appointment = appointments[index];
+                return CustomContainer(
+                  margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
+                  padding: const EdgeInsets.all(AppSizes.size10),
+                  width: 80.w,
+                  height: 20.h,
+                  backGroundColor: AppColors.lightBackGroundColor,
+                  borderColor: AppColors.brownColor,
+                  borderRadius: BorderRadius.circular(AppSizes.size10),
+                  borderWidth: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              appointment.name ?? 'Unknown',
+                              style: TextSizeHelper.smallHeaderStyle,
+                            ),
+                          ),
+                          Text(
+                            appointment.date ?? 'No date',
+                            style: TextSizeHelper.smallTextStyle,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            "${appointment.status}".toUpperCase(),
+                            style: TextSizeHelper.xSmallHeaderStyle.copyWith(
+                                color: appointment.status == "completed"
+                                    ? AppColors.greenColor
+                                    : AppColors.errorColor),
+                          ),
+                        ],
+                      ),
+                      MethodHelper.heightBox(height: 1.h),
+                      Text(
+                        "Appointment Slot : ${appointment.slot}",
+                        style: TextSizeHelper.xSmallTextStyle,
+                      ),
+                      Text(
+                        "Subject  : ${appointment.subject}",
+                        style: TextSizeHelper.xSmallTextStyle,
+                      ),
+                      Text(
+                        "Message : ${appointment.message}",
+                        style: TextSizeHelper.xSmallTextStyle,
+                      ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) =>
+                  MethodHelper.widthBox(width: 2.w),
+              itemCount: appointments.length,
+            ),
+          )
+        : Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: SizedBox(
+              height: 10.h,
+              child:
+                  const ContainerForNoDataFound(title: "No Appointment Found"),
+            ),
+          );
   }
 }
 
@@ -378,40 +380,17 @@ class SpecialityTempletContainer extends StatelessWidget {
   }
 }
 
-class RenderYoutubeVideos extends StatefulWidget {
-  const RenderYoutubeVideos({super.key});
-
-  @override
-  State<RenderYoutubeVideos> createState() => _RenderYoutubeVideosState();
-}
-
-class _RenderYoutubeVideosState extends State<RenderYoutubeVideos>
-    with NavigateHelper {
-  final YouTubeVideoService service = YouTubeVideoService();
-  YoutubeVideoModel? model;
-  bool isLoading = true;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getYoutubeVideo();
-  }
-
-  Future<void> getYoutubeVideo() async {
-    model = await service.getYouTubeVideo(context);
-    isLoading = false;
-  }
+class RenderYoutubeVideos extends StatelessWidget with NavigateHelper {
+  final List<YoutubeVideoInfo> videoData;
+  const RenderYoutubeVideos({super.key, required this.videoData});
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? Center(
-            child: Loader(),
-          )
-        : SizedBox(
+    return videoData.isNotEmpty
+        ? SizedBox(
             height: 30.h,
             child: ListView.separated(
-              itemCount: model?.data?.data?.length ?? 0,
+              itemCount: videoData.length,
               scrollDirection: Axis.horizontal,
               shrinkWrap: true,
               padding: const EdgeInsets.symmetric(horizontal: AppSizes.size20),
@@ -421,7 +400,7 @@ class _RenderYoutubeVideosState extends State<RenderYoutubeVideos>
                 );
               },
               itemBuilder: (context, index) {
-                YoutubeVideoInfo? ytInfo = model?.data?.data?[index];
+                YoutubeVideoInfo? ytInfo = videoData[index];
                 return CustomContainer(
                     width: 90.w,
                     margin: const EdgeInsets.symmetric(
@@ -432,28 +411,28 @@ class _RenderYoutubeVideosState extends State<RenderYoutubeVideos>
                     borderWidth: 1,
                     child: GestureDetector(
                         onTap: () {
-                          if (ytInfo?.youtubeLink?.contains("<iframe") ??
+                          if (ytInfo.youtubeLink?.contains("<iframe") ??
                               false) {
                             push(
                                 context,
                                 CustomVideoPlayer(
                                   videoLink: MethodHelper.extractVideoId(
-                                    iframeEmbedUrl: ytInfo?.youtubeLink ?? "",
+                                    iframeEmbedUrl: ytInfo.youtubeLink ?? "",
                                   ),
-                                  heading: ytInfo?.displayName ?? "",
+                                  heading: ytInfo.displayName ?? "",
                                   description:
-                                      ytInfo?.disease?.displayDescription ?? "",
+                                      ytInfo.disease?.displayDescription ?? "",
                                 ));
                           } else {
                             push(
                                 context,
                                 CustomVideoPlayer(
                                   videoLink: YoutubePlayer.convertUrlToId(
-                                          ytInfo?.youtubeLink ?? "") ??
+                                          ytInfo.youtubeLink ?? "") ??
                                       "",
-                                  heading: ytInfo?.displayName ?? "",
+                                  heading: ytInfo.displayName ?? "",
                                   description:
-                                      ytInfo?.disease?.displayDescription ?? "",
+                                      ytInfo.disease?.displayDescription ?? "",
                                 ));
                           }
                         },
@@ -468,12 +447,12 @@ class _RenderYoutubeVideosState extends State<RenderYoutubeVideos>
                                   topRight: Radius.circular(AppSizes.size10)),
                               child: ImageOrDefaultImage(
                                   image:
-                                      "${AppStrings.thumbnailPhotoUrl}/${ytInfo?.thumbnail ?? ""}"),
+                                      "${AppStrings.thumbnailPhotoUrl}/${ytInfo.thumbnail ?? ""}"),
                             ),
                             Padding(
                               padding: EdgeInsets.only(left: 3.w),
                               child: Text(
-                                ytInfo?.displayName ?? '',
+                                ytInfo.displayName ?? '',
                                 overflow: TextOverflow.ellipsis,
                                 style: TextSizeHelper.smallHeaderStyle
                                     .copyWith(color: AppColors.brownColor),
@@ -483,6 +462,10 @@ class _RenderYoutubeVideosState extends State<RenderYoutubeVideos>
                         )));
               },
             ),
-          );
+          )
+        : SizedBox(
+            height: 20.h,
+            child: const Center(
+                child: ContainerForNoDataFound(title: "No Data Found")));
   }
 }

@@ -32,7 +32,6 @@ class AdminPatientsScreen extends StatefulWidget {
 class _AdminPatientsScreenState extends State<AdminPatientsScreen>
     with NavigateHelper {
   String? role;
-  bool isLoading = false;
   String? branchId;
   String searchQuery = "";
 
@@ -84,6 +83,8 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
       child: Consumer2<GetBrachProvider, MyPatientsProvider>(
         builder: (context, brachProvider, myPatientProvider, child) =>
             RefreshIndicator(
+          color: AppColors.brownColor,
+          backgroundColor: AppColors.whiteColor,
           onRefresh: () async {
             loadRole();
             myPatientProvider.pagingController.refresh();
@@ -113,9 +114,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     brachProvider.isLoading
-                        ? const Center(
-                            child: Loader(),
-                          )
+                        ? const SizedBox.shrink()
                         : CustomDropDownWidget(
                             hintText: "Select Branch",
                             // value: myPatientProvider.branchId,
@@ -263,7 +262,8 @@ class MyPatientsListTile extends StatelessWidget with NavigateHelper {
             style: TextSizeHelper.smallTextStyle,
             overflow: TextOverflow.ellipsis,
           ),
-          role == "admin" || role == "manager"
+          role == "admin"
+              // || role == "manager"
               ? Text(
                   contactNumber,
                   style: TextSizeHelper.smallTextStyle,

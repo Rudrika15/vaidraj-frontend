@@ -19,9 +19,9 @@ import '../../constants/color.dart';
 import '../../constants/text_size.dart';
 
 class NotificationsScreen extends StatelessWidget {
-  NotificationsScreen({super.key});
+  NotificationsScreen({super.key, required this.isPatient});
   final GetNotificationsService service = GetNotificationsService();
-
+  final bool isPatient;
   @override
   Widget build(BuildContext context) {
     return Consumer2<LocalizationProvider, DeleteNotificationProvider>(
@@ -70,6 +70,7 @@ class NotificationsScreen extends StatelessWidget {
                         Notification1? notification =
                             snapshot.data?.data?[index];
                         return NotificationWidget(
+                          isPatient: isPatient,
                             message: notification?.message ?? "",
                             isAppointmentNotification:
                                 notification?.type == "appointmentReminder",
@@ -92,12 +93,14 @@ class NotificationWidget extends StatelessWidget with NavigateHelper {
       required this.langProvider,
       required this.messageId,
       required this.isGeneral,
-      required this.isAppointmentNotification});
+      required this.isAppointmentNotification,
+      required this.isPatient});
   final String message;
   final LocalizationProvider langProvider;
   final int messageId;
   final bool isGeneral;
   final bool isAppointmentNotification;
+  final bool isPatient;
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
@@ -163,35 +166,52 @@ class NotificationWidget extends StatelessWidget with NavigateHelper {
             ],
           ),
           MethodHelper.heightBox(height: 2.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!isAppointmentNotification) ...[
+          if (isPatient)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (!isAppointmentNotification) ...[
+                  PrimaryBtn(
+                    btnText: langProvider.translate("feedback"),
+                    onTap: () {
+                      // add logic to email
+                      push(context, const FeedbackScreen());
+                    },
+                    height: 3.h,
+                    width: 25.w,
+                    borderRadius: BorderRadius.circular(5),
+                    backGroundColor: AppColors.whiteColor,
+                    borderColor: AppColors.brownColor,
+                    textStyle: TextSizeHelper.xSmallTextStyle
+                        .copyWith(color: AppColors.brownColor),
+                  )
+                ] else ...[
+                  PrimaryBtn(
+                    btnText: langProvider.translate("appointment"),
+                    onTap: () {
+                      // add logic to email
+                      push(
+                          context,
+                          const Appointment(
+                            fromPage: true,
+                          ));
+                    },
+                    height: 3.h,
+                    width: 25.w,
+                    borderRadius: BorderRadius.circular(5),
+                    backGroundColor: AppColors.whiteColor,
+                    borderColor: AppColors.brownColor,
+                    textStyle: TextSizeHelper.xSmallTextStyle
+                        .copyWith(color: AppColors.brownColor),
+                  )
+                ],
+                MethodHelper.widthBox(width: 2.w),
                 PrimaryBtn(
-                  btnText: langProvider.translate("feedback"),
+                  btnText: langProvider.translate("call"),
                   onTap: () {
-                    // add logic to email
-                    push(context, const FeedbackScreen());
-                  },
-                  height: 3.h,
-                  width: 25.w,
-                  borderRadius: BorderRadius.circular(5),
-                  backGroundColor: AppColors.whiteColor,
-                  borderColor: AppColors.brownColor,
-                  textStyle: TextSizeHelper.xSmallTextStyle
-                      .copyWith(color: AppColors.brownColor),
-                )
-              ] else ...[
-                PrimaryBtn(
-                  btnText: langProvider.translate("appointment"),
-                  onTap: () {
-                    // add logic to email
-                    push(
-                        context,
-                        const Appointment(
-                          fromPage: true,
-                        ));
+                    // add logic to call
+                    MethodHelper.dialNumber(AppStrings.mobile);
                   },
                   height: 3.h,
                   width: 25.w,
@@ -202,23 +222,7 @@ class NotificationWidget extends StatelessWidget with NavigateHelper {
                       .copyWith(color: AppColors.brownColor),
                 )
               ],
-              MethodHelper.widthBox(width: 2.w),
-              PrimaryBtn(
-                btnText: langProvider.translate("call"),
-                onTap: () {
-                  // add logic to call
-                  MethodHelper.dialNumber(AppStrings.mobile);
-                },
-                height: 3.h,
-                width: 25.w,
-                borderRadius: BorderRadius.circular(5),
-                backGroundColor: AppColors.whiteColor,
-                borderColor: AppColors.brownColor,
-                textStyle: TextSizeHelper.xSmallTextStyle
-                    .copyWith(color: AppColors.brownColor),
-              )
-            ],
-          )
+            )
         ],
       ),
     );

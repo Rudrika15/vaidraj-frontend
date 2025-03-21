@@ -80,6 +80,8 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
 
     // When data is loaded
     return RefreshIndicator(
+      color: AppColors.brownColor,
+      backgroundColor: AppColors.whiteColor,
       onRefresh: () async {
         await initModel();
       },
@@ -280,7 +282,8 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                         const Expanded(child: SizedBox())
                                       ],
                                       if (MethodHelper.isToday(a.date ?? "") &&
-                                          a.status == "completed")
+                                          a.status == "completed" &&
+                                          role != "manager")
                                         IconButton(
                                             onPressed: () {
                                               //// delete prescription if needed

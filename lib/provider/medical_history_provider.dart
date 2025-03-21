@@ -44,6 +44,8 @@ class MedicalHistoryProvider extends ChangeNotifier {
     required BuildContext context,
   }) async {
     _isLoading = true;
+    notifyListeners();
+    _medicalHistoryModel = null;
     _medicalHistoryModel = await service.getMedicalHistory(
       context: context,
     );

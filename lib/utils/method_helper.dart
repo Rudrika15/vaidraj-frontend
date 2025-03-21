@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class MethodHelper {
         prefixIcon,
         color: prefixColor ?? AppColors.greenColor,
       ),
-      suffixIcon:suffix ,
+      suffixIcon: suffix,
       // suffix: suffix,
     );
   }
@@ -175,5 +176,21 @@ class MethodHelper {
     }
 
     return age;
+  }
+
+  // Debounce function to prevent multiple API calls
+  static void Function() debounce(VoidCallback action,
+      {int milliseconds = 500}) {
+    Timer? _timer;
+
+    return () {
+      // Cancel any previous timer if it exists
+      if (_timer?.isActive ?? false) {
+        _timer?.cancel();
+      }
+
+      // Start a new timer with a delay
+      _timer = Timer(Duration(milliseconds: milliseconds), action);
+    };
   }
 }

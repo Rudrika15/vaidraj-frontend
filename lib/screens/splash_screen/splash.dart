@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
     // TODO: implement initState
     super.initState();
     Future.delayed(
-      Duration(seconds: 2),
+      const Duration(seconds: 2),
       () => guideScreen(),
     );
   }
@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
       backgroundColor: AppColors.whiteColor,
       body: Center(
         child: Image(
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
             width: 60.w,
             height: 30.h,
             image: const AssetImage(AppStrings.splashScreen)),

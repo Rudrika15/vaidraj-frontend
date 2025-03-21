@@ -12,6 +12,7 @@ import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
+import 'package:vaidraj/widgets/primary_btn.dart';
 import '../../models/patient_medical_history_adminside.dart' as p;
 import '../../models/patient_medical_history_adminside.dart';
 import '../../models/product_model.dart';
@@ -105,178 +106,204 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
   Widget build(BuildContext context) {
     return Consumer<MedicalHistoryProvider>(
       builder: (context, medicalHistoryModel, child) => RefreshIndicator(
-        onRefresh: () async {},
-        child: isLoading
-            ? const Center(
-                child: Loader(),
-              )
-            : medicalHistoryModel.medicalHistoryModel?.data?.data?.isEmpty ==
-                    true
-                ? Center(
-                    child: Text(
-                      'No Medical History Found',
-                      style: TextSizeHelper.smallHeaderStyle,
-                    ),
-                  )
-                : ListView.builder(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
-                    itemCount: medicalHistoryModel
-                            .medicalHistoryModel?.data?.data?.length ??
-                        0,
-                    itemBuilder: (context, index) {
-                      PatientHistoryInfo? item = medicalHistoryModel
-                          .medicalHistoryModel?.data?.data?[index];
-                      return CustomContainer(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              for (p.Appointments a
-                                  in item?.appointments ?? []) ...[
-                                if (a.status == "completed") ...[
-                                  CustomContainer(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: AppSizes.size10),
-                                    padding:
-                                        const EdgeInsets.all(AppSizes.size10),
-                                    width: 80.w,
-                                    borderColor: AppColors.brownColor,
-                                    borderRadius:
-                                        BorderRadius.circular(AppSizes.size10),
-                                    borderWidth: 1,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        for (PatientWisePrescriptions pp
-                                            in a.prescriptions ?? []) ...[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Expanded(
-                                                  flex: 2,
-                                                  child: Text(
-                                                    pp.user?.name ?? "",
-                                                    style: TextSizeHelper
-                                                        .smallHeaderStyle
-                                                        .copyWith(
-                                                            color: AppColors
-                                                                .brownColor),
-                                                  )),
-                                              MethodHelper.widthBox(width: 2.w),
-                                              Text(
-                                                a.date ?? "",
-                                                style: TextSizeHelper
-                                                    .xSmallHeaderStyle,
-                                              ),
-                                            ],
-                                          ),
-                                          const Divider(
-                                            thickness: 0.5,
-                                          ),
-                                          Text(
-                                            "Prescriptions :-",
-                                            style: TextSizeHelper
-                                                .xSmallHeaderStyle,
-                                          ),
-                                          for (PatientWiseMedicines m
-                                              in pp.medicines ?? []) ...[
-                                            Text(
-                                              "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
-                                              style: TextSizeHelper
-                                                  .xSmallTextStyle,
+          color: AppColors.brownColor,
+          backgroundColor: AppColors.whiteColor,
+          onRefresh: () async {
+            await medicalHistoryModel.getMedicalHistory(context: context);
+          },
+          child: isLoading
+              ? const Center(
+                  child: Loader(),
+                )
+              : medicalHistoryModel.medicalHistoryModel?.data?.data
+                          ?.where((e) => e.appointments?.isNotEmpty ?? false)
+                          .isNotEmpty ==
+                      true
+                  ? ListView.builder(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
+                      itemCount: medicalHistoryModel
+                              .medicalHistoryModel?.data?.data?.length ??
+                          0,
+                      itemBuilder: (context, index) {
+                        PatientHistoryInfo? item = medicalHistoryModel
+                            .medicalHistoryModel?.data?.data?[index];
+                        return CustomContainer(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (p.Appointments a
+                                    in item?.appointments ?? []) ...[
+                                  if (a.status == "completed") ...[
+                                    CustomContainer(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: AppSizes.size10),
+                                      padding:
+                                          const EdgeInsets.all(AppSizes.size10),
+                                      width: 80.w,
+                                      borderColor: AppColors.brownColor,
+                                      borderRadius: BorderRadius.circular(
+                                          AppSizes.size10),
+                                      borderWidth: 1,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          for (PatientWisePrescriptions pp
+                                              in a.prescriptions ?? []) ...[
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      pp.user?.name ?? "",
+                                                      style: TextSizeHelper
+                                                          .smallHeaderStyle
+                                                          .copyWith(
+                                                              color: AppColors
+                                                                  .brownColor),
+                                                    )),
+                                                MethodHelper.widthBox(
+                                                    width: 2.w),
+                                                Text(
+                                                  a.date ?? "",
+                                                  style: TextSizeHelper
+                                                      .xSmallHeaderStyle,
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              "Timing  : ${m.time ?? "Not Found"}",
-                                              style: TextSizeHelper
-                                                  .xSmallTextStyle,
-                                            ),
-                                            Text(
-                                              "How To Take? : ${m.toBeTaken ?? "Not Found"}",
-                                              style: TextSizeHelper
-                                                  .xSmallTextStyle,
-                                            ),
-                                          ],
-                                          MethodHelper.heightBox(height: 1.h),
-                                          if (pp.note != null)
-                                            Text(
-                                              'Note : ${pp.note}',
-                                              style: TextSizeHelper
-                                                  .xSmallTextStyle,
-                                            ),
-                                          if (pp.otherMedicines != "")
                                             const Divider(
                                               thickness: 0.5,
                                             ),
-                                          Text(
-                                            'Other Medicines : ${pp.otherMedicines}',
-                                            style:
-                                                TextSizeHelper.xSmallTextStyle,
-                                          ),
-                                          MethodHelper.heightBox(height: 1.h),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () async {
-                                                  await pdfService.downloadPdf(
-                                                      context,
-                                                      pp.id ?? 0,
-                                                      pp.diseaseId.toString());
-                                                },
-                                                child: CustomContainer(
-                                                  padding: const EdgeInsets.all(
-                                                      AppSizes.size10 - 5),
-                                                  borderColor:
-                                                      AppColors.brownColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          AppSizes.size10),
-                                                  borderWidth: 0.5,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const Icon(
-                                                        Icons.download,
-                                                        color: AppColors
-                                                            .brownColor,
-                                                        size:
-                                                            AppSizes.size10 + 5,
-                                                      ),
-                                                      MethodHelper.widthBox(
-                                                          width: 2.w),
-                                                      Text(
-                                                        'Get Prescription',
-                                                        style: TextSizeHelper
-                                                            .xSmallTextStyle,
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              )
+                                            Text(
+                                              "Prescriptions :-",
+                                              style: TextSizeHelper
+                                                  .xSmallHeaderStyle,
+                                            ),
+                                            for (PatientWiseMedicines m
+                                                in pp.medicines ?? []) ...[
+                                              Text(
+                                                "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
+                                                style: TextSizeHelper
+                                                    .xSmallTextStyle,
+                                              ),
+                                              Text(
+                                                "Timing  : ${m.time ?? "Not Found"}",
+                                                style: TextSizeHelper
+                                                    .xSmallTextStyle,
+                                              ),
+                                              Text(
+                                                "How To Take? : ${m.toBeTaken ?? "Not Found"}",
+                                                style: TextSizeHelper
+                                                    .xSmallTextStyle,
+                                              ),
                                             ],
-                                          )
-                                        ]
-                                      ],
-                                    ),
-                                  )
-                                ]
-                              ],
-                            ]),
-                      );
-                    },
-                  ),
-      ),
+                                            MethodHelper.heightBox(height: 1.h),
+                                            if (pp.note != null)
+                                              Text(
+                                                'Note : ${pp.note}',
+                                                style: TextSizeHelper
+                                                    .xSmallTextStyle,
+                                              ),
+                                            if (pp.otherMedicines != "")
+                                              const Divider(
+                                                thickness: 0.5,
+                                              ),
+                                            Text(
+                                              'Other Medicines : ${pp.otherMedicines}',
+                                              style: TextSizeHelper
+                                                  .xSmallTextStyle,
+                                            ),
+                                            MethodHelper.heightBox(height: 1.h),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    await pdfService
+                                                        .downloadPdf(
+                                                            context,
+                                                            pp.id ?? 0,
+                                                            pp.diseaseId
+                                                                .toString());
+                                                  },
+                                                  child: CustomContainer(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            AppSizes.size10 -
+                                                                5),
+                                                    borderColor:
+                                                        AppColors.brownColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            AppSizes.size10),
+                                                    borderWidth: 0.5,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        const Icon(
+                                                          Icons.download,
+                                                          color: AppColors
+                                                              .brownColor,
+                                                          size:
+                                                              AppSizes.size10 +
+                                                                  5,
+                                                        ),
+                                                        MethodHelper.widthBox(
+                                                            width: 2.w),
+                                                        Text(
+                                                          'Get Prescription',
+                                                          style: TextSizeHelper
+                                                              .xSmallTextStyle,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ]
+                                        ],
+                                      ),
+                                    )
+                                  ]
+                                ],
+                              ]),
+                        );
+                      },
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Text(
+                            'No Medical History Found',
+                            style: TextSizeHelper.smallHeaderStyle,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 1.h,
+                        ),
+                        PrimaryBtn(
+                            width: 30.w,
+                            btnText: "Refresh",
+                            onTap: () => medicalHistoryModel.getMedicalHistory(
+                                context: context))
+                      ],
+                    )),
     );
   }
 

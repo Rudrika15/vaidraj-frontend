@@ -174,15 +174,6 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   },
                                 ),
                                 MethodHelper.heightBox(height: 2.h),
-                                // GestureDetector(
-                                //   onTap: () {
-                                //     // add logic for forgot password
-                                //   },
-                                //   child: Text(
-                                //     langProvider.translate("forgotPass"),
-                                //     style: TextSizeHelper.smallTextStyle,
-                                //   ),
-                                // )
                               ],
                             )))
                     : widget.UserStatus == "PATIENT"
@@ -196,10 +187,22 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                               child: GestureDetector(
                                 onTap: () async {
                                   dob = await showDatePicker(
-                                      context: context,
-                                      firstDate: DateTime(1950),
-                                      lastDate:
-                                          DateTime(DateTime.now().year + 1));
+                                    context: context,
+                                    firstDate: DateTime(1950),
+                                    lastDate: DateTime(DateTime.now().year + 1),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(
+                                          inputDecorationTheme:
+                                              const InputDecorationTheme(
+                                            hintStyle:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
+                                  );
                                   if (dob != null) {
                                     dobController.text =
                                         DateFormat('yyyy-MM-dd').format(dob!);

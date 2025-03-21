@@ -162,7 +162,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                         PrimaryBtn(
                           btnText: langProvider.translate("call"),
                           onTap: () {
-                            MethodHelper.dialNumber(AppStrings.mobile);
+                            MethodHelper.dialNumber(AppStrings.mobile3);
                           },
                           height: 3.h,
                           width: 25.w,
@@ -531,7 +531,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                           )
                         : PrimaryBtn(
                             btnText: langProvider.translate('submit'),
-                            onTap: () async {
+                            onTap: MethodHelper.debounce(() async {
                               if (formKey.currentState!.validate() &&
                                   slotToBook != "") {
                                 await appointmentProvider
@@ -553,6 +553,13 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                     .then((success) {
                                   if (success) {
                                     emptyController();
+                                    pushRemoveUntil(
+                                        context,
+                                        HomeScreen(
+                                          isDoctor: false,
+                                          isAdmin: false,
+                                          screenIndex: 0,
+                                        ));
                                   } else {
                                     WidgetHelper.customSnackBar(
                                         context: context,
@@ -560,31 +567,10 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                         isError: true);
                                   }
                                 });
-
-                                // print(
-                                //     "Name => ${nameController.text} and type ${nameController.text.runtimeType}");
-                                // print(
-                                //     "email => ${emailController.text} and type ${emailController.text.runtimeType}");
-                                // print(
-                                //     "contactNumber => ${contactController.text} and type ${contactController.text.runtimeType}");
-                                // print(
-                                //     "DOB => ${dobController.text} and type ${dobController.text.runtimeType}");
-                                // print(
-                                //     "address => ${addressController.text} and type ${addressController.text.runtimeType}");
-                                // print(
-                                //     "appointmentdate => ${appointmentDateController.text} and type ${appointmentDateController.text.runtimeType}");
-                                // print(
-                                //     "slot => $slotToBook and type ${slotToBook.runtimeType}");
-                                // print(
-                                //     "disease => $diseaseId and type ${diseaseId.runtimeType}");
-                                // print(
-                                //     "subject => ${subjectController.text} and type ${subjectController.text.runtimeType}");
-                                // print(
-                                //     "message => ${messageController.text} and type ${messageController.text.runtimeType}");
                               } else {
                                 print("Appointment Not verified");
                               }
-                            }),
+                            })),
                   )
                 ],
               ),

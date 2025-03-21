@@ -127,7 +127,7 @@ class AppointmentProvider extends ChangeNotifier {
     required int userId,
   }) async {
     _isLoading = true;
-
+    notifyListeners();
     _appointmentModel = await service.createAppointment(
         context: context,
         diseaseId: diseaseId,

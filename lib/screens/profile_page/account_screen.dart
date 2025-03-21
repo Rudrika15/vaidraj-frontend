@@ -306,7 +306,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                 ),
                                                 MethodHelper.heightBox(
                                                     height: 1.h),
-                                                if (role != 'admin') ...[
+                                                if (role != 'admin' && role != "manager") ...[
                                                   branchProvider.isLoading
                                                       ? const Center(
                                                           child: Loader())
@@ -442,8 +442,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                             if (value?.success == true) {
                                               WidgetHelper.customSnackBar(
                                                   context: profileContext,
-                                                  title:
-                                                      "User Account Created");
+                                                  title: "Success");
                                               setState(() {
                                                 isEditing = false;
                                               });
