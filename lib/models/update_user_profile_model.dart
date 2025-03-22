@@ -24,7 +24,7 @@ class UpdateProfileModel {
 
 class Data {
   int? id;
-  int? branchId;
+  String? branchId;
   String? name;
   String? email;
   String? emailVerifiedAt;

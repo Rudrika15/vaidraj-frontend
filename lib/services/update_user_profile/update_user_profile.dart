@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
 import 'package:provider/provider.dart';
-import 'package:vaidraj/main.dart';
 import 'package:vaidraj/models/update_user_profile_model.dart';
 import 'package:vaidraj/provider/profile_provider.dart';
 import '../../utils/api_helper/api_helper.dart';
@@ -45,7 +44,7 @@ class UpdateUserProfileService {
               address: model.data?.address ?? "",
               dob: model.data?.dob ?? "",
               email: model.data?.email ?? "",
-              branchId: model.data?.branchId ?? 0,
+              branchId: int.parse((model.data?.branchId ?? "")),
               userId: model.data?.id ?? 0,
               language: model.data?.language ?? "",
               mobileNo: model.data?.mobileNo ?? "",

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vaidraj/main.dart';
+import 'package:vaidraj/models/mobile_verification_model.dart';
 import 'package:vaidraj/provider/profile_provider.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
 import 'package:vaidraj/utils/http_helper/http_helper.dart';
@@ -22,7 +23,10 @@ class UpdateFcmTokenService {
         if (response.statusCode == 200 || response.statusCode == 201) {
           Map<String, dynamic> data = jsonDecode(response.body);
           if (data['success'] == true) {
-            // context.read<ProfileProvider>().
+            VerifyMobileNumberModel profileModel =
+                VerifyMobileNumberModel.fromJson(data);
+            ProfileProvider profileProvider = context.read<ProfileProvider>();
+            profileProvider.setUserModel = profileModel;
             return true;
           }
         }

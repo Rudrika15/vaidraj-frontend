@@ -6,6 +6,8 @@ import 'package:http/retry.dart';
 import 'package:http/http.dart' as http;
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/screens/mobile_verification/mobile_verification.dart';
+import 'package:vaidraj/screens/no_intenet_connection/no_internet_connection.dart';
+import 'package:vaidraj/screens/splash_screen/splash.dart';
 import '../widget_helper/widget_helper.dart';
 import '../shared_prefs_helper.dart/shared_prefs_helper.dart';
 
@@ -33,21 +35,34 @@ class HttpHelper {
         return httpErrorHandling(response, context);
       }
     } catch (e) {
-      if (e is SocketException) {
-        WidgetHelper.customSnackBar(
-          context: context,
-          isError: true,
-          title: 'No internet connection.',
-        );
-      } else {
-        WidgetHelper.customSnackBar(
-          context: context,
-          title: 'Something went Wrong!',
-          color: AppColors.whiteColor,
-          isError: true,
-        );
-      }
+      noInternetConnection(e, context);
       throw Exception(e);
+    }
+  }
+
+  static void noInternetConnection(Object e, BuildContext context) {
+    if (e is SocketException) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NoInternetPage(
+              onRetry: () => Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SplashScreen(),
+                    ),
+                    (route) => false,
+                  )),
+        ),
+        (route) => false,
+      );
+    } else {
+      WidgetHelper.customSnackBar(
+        context: context,
+        title: 'Something went Wrong!',
+        color: AppColors.whiteColor,
+        isError: true,
+      );
     }
   }
 

@@ -6,7 +6,10 @@ class ProfileProvider extends ChangeNotifier {
   /// will init user profile data to be used dynamically anywhere
   VerifyMobileNumberModel _userModel = VerifyMobileNumberModel();
   VerifyMobileNumberModel get userModel => _userModel;
-  set setUserModel(VerifyMobileNumberModel model) => _userModel = model;
+  set setUserModel(VerifyMobileNumberModel model) {
+    _userModel = model;
+    notifyListeners();
+  }
 
   void setUserInfo(
       {String? name,

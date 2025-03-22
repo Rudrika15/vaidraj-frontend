@@ -112,120 +112,111 @@ class _ViewProductOrAppointmentState extends State<ViewProductOrAppointment>
                           ));
                     }),
               ),
-              MethodHelper.heightBox(height: 3.h),
-              InScreenHeading(heading: langProvider.translate("videos")),
-              SizedBox(
-                height: 25.h,
-                child: widget.videos?.isEmpty ?? true
-                    ? const ContainerForNoDataFound(
-                        title: "No Videos To Show",
-                      )
-                    : ListView.separated(
-                        itemCount: widget.videos?.length ?? 0,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.only(left: AppSizes.size10),
-                        scrollDirection: Axis.horizontal,
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            width: AppSizes.size10,
-                          );
-                        },
-                        itemBuilder: (context, index) {
-                          Videos? video = widget.videos?[index];
-                          print(video?.thumbnail);
-                          print(video?.youtubeLink);
-                          return CustomContainer(
-                              width: 90.w,
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: AppSizes.size10),
-                              backGroundColor: AppColors.lightBackGroundColor,
-                              borderColor: AppColors.brownColor,
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.size10),
-                              borderWidth: 1,
-                              child: GestureDetector(
-                                  onTap: () {
-                                    if (video?.thumbnail?.contains("<iframe") ??
-                                        false) {
-                                      push(
-                                          context,
-                                          CustomVideoPlayer(
-                                            videoLink:
-                                                MethodHelper.extractVideoId(
-                                              iframeEmbedUrl:
-                                                  video?.youtubeLink ?? "",
-                                            ),
-                                            heading: video?.title ?? "",
-                                            description: widget.description,
-                                          ));
-                                    } else {
-                                      push(
-                                          context,
-                                          CustomVideoPlayer(
-                                            videoLink:
-                                                YoutubePlayer.convertUrlToId(
-                                                        video?.youtubeLink ??
-                                                            "") ??
-                                                    "",
-                                            heading: video?.title ?? "",
-                                            description: widget.description,
-                                          ));
-                                    }
-                                  },
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.circular(AppSizes.size10),
-                                    child: ImageOrDefaultImage(
-                                        image:
-                                            "${AppStrings.thumbnailPhotoUrl}/${video?.thumbnail ?? ""}"),
-                                  )));
-                        },
-                      ),
-              ),
-              MethodHelper.heightBox(height: 3.h),
-              InScreenHeading(heading: langProvider.translate("article")),
-              SizedBox(
-                height: 25.h,
-                child: widget.articles?.isEmpty ?? true
-                    ? const ContainerForNoDataFound(title: "No Article To Show")
-                    : ListView.separated(
-                        itemCount: widget.articles?.length ?? 0,
-                        padding: const EdgeInsets.only(left: AppSizes.size10),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            width: AppSizes.size10,
-                          );
-                        },
-                        itemBuilder: (context, index) {
-                          Articles? articles = widget.articles?[index];
-                          return GestureDetector(
-                            onTap: () => push(
-                                context,
-                                WebViewScreen(
-                                  uri: articles?.url ?? "",
-                                  diseaseName: widget.title,
-                                )),
-                            child: CustomContainer(
-                              width: 90.w,
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: AppSizes.size10),
-                              backGroundColor: AppColors.lightBackGroundColor,
-                              borderColor: AppColors.brownColor,
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.size10),
-                              borderWidth: 1,
-                              image: MethodHelper.imageOrNoImage(
-                                  image:
-                                      "${AppStrings.articlePhotoUrl}/${articles?.thumbnail ?? ""}"),
-                              // child: ,
-                            ),
-                          );
-                        },
-                      ),
-              ),
-              MethodHelper.heightBox(height: 3.h),
+              if (widget.videos?.isNotEmpty ?? true) ...[
+                MethodHelper.heightBox(height: 3.h),
+                InScreenHeading(heading: langProvider.translate("videos")),
+                SizedBox(
+                  height: 25.h,
+                  child: ListView.separated(
+                    itemCount: widget.videos?.length ?? 0,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.only(left: AppSizes.size10),
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        width: AppSizes.size10,
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      Videos? video = widget.videos?[index];
+                      return CustomContainer(
+                          width: 90.w,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: AppSizes.size10),
+                          backGroundColor: AppColors.lightBackGroundColor,
+                          borderColor: AppColors.brownColor,
+                          borderRadius: BorderRadius.circular(AppSizes.size10),
+                          borderWidth: 1,
+                          child: GestureDetector(
+                              onTap: () {
+                                if (video?.thumbnail?.contains("<iframe") ??
+                                    false) {
+                                  push(
+                                      context,
+                                      CustomVideoPlayer(
+                                        videoLink: MethodHelper.extractVideoId(
+                                          iframeEmbedUrl:
+                                              video?.youtubeLink ?? "",
+                                        ),
+                                        heading: video?.title ?? "",
+                                        description: widget.description,
+                                      ));
+                                } else {
+                                  push(
+                                      context,
+                                      CustomVideoPlayer(
+                                        videoLink: YoutubePlayer.convertUrlToId(
+                                                video?.youtubeLink ?? "") ??
+                                            "",
+                                        heading: video?.title ?? "",
+                                        description: widget.description,
+                                      ));
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(AppSizes.size10),
+                                child: ImageOrDefaultImage(
+                                    image:
+                                        "${AppStrings.thumbnailPhotoUrl}/${video?.thumbnail ?? ""}"),
+                              )));
+                    },
+                  ),
+                ),
+              ],
+              if (widget.articles?.isNotEmpty ?? true) ...[
+                MethodHelper.heightBox(height: 3.h),
+                InScreenHeading(heading: langProvider.translate("article")),
+                SizedBox(
+                  height: 25.h,
+                  child: ListView.separated(
+                    itemCount: widget.articles?.length ?? 0,
+                    padding: const EdgeInsets.only(left: AppSizes.size10),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        width: AppSizes.size10,
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      Articles? articles = widget.articles?[index];
+                      return GestureDetector(
+                        onTap: () => push(
+                            context,
+                            WebViewScreen(
+                              uri: articles?.url ?? "",
+                              diseaseName: widget.title,
+                            )),
+                        child: CustomContainer(
+                          width: 90.w,
+                          margin: const EdgeInsets.symmetric(
+                              vertical: AppSizes.size10),
+                          backGroundColor: AppColors.lightBackGroundColor,
+                          borderColor: AppColors.brownColor,
+                          borderRadius: BorderRadius.circular(AppSizes.size10),
+                          borderWidth: 1,
+                          image: MethodHelper.imageOrNoImage(
+                              image:
+                                  "${AppStrings.articlePhotoUrl}/${articles?.thumbnail ?? ""}"),
+                          // child: ,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                MethodHelper.heightBox(height: 3.h),
+              ],
             ],
           ),
         ),

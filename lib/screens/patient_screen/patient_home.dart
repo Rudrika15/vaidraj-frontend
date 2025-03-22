@@ -144,9 +144,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                         appointmentData: _allData[0]?.data?.data ?? []),
 
                     /// Recommended Videos Section
-                    SizedBox(
-                      height: 1.5.h,
-                    ),
                     InScreenHeading(
                         heading: context
                             .watch<LocalizationProvider>()
@@ -249,7 +246,7 @@ class RenderUpcomingAppointment extends StatelessWidget {
                 return CustomContainer(
                   margin: const EdgeInsets.symmetric(vertical: AppSizes.size10),
                   padding: const EdgeInsets.all(AppSizes.size10),
-                  width: 80.w,
+                  width: 90.w,
                   height: 20.h,
                   backGroundColor: AppColors.lightBackGroundColor,
                   borderColor: AppColors.brownColor,
@@ -309,7 +306,7 @@ class RenderUpcomingAppointment extends StatelessWidget {
             ),
           )
         : Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
             child: SizedBox(
               height: 10.h,
               child:
