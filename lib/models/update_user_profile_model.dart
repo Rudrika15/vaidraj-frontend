@@ -27,7 +27,7 @@ class Data {
   String? branchId;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   String? address;
   String? mobileNo;
   String? dob;

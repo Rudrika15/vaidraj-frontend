@@ -104,9 +104,9 @@ class MethodHelper {
   static Future<bool> requestStoragePermission(BuildContext context) async {
     // Check for Permission.storage status (Normal storage for Android < 12)
     var status = await Permission.storage.status;
-    print('status on init = ${status.isGranted}');
+    // print('status on init = ${status.isGranted}');
     if (status.isGranted) {
-      print("Storage permission is already granted.");
+      // print("Storage permission is already granted.");
       return true;
     }
 
@@ -114,10 +114,10 @@ class MethodHelper {
     if (Platform.isAndroid && status.isDenied) {
       var isGranted = await Permission.manageExternalStorage.request();
       if (isGranted.isGranted) {
-        print("MANAGE_EXTERNAL_STORAGE permission granted.");
+        // print("MANAGE_EXTERNAL_STORAGE permission granted.");
         return true;
       } else {
-        print("MANAGE_EXTERNAL_STORAGE permission denied.");
+        // print("MANAGE_EXTERNAL_STORAGE permission denied.");
         return false;
       }
     }
@@ -126,10 +126,10 @@ class MethodHelper {
     if (status.isDenied) {
       status = await Permission.storage.request();
       if (status.isGranted) {
-        print("Storage permission granted.");
+        // print("Storage permission granted.");
         return true;
       } else {
-        print("Storage permission denied.");
+        // print("Storage permission denied.");
         return false;
       }
     }

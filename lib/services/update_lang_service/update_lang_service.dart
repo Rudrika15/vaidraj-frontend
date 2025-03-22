@@ -23,7 +23,7 @@ class UpdateLangService {
       }
       return null;
     } catch (e) {
-      print("error while updating lang => $e");
+      // print("error while updating lang => $e");
       return null;
     }
   }

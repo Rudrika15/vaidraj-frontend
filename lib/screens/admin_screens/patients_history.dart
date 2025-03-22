@@ -4,7 +4,6 @@ import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/text_size.dart';
-import 'package:vaidraj/models/medical_history_model.dart' as m;
 import 'package:vaidraj/models/patient_medical_history_adminside.dart';
 import 'package:vaidraj/models/product_model.dart';
 import 'package:vaidraj/services/medical_history/medical_history_service.dart';
@@ -15,7 +14,6 @@ import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/loader.dart';
-import '../../models/upcoming_appointment_model.dart';
 import '../../provider/prescription_provider.dart';
 import '../../utils/widget_helper/widget_helper.dart';
 import '../../widgets/primary_btn.dart';
@@ -55,10 +53,10 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
       patientsHistoryModel = await service.getPatientWiseMedicalHistory(
           context: context, number: widget.number);
       productModel = await productService.getAllProduct(context: context);
-      print("data collected");
+      // print("data collected");
     } catch (error) {
       // Handle error gracefully, maybe show an error message
-      print('Error fetching medical history: $error');
+      // print('Error fetching medical history: $error');
     } finally {
       setState(() {
         isLoading = false; // Stop loading after the data is fetched
@@ -263,7 +261,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                               if (value == true) {
                                                 initModel();
                                               } else {
-                                                print("not updated");
+                                                // print("not updated");
                                               }
                                             });
                                           },

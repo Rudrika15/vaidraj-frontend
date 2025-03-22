@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/todays_appointment_model.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
@@ -23,7 +22,7 @@ class TodaysAppointmentService {
       }
       return null;
     } catch (e) {
-      print("error while getting Todays appointment => $e");
+      // print("error while getting Todays appointment => $e");
       return null;
     }
   }

@@ -46,10 +46,10 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("prescription id => ${widget.pId}");
-    print("appointment id => ${widget.appointmentId}");
-    print("disease id => ${widget.diseaseId}");
-    print("isCreating id => ${widget.isCreating}");
+    // print("prescription id => ${widget.pId}");
+    // print("appointment id => ${widget.appointmentId}");
+    // print("disease id => ${widget.diseaseId}");
+    // print("isCreating id => ${widget.isCreating}");
     initPage();
   }
 
@@ -66,7 +66,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
     if (prescriptionProvider.productModel == null) {
       await prescriptionProvider.getAllProducts(context: context);
     } else {
-      print('product model has data');
+      // print('product model has data');
     }
     // Defer the disease initialization to the next frame
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -115,7 +115,9 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                           child: Column(
                             children: [
                               paddingMethod(CustomTextFieldWidget(
-                                  validator: (value) {},
+                                  validator: (value) {
+                                    return null;
+                                  },
                                   enabled: false,
                                   keyboardType: TextInputType.text,
                                   controller: patientNameController,
@@ -216,14 +218,17 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                                 PrescriptionWidget(),
                               MethodHelper.heightBox(height: 2.h),
                               paddingMethod(CustomTextFieldWidget(
-                                  validator: (value) {},
+                                  validator: (value) {
+                                    return null;
+                                  },
                                   keyboardType: TextInputType.text,
                                   controller: otherMedicineController,
-                  
                                   decoration: MethodHelper.greenUnderLineBorder(
                                       hintText: "Other Notes (if Any)"))),
                               paddingMethod(CustomTextFieldWidget(
-                                  validator: (value) {},
+                                  validator: (value) {
+                                    return null;
+                                  },
                                   keyboardType: TextInputType.text,
                                   controller: noteController,
                                   decoration: MethodHelper.greenUnderLineBorder(

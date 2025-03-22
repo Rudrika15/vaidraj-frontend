@@ -18,7 +18,6 @@ import '../../utils/border_helper/border_helper.dart';
 import '../../utils/method_helper.dart';
 import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../widgets/custom_dropdown.dart';
-import '../../widgets/loader.dart';
 import '../../widgets/primary_btn.dart';
 import '../home/home_screen.dart';
 
@@ -37,7 +36,7 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
 
   Future<void> loadRole() async {
     role = await SharedPrefs.getRole();
-    print('$role');
+    // print('$role');
   }
 
   Future<void> loadBranchId() async {
@@ -236,7 +235,7 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                               color: AppColors
                                                                   .whiteColor),
                                                       onTap: () async {
-                                                        print("clicked");
+                                                        // print("clicked");
                                                         doctorAppointmentProvider
                                                             .pagingController
                                                             .refresh();

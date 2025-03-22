@@ -11,8 +11,8 @@ class MobileVerificationService {
       {required BuildContext context, required String mobileNumber}) async {
     print(mobileNumber);
     try {
-      print("baseurl ${ApiHelper.baseUrl}");
-      print("mobile ${ApiHelper.mobileNumVerification}");
+      // print("baseurl ${ApiHelper.baseUrl}");
+      // print("mobile ${ApiHelper.mobileNumVerification}");
       Response response = await HttpHelper.post(
           uri: ApiHelper.mobileNumVerification,
           context: context,
@@ -36,7 +36,7 @@ class MobileVerificationService {
       }
       return null;
     } catch (e) {
-      print("error in mobile verification service = > $e");
+      // print("error in mobile verification service = > $e");
       return null;
     }
   }
@@ -57,15 +57,15 @@ class MobileVerificationService {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {
           SharedPrefs.saveToken(data['token']);
-          print("saving token for staff => ${data['token']}");
+          // print("saving token for staff => ${data['token']}");
           SharedPrefs.saveRole(data['data']["role"]);
-          print("saving role for staff => ${data['data']["role"]}");
+          // print("saving role for staff => ${data['data']["role"]}");
           return true;
         }
       }
       return false;
     } catch (e) {
-      print("error while verifyPassword => $e");
+      // print("error while verifyPassword => $e");
       return false;
     }
   }

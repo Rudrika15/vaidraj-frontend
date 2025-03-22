@@ -42,7 +42,7 @@ class UpdateUserProfileService {
       }
       return null;
     } catch (e) {
-      print("error while updating user => $e");
+      // print("error while updating user => $e");
       return null;
     }
   }

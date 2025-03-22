@@ -482,7 +482,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   ));
                               WidgetHelper.customSnackBar(
                                   context: context, title: "Welcome");
-                              print("staff validated");
+                              // print("staff validated");
                               return;
                             }
                           }
@@ -505,7 +505,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                   ));
                               WidgetHelper.customSnackBar(
                                   context: context, title: "Welcome");
-                              print("staff validated");
+                              // print("staff validated");
                               return;
                             }
                           }
@@ -530,7 +530,7 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                     isDoctor: false,
                                     isAdmin: false,
                                   ));
-                              print("patient validated");
+                              // print("patient validated");
                               return;
                             } else {
                               WidgetHelper.customSnackBar(

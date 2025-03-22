@@ -27,13 +27,13 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
 
   Future<bool> getToken() async {
     String? token = await SharedPrefs.getToken();
-    print("token from splash => $token");
+    // print("token from splash => $token");
     return token.isNotEmpty;
   }
 
   Future<String?> getRole() async {
     String? role = await SharedPrefs.getRole();
-    print("role from splash => $role");
+    // print("role from splash => $role");
     return role;
   }
 

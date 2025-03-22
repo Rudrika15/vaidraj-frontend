@@ -22,7 +22,7 @@ class UpcomingAppointmentService {
       }
       return null;
     } catch (e) {
-      print("error while getting upcoming appointment => $e");
+      // print("error while getting upcoming appointment => $e");
       return null;
     }
   }

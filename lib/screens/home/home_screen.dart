@@ -2,7 +2,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
-import 'package:vaidraj/constants/sizes.dart';
 import 'package:vaidraj/constants/strings.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
@@ -24,7 +23,6 @@ import 'package:vaidraj/screens/patient_screen/specialities.dart';
 import 'package:vaidraj/services/updateFCMToken/update_fcm_token.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
-import 'package:vaidraj/utils/notification_helper/notification_helper.dart';
 import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
@@ -137,15 +135,15 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     try {
       // Retrieve the FCM token
       String? fcmToken = await FirebaseMessaging.instance.getToken();
-      print('getting => $fcmToken');
+      // print('getting => $fcmToken');
       if (fcmToken != null) {
         await SharedPrefs.saveFCMToken(fcmToken);
         await fcmTokenService.updateFCMToken(context: context);
       } else {
-        print("FCM Token is null");
+        // print("FCM Token is null");
       }
     } catch (e) {
-      print("Error retrieving FCM token: $e");
+      // print("Error retrieving FCM token: $e");
       WidgetHelper.customSnackBar(
           context: context, title: "Failed to Load FCMToken", isError: true);
     }
@@ -238,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
                           branchProvider.resetBranchAddressModel(
                               context: context);
                         } else {
-                          print("pagination not refreshed");
+                          // print("pagination not refreshed");
                         }
                       });
                     },

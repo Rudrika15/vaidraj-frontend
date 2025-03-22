@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
 import 'package:vaidraj/models/youtube_video_model.dart';
@@ -24,7 +23,7 @@ class YouTubeVideoService {
       }
       return null;
     } catch (e) {
-      print("error while getting recommanded videos => $e");
+      // print("error while getting recommanded videos => $e");
       return null;
     }
   }
@@ -34,7 +33,7 @@ class YouTubeVideoService {
       required int currentPage,
       int? perPage}) async {
     try {
-      log(ApiHelper.getAllYTVideos(currentPage: currentPage, perPage: perPage));
+      // log(ApiHelper.getAllYTVideos(currentPage: currentPage, perPage: perPage));
       Response response = await HttpHelper.get(
         context: context,
         uri: ApiHelper.getAllYTVideos(
@@ -49,7 +48,7 @@ class YouTubeVideoService {
       }
       return null;
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       return null;
     }
   }

@@ -34,13 +34,13 @@ class AppointmentProvider extends ChangeNotifier {
       _isLoading = false;
       _pagingController.refresh();
       notifyListeners();
-      print("branch - => $_branchId");
+      // print("branch - => $_branchId");
       return false;
     }
     _isLoading = false;
     _pagingController.refresh();
     notifyListeners();
-    print("branch => $_branchId");
+    // print("branch => $_branchId");
     return true;
   }
 

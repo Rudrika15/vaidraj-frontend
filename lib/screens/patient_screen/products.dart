@@ -15,7 +15,6 @@ import '../../constants/sizes.dart';
 import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../widgets/custom_container.dart';
 import '../../widgets/custom_searchbar.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../home/home_screen.dart';
 

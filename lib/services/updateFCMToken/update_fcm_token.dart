@@ -11,7 +11,7 @@ class UpdateFcmTokenService {
   Future<bool> updateFCMToken({required BuildContext context}) async {
     try {
       String fcmToken = await SharedPrefs.getFCMToken();
-      print('got this FCM Token => $fcmToken');
+      // print('got this FCM Token => $fcmToken');
       if (fcmToken != "") {
         var body = {'form_token': fcmToken};
         Response response = await HttpHelper.post(

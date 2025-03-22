@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 
 @pragma('vm:entry-point')
 Future<void> onBackGroundMessage(RemoteMessage message) async {
@@ -36,12 +35,12 @@ class FirebaseMessagingUtils {
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
     FirebaseMessaging.onBackgroundMessage(onBackGroundMessage);
     FirebaseMessaging.onMessage.listen((message) {
-      print('onMessgaeFireBase ${message.toString()}');
+      // print('onMessgaeFireBase ${message.toString()}');
       FirebaseMessagingUtils.handleMessage(message);
       FirebaseMessagingUtils.showLocalNotification(message);
     });
 
-    final fcmToken = await firebaseMessaging.getToken();
+    // final fcmToken = await firebaseMessaging.getToken();
     // await SharedPrefs.saveFCMToken(fcmToken ?? '');
     // print('Firebase FCM Token $fcmToken');
   }
@@ -79,15 +78,15 @@ class FirebaseMessagingUtils {
   static void handleMessage(RemoteMessage? message) {
     if (message != null) {
       if (message.notification?.body == "Please Take New Appointment") {
-        print('${message.notification?.body}');
+        // print('${message.notification?.body}');
         return;
       }
-      print('cant handle');
+      // print('cant handle');
     }
   }
 
   static void showLocalNotification(RemoteMessage remoteMessage) {
-    print('showLocalNotification ${remoteMessage.notification}');
+    // print('showLocalNotification ${remoteMessage.notification}');
     RemoteNotification? notification = remoteMessage.notification;
     if (notification != null) {
       localNotifications.show(

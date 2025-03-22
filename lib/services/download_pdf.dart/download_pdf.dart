@@ -3,7 +3,6 @@ import 'package:open_filex/open_filex.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/src/response.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../utils/api_helper/api_helper.dart';
 import '../../utils/http_helper/http_helper.dart';
 import '../../utils/method_helper.dart';
@@ -59,7 +58,7 @@ class DownloadPdfService {
         );
       }
     } catch (e) {
-      print("Error while downloading PDF => $e");
+      // print("Error while downloading PDF => $e");
       // Optionally show an error message to the user
       WidgetHelper.customSnackBar(
         context: context,

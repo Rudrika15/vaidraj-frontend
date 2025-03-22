@@ -155,7 +155,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> with NavigateHelper {
                         MethodHelper.heightBox(height: 2.h),
                         CustomContainer(
                           backGroundColor: AppColors.whiteColor,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               color: Color.fromRGBO(0, 0, 0, 0.19),
                               blurRadius: 20,
@@ -180,7 +180,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> with NavigateHelper {
                               CustomContainer(
                                 padding: const EdgeInsets.all(AppSizes.size10),
                                 child: CustomTextFieldWidget(
-                                    validator: (value) {},
+                                    validator: (value) {
+                                      return null;
+                                    },
                                     minLines: 5,
                                     keyboardType: TextInputType.text,
                                     style: TextSizeHelper.smallTextStyle,
@@ -194,7 +196,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> with NavigateHelper {
                                             hintText: langProvider
                                                 .translate('comment'))),
                               ),
-                              CustomContainer(
+                              const CustomContainer(
                                 height: 5,
                                 backGroundColor: AppColors.greenColor,
                               )

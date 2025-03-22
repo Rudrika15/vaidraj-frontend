@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:vaidraj/models/medical_history_model.dart';
 import 'package:vaidraj/models/patient_medical_history_adminside.dart';
 import 'package:vaidraj/services/medical_history/medical_history_service.dart';
 

@@ -98,7 +98,7 @@ class _RenderSpecialityState extends State<RenderSpeciality> {
         fetchPage(pageKey: pageKey, context: context);
       });
     } else {
-      print('nope');
+      // print('nope');
     }
   }
 

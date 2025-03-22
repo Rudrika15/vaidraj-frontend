@@ -38,7 +38,7 @@ class LocalizationProvider extends ChangeNotifier {
       await load(_currentLocal);
       notifyListeners();
     } catch (e) {
-      print("Error loading language: $e");
+      // print("Error loading language: $e");
       // Fallback to default language in case of error
       _currentLocal = "en";
       await load(_currentLocal);
@@ -67,7 +67,7 @@ class LocalizationProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     } catch (e) {
-      print("Error changing language: $e");
+      // print("Error changing language: $e");
       return false;
     }
   }
@@ -82,10 +82,10 @@ class LocalizationProvider extends ChangeNotifier {
           return MapEntry(key, value.toString());
         });
       } else {
-        print("Localization file is empty for locale: $locale");
+        // print("Localization file is empty for locale: $locale");
       }
     } catch (e) {
-      print("Error loading localization file: $e");
+      // print("Error loading localization file: $e");
       // Fallback to default localization if loading fails
       _localizedStrings = {};
       await load("en");

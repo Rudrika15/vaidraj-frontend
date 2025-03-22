@@ -32,7 +32,7 @@ class ContactService {
       }
       return false;
     } catch (e) {
-      print('error while contact to vaidraj => $e');
+      // print('error while contact to vaidraj => $e');
       return false;
     }
   }

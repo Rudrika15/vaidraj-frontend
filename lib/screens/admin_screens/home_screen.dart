@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/models/todays_appointment_model.dart';
 import 'package:vaidraj/provider/appointment_provider.dart';
-import 'package:vaidraj/provider/localization_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/prescription_model.dart';
@@ -63,7 +62,7 @@ class PrescriptionStateProvider extends ChangeNotifier {
   Future<void> initPreviousDiseaseList(
       {required List<Medicines> previousList}) async {
     _isLoading = true;
-    print("Starting to initialize previous disease list...");
+    // print("Starting to initialize previous disease list...");
     List<Medicine> tempList = List.generate(
         previousList.length,
         (i) => Medicine(
@@ -72,16 +71,16 @@ class PrescriptionStateProvider extends ChangeNotifier {
             time: previousList[i].time?.split(","),
             toBeTaken: previousList[i].toBeTaken));
     if (tempList.isNotEmpty) {
-      tempList.map((i) => print("i ====> ${i.productId}"));
+      // tempList.map((i) => print("i ====> ${i.productId}"));
     }
     for (Medicine m in tempList) {
-      print("Processing medicine: ${m.productId}");
+      // print("Processing medicine: ${m.productId}");
 
       final index = _productToShow.indexWhere((i) => i.id == m.productId);
 
       if (index != -1) {
         final disease = _diseaseList[index];
-        print("Disease found at index $index: ${disease.toString()}");
+        // print("Disease found at index $index: ${disease.toString()}");
 
         // Find the medicine by productId
         final medicineIndex =
@@ -90,23 +89,23 @@ class PrescriptionStateProvider extends ChangeNotifier {
         // If both the disease and medicine are found
         if (medicineIndex != null && medicineIndex != -1) {
           final medicine = disease.medicine?[medicineIndex];
-          print("Found medicine: ${medicine.toString()}");
+          // print("Found medicine: ${medicine.toString()}");
 
           disease.medicine?[medicineIndex] = medicine!;
           _diseaseList[index] = disease;
 
-          print("Updated medicine: ${medicine.toString()}");
-          print("Updated disease: ${disease.toString()}");
+          // print("Updated medicine: ${medicine.toString()}");
+          // print("Updated disease: ${disease.toString()}");
         } else {
-          print("No medicine found for productId ${m.productId}");
+          // print("No medicine found for productId ${m.productId}");
         }
       } else {
-        print("No disease found for medicine with productId ${m.productId}");
+        // print("No disease found for medicine with productId ${m.productId}");
       }
     }
 
     _isLoading = false;
-    print("Finished initializing disease list");
+    // print("Finished initializing disease list");
     notifyListeners();
   }
 
@@ -158,7 +157,7 @@ class PrescriptionStateProvider extends ChangeNotifier {
       }
     });
 
-    print('Products that can be added to $_selectedDisease: ${newList.length}');
+    // print('Products that can be added to $_selectedDisease: ${newList.length}');
 
     /// if found products than add them in list
     if (newList.isNotEmpty) {
@@ -191,16 +190,16 @@ class PrescriptionStateProvider extends ChangeNotifier {
 
           /// add them in original list
           _diseaseList[diseaseIndex].medicine = currentMedicines;
-          log(_diseaseList.toString());
+          // log(_diseaseList.toString());
         }
       }
     } else {
       diseaseList.removeWhere((e) => e.diseaseName == _selectedDisease);
-      print("No products found.");
+      // print("No products found.");
     }
 
-    log(newList.length.toString());
-    log(_diseaseList.map((e) => e.toString()).toList().toString());
+    // log(newList.length.toString());
+    // log(_diseaseList.map((e) => e.toString()).toList().toString());
 
     notifyListeners();
   }
@@ -243,7 +242,7 @@ class PrescriptionStateProvider extends ChangeNotifier {
     }
 
     // Log the updated disease list for debugging
-    log(_diseaseList.toString());
+    // log(_diseaseList.toString());
 
     // Notify listeners to update the UI
     notifyListeners();
@@ -279,7 +278,7 @@ class PrescriptionStateProvider extends ChangeNotifier {
         _diseaseList[diseaseIndex] = disease;
 
         // Log the updated list for debugging
-        log(_diseaseList.toString());
+        // log(_diseaseList.toString());
       }
     }
 
@@ -297,7 +296,7 @@ class PrescriptionStateProvider extends ChangeNotifier {
       required bool isCreating,
       required String otherNote}) async {
     _isLoading = true;
-    log(_diseaseList.toString());
+    // log(_diseaseList.toString());
     if (_diseaseList.any((e) =>
         e.medicine?.isEmpty == true ||
         e.medicine?.every((f) => f.isSelected == false) == true ||

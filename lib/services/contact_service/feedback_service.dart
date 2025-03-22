@@ -22,7 +22,7 @@ class FeedbackService {
       }
       return false;
     } catch (e) {
-      print("error while giving feedback => $e");
+      // print("error while giving feedback => $e");
       return false;
     }
   }

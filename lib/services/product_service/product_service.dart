@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/product_model.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
@@ -23,7 +22,7 @@ class ProductService {
       }
       return null;
     } catch (e) {
-      print("error while getting products with pagination => $e");
+      // print("error while getting products with pagination => $e");
       return null;
     }
   }
@@ -44,7 +43,7 @@ class ProductService {
       }
       return null;
     } catch (e) {
-      print("error while getting products disease wise => $e");
+      // print("error while getting products disease wise => $e");
       return null;
     }
   }
@@ -64,7 +63,7 @@ class ProductService {
       }
       return null;
     } catch (e) {
-      print("error while getting all products => $e");
+      // print("error while getting all products => $e");
       return null;
     }
   }

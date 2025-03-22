@@ -53,7 +53,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading data: $e');
+      // print('Error loading data: $e');
       setState(() {
         _isLoading = false;
       });
@@ -93,7 +93,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         fetchPage(pageKey: pageKey, context: context);
       });
     } else {
-      print('nope');
+      // print('nope');
     }
   }
 

@@ -555,7 +555,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                     emptyController();
                                     pushRemoveUntil(
                                         context,
-                                        HomeScreen(
+                                       const HomeScreen(
                                           isDoctor: false,
                                           isAdmin: false,
                                           screenIndex: 0,
@@ -568,7 +568,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                   }
                                 });
                               } else {
-                                print("Appointment Not verified");
+                                // print("Appointment Not verified");
                               }
                             })),
                   )

@@ -24,7 +24,7 @@ class AllDiseaseService {
       }
       return null;
     } catch (e) {
-      print("error while getting All Diseases => $e");
+      // print("error while getting All Diseases => $e");
       return null;
     }
   }
@@ -45,7 +45,7 @@ class AllDiseaseService {
       }
       return null;
     } catch (e) {
-      print("error while getting All Diseases => $e");
+      // print("error while getting All Diseases => $e");
       return null;
     }
   }

@@ -108,7 +108,7 @@ class _VideoAppState extends State<CustomVideoPlayer> with NavigateHelper {
   }
 
   Future<void> loadController() async {
-    print("video player is initing with this video Id => ${widget.videoLink}");
+    // print("video player is initing with this video Id => ${widget.videoLink}");
     _controller = YoutubePlayerController(
         initialVideoId: widget.videoLink,
         flags: YoutubePlayerFlags(autoPlay: false, mute: false));

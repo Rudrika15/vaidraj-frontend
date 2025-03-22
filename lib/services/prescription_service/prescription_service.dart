@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/prescription_model.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
@@ -48,7 +47,7 @@ class PrescriptionService {
 
       return _handleResponse(context, response);
     } catch (e) {
-      print("Error while creating  or updating prescription => $e");
+      // print("Error while creating  or updating prescription => $e");
       return false;
     }
   }
@@ -78,8 +77,8 @@ class PrescriptionService {
     required Map<String, dynamic> payload,
     required Map<String, String> header,
   }) async {
-    log(url);
-    log(jsonEncode(payload));
+    // log(url);
+    // log(jsonEncode(payload));
     return await HttpHelper.post(
       context: context,
       uri: url,
@@ -89,7 +88,7 @@ class PrescriptionService {
   }
 
   bool _handleResponse(BuildContext context, Response response) {
-    log(response.body);
+    // log(response.body);
     if (response.statusCode == 200 || response.statusCode == 201) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data['success'] == true) {
@@ -112,7 +111,7 @@ class PrescriptionService {
       Response response = await HttpHelper.get(
           context: context,
           uri: ApiHelper.deletePrescription(prescriptionId: prescriptionId));
-      log(ApiHelper.deletePrescription(prescriptionId: prescriptionId));
+      // log(ApiHelper.deletePrescription(prescriptionId: prescriptionId));
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {
@@ -121,7 +120,7 @@ class PrescriptionService {
       }
       return false;
     } catch (e) {
-      print('error while deleting prescriptionId $prescriptionId error => $e');
+      // print('error while deleting prescriptionId $prescriptionId error => $e');
       return false;
     }
   }

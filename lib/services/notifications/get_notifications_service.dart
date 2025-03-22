@@ -19,7 +19,7 @@ class GetNotificationsService {
       }
       return null;
     } catch (e) {
-      print("error while getting Notifications => $e");
+      // print("error while getting Notifications => $e");
       return null;
     }
   }

@@ -105,7 +105,7 @@ class _RenderSpecialityState extends State<RenderAllArticle>
         fetchPage(pageKey: pageKey, context: context);
       });
     } else {
-      print('nope');
+      // print('nope');
     }
   }
 

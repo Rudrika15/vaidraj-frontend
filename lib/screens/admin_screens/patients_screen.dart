@@ -15,7 +15,6 @@ import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_dropdown.dart';
 import 'package:vaidraj/widgets/custom_searchbar.dart';
 import '../../provider/my_patients_provider.dart';
-import '../../widgets/loader.dart';
 import '../../widgets/primary_btn.dart';
 import '../home/home_screen.dart';
 import 'patients_history.dart';
@@ -197,7 +196,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                                     textStyle: TextSizeHelper.smallTextStyle
                                         .copyWith(color: AppColors.whiteColor),
                                     onTap: () async {
-                                      print("clicked");
+                                      // print("clicked");
                                       myPatientProvider.pagingController
                                           .refresh();
                                     }),

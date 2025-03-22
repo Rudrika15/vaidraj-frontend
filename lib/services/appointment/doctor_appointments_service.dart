@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:vaidraj/models/upcoming_appointment_model.dart';
 import 'package:vaidraj/utils/api_helper/api_helper.dart';
@@ -21,12 +20,12 @@ class DoctorAppointmentsService {
               currentPage: currentPage,
               perPage: perPage),
           context: context);
-      log(ApiHelper.getDoctorAppointments(
-          branchId: branchId,
-          date: date,
-          currentPage: currentPage,
-          perPage: perPage));
-      log(response.body);
+      // log(ApiHelper.getDoctorAppointments(
+      //     branchId: branchId,
+      //     date: date,
+      //     currentPage: currentPage,
+      //     perPage: perPage));
+      // log(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success']) {
@@ -37,7 +36,7 @@ class DoctorAppointmentsService {
       }
       return null;
     } catch (e) {
-      print("error while getting Todays appointment => $e");
+      // print("error while getting Todays appointment => $e");
       return null;
     }
   }

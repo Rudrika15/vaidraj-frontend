@@ -19,7 +19,7 @@ class DeleteUserService {
       }
       return null;
     } catch (e) {
-      print("error while deleting account => $e");
+      // print("error while deleting account => $e");
       return null;
     }
   }

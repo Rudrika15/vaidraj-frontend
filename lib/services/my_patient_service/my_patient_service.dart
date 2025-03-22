@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
 import 'package:vaidraj/models/my_patients_model.dart';
@@ -24,10 +23,10 @@ class MyPatientService {
             perPage: perPage,
             searchQuery: searchQuery ?? ""),
       );
-      log(ApiHelper.getMyPatients(
-          branchId: branchId ?? branch,
-          currentPage: currentPage,
-          perPage: perPage));
+      // log(ApiHelper.getMyPatients(
+      //     branchId: branchId ?? branch,
+      //     currentPage: currentPage,
+      //     perPage: perPage));
       if (response?.statusCode == 200 || response?.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response!.body);
         if (data['success'] == true) {
@@ -35,11 +34,11 @@ class MyPatientService {
           return model;
         }
       } else {
-        log("error");
+        // log("error");
       }
       return null;
     } catch (e) {
-      print("error while getting Patients => $e");
+      // print("error while getting Patients => $e");
       return null;
     }
   }

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vaidraj/models/delete_account_model.dart';
 import 'package:vaidraj/services/delete_user_service/delete_user_service.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
-import '../screens/mobile_verification/mobile_verification.dart';
-import '../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 
 class DeleteUserProvider extends ChangeNotifier with NavigateHelper {
   bool _isLoading = false;
