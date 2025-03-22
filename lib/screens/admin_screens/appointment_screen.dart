@@ -433,7 +433,8 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                   if (MethodHelper.isToday(
                                                           item.date ?? "") &&
                                                       item.status ==
-                                                          "completed")
+                                                          "completed" &&
+                                                      role != "manager")
                                                     IconButton(
                                                         padding:
                                                             EdgeInsets.all(0),

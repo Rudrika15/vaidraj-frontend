@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
+import 'package:provider/provider.dart';
+import 'package:vaidraj/main.dart';
 import 'package:vaidraj/models/update_user_profile_model.dart';
+import 'package:vaidraj/provider/profile_provider.dart';
 import '../../utils/api_helper/api_helper.dart';
 import '../../utils/http_helper/http_helper.dart';
 import '../../utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
@@ -37,6 +40,17 @@ class UpdateUserProfileService {
           SharedPrefs.saveAddress(model.data?.address ?? "");
           SharedPrefs.saveEmail(model.data?.email ?? "");
           SharedPrefs.saveDOB(model.data?.dob ?? "");
+          ProfileProvider profileProvider = context.read<ProfileProvider>();
+          profileProvider.setUserInfo(
+              address: model.data?.address ?? "",
+              dob: model.data?.dob ?? "",
+              email: model.data?.email ?? "",
+              branchId: model.data?.branchId ?? 0,
+              userId: model.data?.id ?? 0,
+              language: model.data?.language ?? "",
+              mobileNo: model.data?.mobileNo ?? "",
+              name: model.data?.name ?? "",
+              role: model.data?.role ?? "");
           return model;
         }
       }

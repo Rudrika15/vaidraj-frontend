@@ -13,6 +13,7 @@ class MobileVerificationProvider extends ChangeNotifier {
   Future<void> verifyMobile(
       {required BuildContext context, required String mobileNumber}) async {
     _isLoading = true;
+    notifyListeners();
     verifyMobileNumberModel = await mobileVerService.verifyMobile(
         context: context, mobileNumber: mobileNumber);
     _isLoading = false;
@@ -24,6 +25,7 @@ class MobileVerificationProvider extends ChangeNotifier {
       required String mobile,
       required String password}) async {
     _isLoading = true;
+    notifyListeners();
     _isPasswordVerified = await mobileVerService.verifyPassword(
         context: context, mobile: mobile, password: password);
     _isLoading = false;

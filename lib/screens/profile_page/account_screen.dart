@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/provider/profile_provider.dart';
 import 'package:vaidraj/screens/mobile_verification/mobile_verification.dart';
 import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -46,14 +48,15 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
   UpdateUserProfileService service = UpdateUserProfileService();
 
   ////
-  Future<void> getUserInfo() async {
-    role = await SharedPrefs.getRole();
-    nameController.text = await SharedPrefs.getName();
-    emailController.text = await SharedPrefs.getEmail();
-    numberController.text = await SharedPrefs.getMobileNumber();
-    branchSelection = int.parse(await SharedPrefs.getBranchId());
-    dobController.text = await SharedPrefs.getDOB();
-    addressController.text = await SharedPrefs.getAddress();
+  Future<void> getUserInfo(BuildContext context) async {
+    ProfileProvider profileProvider = context.read<ProfileProvider>();
+    role = profileProvider.userModel.data?.role ?? "";
+    nameController.text = profileProvider.userModel.data?.name ?? "";
+    emailController.text = profileProvider.userModel.data?.email ?? "";
+    numberController.text = profileProvider.userModel.data?.mobileNo ?? "";
+    branchSelection = profileProvider.userModel.data?.branchId;
+    dobController.text = profileProvider.userModel.data?.dob ?? "";
+    addressController.text = profileProvider.userModel.data?.address ?? "";
     setState(() {
       isLoading = false;
     });
@@ -62,7 +65,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
   @override
   void initState() {
     super.initState();
-    getUserInfo();
+    getUserInfo(context);
     var branchProvider = Provider.of<GetBrachProvider>(context, listen: false);
     if (branchProvider.getBranchModel == null) {
       branchProvider.getBranch(context: context);
@@ -304,7 +307,8 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                 ),
                                                 MethodHelper.heightBox(
                                                     height: 1.h),
-                                                if (role != 'admin' && role != "manager") ...[
+                                                if (role != 'admin' &&
+                                                    role != "manager") ...[
                                                   branchProvider.isLoading
                                                       ? const Center(
                                                           child: Loader())
@@ -322,15 +326,20 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                                 .translate(
                                                                     "selectBranch"),
                                                           ),
-                                                          value: branchSelection
-                                                              as int,
+                                                          value: branchSelection !=
+                                                                  0
+                                                              ? branchSelection
+                                                                  as int
+                                                              : 0,
                                                           alignment: Alignment
                                                               .centerLeft,
                                                           items: branchProvider
-                                                                      .getBranchModel
-                                                                      ?.data
-                                                                      ?.isNotEmpty ==
-                                                                  true
+                                                                          .getBranchModel
+                                                                          ?.data
+                                                                          ?.isNotEmpty ==
+                                                                      true &&
+                                                                  branchSelection !=
+                                                                      0
                                                               ? List<
                                                                   DropdownMenuItem<
                                                                       Object?>>.generate(
@@ -358,6 +367,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                                 )
                                                               : [
                                                                   DropdownMenuItem(
+                                                                    value: 0,
                                                                     child: Text(
                                                                       "No Branch Found",
                                                                       style: TextSizeHelper
@@ -472,6 +482,9 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                       secondBtnText: "LogOut",
                                       color: AppColors.errorColor,
                                       onPressedSecondBtn: () async {
+                                        await FirebaseMessaging.instance
+                                            .deleteToken();
+
                                         await SharedPrefs.clearShared();
                                         pushRemoveUntil(
                                             context, MobileVerification());

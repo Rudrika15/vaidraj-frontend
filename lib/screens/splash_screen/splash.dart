@@ -1,7 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:vaidraj/constants/color.dart';
 import 'package:vaidraj/constants/strings.dart';
+import 'package:vaidraj/main.dart';
+import 'package:vaidraj/provider/profile_provider.dart';
 import 'package:vaidraj/screens/home/home_screen.dart';
 import 'package:vaidraj/screens/welcome_page/welcome_page.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
@@ -19,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
   void initState() {
     // TODO: implement initState
     super.initState();
+    initProfileProvider(context: context);
     Future.delayed(
       const Duration(seconds: 2),
       () => guideScreen(),
@@ -35,6 +41,29 @@ class _SplashScreenState extends State<SplashScreen> with NavigateHelper {
     String? role = await SharedPrefs.getRole();
     // print("role from splash => $role");
     return role;
+  }
+
+  Future<void> initProfileProvider({required BuildContext context}) async {
+    ProfileProvider profileProvider = context.read<ProfileProvider>();
+    String? address = await SharedPrefs.getAddress();
+    int? branchId = int.parse(await SharedPrefs.getBranchId());
+    String? dob = await SharedPrefs.getDOB();
+    String? email = await SharedPrefs.getEmail();
+    int? id = int.parse(await SharedPrefs.getId());
+    String? language = await SharedPrefs.getLanguage();
+    String? mobileNo = await SharedPrefs.getMobileNumber();
+    String? name = await SharedPrefs.getName();
+    String? role = await SharedPrefs.getRole();
+    profileProvider.setUserInfo(
+        address: address,
+        dob: dob,
+        email: email,
+        branchId: branchId,
+        userId: id,
+        language: language,
+        mobileNo: mobileNo,
+        name: name,
+        role: role);
   }
 
   Future<void> guideScreen() async {

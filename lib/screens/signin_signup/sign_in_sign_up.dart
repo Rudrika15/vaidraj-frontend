@@ -104,8 +104,8 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                   width: 100.w,
                   height: 20.h,
                   image: const DecorationImage(
-                      image: AssetImage(AppStrings.image3),
-                      fit: BoxFit.contain),
+                      image: AssetImage(AppStrings.splashScreen),
+                      fit: BoxFit.cover),
                 ),
                 MethodHelper.heightBox(height: 3.h),
                 Row(
@@ -455,7 +455,10 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                       mobileVerProvider.isLoading ||
                       branchProvider.isLoading
                   ? CustomContainer(
-                      child: Center(child: Loader()),
+                      alignment: Alignment.center,
+                      width: 10.w,
+                      height: 5.h,
+                      child: const Loader(),
                     )
                   : PrimaryBtn(
                       btnText: widget.UserStatus == "STAFF" ||

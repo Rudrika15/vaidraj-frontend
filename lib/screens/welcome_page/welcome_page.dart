@@ -19,59 +19,61 @@ class WelcomePage extends StatelessWidget with NavigateHelper {
   Widget build(BuildContext context) {
     return Consumer<LocalizationProvider>(
       builder: (context, langProvider, child) => Scaffold(
-          body: SafeArea(
-        child: SingleChildScrollView(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            /// image on top
-            CustomContainer(
-              height: 35.h,
-              width: 100.w,
-              image: const DecorationImage(
-                  image: AssetImage(AppStrings.image1), fit: BoxFit.cover),
-            ),
-            MethodHelper.heightBox(height: 5.h),
-
-            /// welcome heading
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(langProvider.translate("welcome"),
-                    style: TextSizeHelper.xLargeHeaderStyle
-                        .copyWith(color: AppColors.brownColor))
-              ],
-            ),
-            GreenDividerLine(
-              indent: 35.w,
-              endIndent: 50.w,
-            ),
-            // height gap
-            MethodHelper.heightBox(height: 5.h),
-
-            CustomContainer(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Text(
-                langProvider.translate("welcomeLine"),
-                textAlign: TextAlign.center,
-                style: TextSizeHelper.smallTextStyle,
+        backgroundColor: AppColors.whiteColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              /// image on top
+              CustomContainer(
+                height: 20.h,
+                width: 100.w,
+                child: const Image(
+                  image: AssetImage(AppStrings.logoHerb),
+                ),
               ),
-            ),
-            // height gap
-            MethodHelper.heightBox(height: 20.h),
+              MethodHelper.heightBox(height: 5.h),
 
-            /// btn to get started
-            PrimaryBtn(
-              btnText: langProvider.translate("getStarted"),
-              onTap: () {
-                push(context, MobileVerification());
-              },
-            )
-          ],
-        )),
-      )),
+              /// welcome heading
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(langProvider.translate("welcome"),
+                      style: TextSizeHelper.xLargeHeaderStyle
+                          .copyWith(color: AppColors.brownColor))
+                ],
+              ),
+              GreenDividerLine(
+                indent: 35.w,
+                endIndent: 50.w,
+              ),
+              // height gap
+              MethodHelper.heightBox(height: 5.h),
+
+              CustomContainer(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Text(
+                  langProvider.translate("welcomeLine"),
+                  textAlign: TextAlign.center,
+                  style: TextSizeHelper.smallTextStyle,
+                ),
+              ),
+            ],
+          )),
+        ),
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+          child: PrimaryBtn(
+            btnText: langProvider.translate("getStarted"),
+            onTap: () {
+              push(context, MobileVerification());
+            },
+          ),
+        ),
+      ),
     );
   }
 }

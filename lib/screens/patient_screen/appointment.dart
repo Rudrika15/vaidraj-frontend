@@ -363,8 +363,8 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                               DateTime.now().day,
                             ),
                             lastDate: DateTime(
-                              DateTime.now().year + 1,
-                              DateTime.now().month,
+                              DateTime.now().year,
+                              DateTime.now().month + 1,
                               DateTime.now().day,
                             ));
                         if (dob != null) {
@@ -555,7 +555,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                                     emptyController();
                                     pushRemoveUntil(
                                         context,
-                                       const HomeScreen(
+                                        const HomeScreen(
                                           isDoctor: false,
                                           isAdmin: false,
                                           screenIndex: 0,

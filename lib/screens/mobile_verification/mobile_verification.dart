@@ -11,6 +11,7 @@ import 'package:vaidraj/utils/method_helper.dart';
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/green_divider.dart';
+import 'package:vaidraj/widgets/loader.dart';
 import 'package:vaidraj/widgets/primary_btn.dart';
 import 'dart:math' as math;
 import '../../constants/text_size.dart';
@@ -50,7 +51,7 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                 opacity: 0.2,
                 child: Image(
                   image: AssetImage(AppStrings.logoHerb),
-                  fit: BoxFit.fitHeight,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
@@ -62,8 +63,8 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
                     width: 100.w,
                     height: 20.h,
                     image: const DecorationImage(
-                        image: AssetImage(AppStrings.image3),
-                        fit: BoxFit.contain),
+                        image: AssetImage(AppStrings.splashScreen),
+                        fit: BoxFit.cover),
                   ),
                   MethodHelper.heightBox(height: 3.h),
                   Row(
@@ -116,60 +117,70 @@ class MobileVerification extends StatelessWidget with NavigateHelper {
           child: CustomContainer(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: PrimaryBtn(
-                  btnText: langProvider.translate("submit"),
-                  onTap: () async {
-                    if (formkey.currentState!.validate()) {
-                      await mobileVerProvider.verifyMobile(
-                          context: context,
-                          mobileNumber: mobileController.text);
-                      if (mobileVerProvider.verifyMobileNumberModel?.success ==
-                          true) {
-                        //here this will change the language of app to previous or to defualt english
-                        langProvider.setCurrentLocal(
-                            langToSet: mobileVerProvider
+              child: mobileVerProvider.isLoading
+                  ? CustomContainer(
+                      alignment: Alignment.center,
+                      width: 10.w,
+                      height: 5.h,
+                      child: const Loader(),
+                    )
+                  : PrimaryBtn(
+                      btnText: langProvider.translate("submit"),
+                      onTap: () async {
+                        if (formkey.currentState!.validate()) {
+                          await mobileVerProvider.verifyMobile(
+                              context: context,
+                              mobileNumber: mobileController.text);
+                          if (mobileVerProvider
+                                  .verifyMobileNumberModel?.success ==
+                              true) {
+                            //here this will change the language of app to previous or to defualt english
+                            langProvider.setCurrentLocal(
+                                langToSet: mobileVerProvider
+                                        .verifyMobileNumberModel
+                                        ?.data
+                                        ?.language ??
+                                    "en");
+                            await langProvider.load(mobileVerProvider
                                     .verifyMobileNumberModel?.data?.language ??
                                 "en");
-                        await langProvider.load(mobileVerProvider
-                                .verifyMobileNumberModel?.data?.language ??
-                            "en");
-                        if (mobileVerProvider
-                                .verifyMobileNumberModel?.data?.role ==
-                            "admin") {
-                          push(
-                              context, const SignInSignUp(UserStatus: "ADMIN"));
-                          return;
-                        }
-                        if (mobileVerProvider
+                            if (mobileVerProvider
                                     .verifyMobileNumberModel?.data?.role ==
-                                "doctor" ||
-                            mobileVerProvider
+                                "admin") {
+                              push(context,
+                                  const SignInSignUp(UserStatus: "ADMIN"));
+                              return;
+                            }
+                            if (mobileVerProvider
+                                        .verifyMobileNumberModel?.data?.role ==
+                                    "doctor" ||
+                                mobileVerProvider
+                                        .verifyMobileNumberModel?.data?.role ==
+                                    "manager") {
+                              push(context,
+                                  const SignInSignUp(UserStatus: "STAFF"));
+                              return;
+                            }
+                            if (mobileVerProvider
                                     .verifyMobileNumberModel?.data?.role ==
-                                "manager") {
-                          push(
-                              context, const SignInSignUp(UserStatus: "STAFF"));
+                                "patient") {
+                              push(context,
+                                  const SignInSignUp(UserStatus: "PATIENT"));
+                              return;
+                            }
+                          } else {
+                            /// passing mobile number to registration screen
+                            push(
+                                context,
+                                SignInSignUp(
+                                  UserStatus: "NEW",
+                                  phoneNumber: mobileController.text,
+                                ));
+                            return;
+                          }
                           return;
                         }
-                        if (mobileVerProvider
-                                .verifyMobileNumberModel?.data?.role ==
-                            "patient") {
-                          push(context,
-                              const SignInSignUp(UserStatus: "PATIENT"));
-                          return;
-                        }
-                      } else {
-                        /// passing mobile number to registration screen
-                        push(
-                            context,
-                            SignInSignUp(
-                              UserStatus: "NEW",
-                              phoneNumber: mobileController.text,
-                            ));
-                        return;
-                      }
-                      return;
-                    }
-                  })),
+                      })),
         ),
       ),
     );

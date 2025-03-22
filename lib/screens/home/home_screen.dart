@@ -7,6 +7,7 @@ import 'package:vaidraj/constants/text_size.dart';
 import 'package:vaidraj/provider/all_disease_provider.dart';
 import 'package:vaidraj/provider/get_brach_provider.dart';
 import 'package:vaidraj/provider/localization_provider.dart';
+import 'package:vaidraj/provider/profile_provider.dart';
 import 'package:vaidraj/screens/feedback/feedback.dart';
 import 'package:vaidraj/screens/profile_page/account_screen.dart';
 import 'package:vaidraj/screens/admin_screens/home_screen.dart';
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedTabIndex = 0;
   int _selectedNavTabIndex = 0;
-  String userName = "";
+  // String userName = "";
   final List<Widget> screensNav = const [
     AdminHomeScreen(),
     AdminAppointmentScreen(),
@@ -88,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getUserName();
+    // getUserName();
     getAndStoreFCMToken();
     setupInteractedMessage();
     if (widget.isAdmin || widget.isDoctor) {
@@ -149,14 +150,14 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
     }
   }
 
-  Future<String> getUserName() async {
-    String u = await SharedPrefs.getName();
-    setState(() {
-      userName = u;
-    });
-    print(u);
-    return u;
-  }
+  // Future<String> getUserName() async {
+  //   String u = await SharedPrefs.getName();
+  //   setState(() {
+  //     userName = u;
+  //   });
+  //   print(u);
+  //   return u;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -172,13 +173,12 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
           endDrawer: _buildDrawer(
               langProvider: langProvider,
               diseaseProvider: diseaseProvider,
-              userName: userName,
               context: context),
           appBar: _buildAppBar(
-              isDoctor: widget.isDoctor,
-              isAdmin: widget.isAdmin,
-              langProvider: langProvider,
-              userName: userName),
+            isDoctor: widget.isDoctor,
+            isAdmin: widget.isAdmin,
+            langProvider: langProvider,
+          ),
           body: widget.isDoctor || widget.isAdmin
               ? screensNav[_selectedNavTabIndex]
               : screensTab[_selectedTabIndex],
@@ -193,7 +193,6 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   Drawer _buildDrawer(
       {required LocalizationProvider langProvider,
       required AllDiseaseProvider diseaseProvider,
-      required String userName,
       required BuildContext context}) {
     return Drawer(
       backgroundColor: AppColors.lightBackGroundColor,
@@ -201,9 +200,7 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            DrawerHeaderWidget(
-              userName: userName,
-            ),
+            const DrawerHeaderWidget(),
             const Divider(),
             ...List.generate(drawerOptions.length, (index) {
               return DrawerOptionWidget(
@@ -304,22 +301,22 @@ class _HomeScreenState extends State<HomeScreen> with NavigateHelper {
   AppBar _buildAppBar(
       {required bool isDoctor,
       required bool isAdmin,
-      required LocalizationProvider langProvider,
-      required String userName}) {
+      required LocalizationProvider langProvider}) {
+    ProfileProvider profileProvider = context.watch<ProfileProvider>();
     return AppBar(
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: AppColors.whiteColor,
       title: Text(
         isDoctor || isAdmin
             ? _selectedNavTabIndex == 0
-                ? "Hello, $userName"
+                ? "Hello, ${profileProvider.userModel.data?.name}"
                 : _selectedNavTabIndex == 1
                     ? navTabNames[0]
                     : _selectedNavTabIndex == 2
                         ? navTabNames[1]
                         : navTabNames[2]
             : _selectedTabIndex == 0
-                ? "Hello, $userName"
+                ? "Hello, ${profileProvider.userModel.data?.name}"
                 : langProvider
                     .translate(drawerOptions[_selectedTabIndex]['text']),
         style: TextSizeHelper.mediumTextStyle
@@ -518,9 +515,9 @@ class DrawerOptionWidget extends StatelessWidget {
 
 /// have used this to render header in drawer
 class DrawerHeaderWidget extends StatefulWidget {
-  const DrawerHeaderWidget({super.key, required this.userName});
-  final String userName;
-
+  const DrawerHeaderWidget({
+    super.key,
+  });
   @override
   State<DrawerHeaderWidget> createState() => _DrawerHeaderWidgetState();
 }
@@ -529,6 +526,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget>
     with NavigateHelper {
   @override
   Widget build(BuildContext context) {
+    ProfileProvider profileProvider = context.watch<ProfileProvider>();
     return CustomContainer(
       width: 80.w,
       height: 20.h,
@@ -546,7 +544,11 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget>
                   backgroundColor: AppColors.backgroundColor,
                   radius: 10.w,
                   child: Text(
-                      widget.userName.isNotEmpty ? widget.userName[0] : "",
+                      profileProvider.userModel.data?.name?.isNotEmpty == true
+                          ? profileProvider.userModel.data?.name
+                                  ?.substring(0, 1) ??
+                              ""
+                          : "",
                       overflow: TextOverflow.ellipsis,
                       style: TextSizeHelper.mediumHeaderStyle),
                 ),
@@ -555,7 +557,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget>
                   right: 0,
                   child: GestureDetector(
                     onTap: () => push(context, ProfilePage()),
-                    child: CustomContainer(
+                    child: const CustomContainer(
                       shape: BoxShape.circle,
                       borderColor: AppColors.brownColor,
                       backGroundColor: AppColors.brownColor,
@@ -570,7 +572,7 @@ class _DrawerHeaderWidgetState extends State<DrawerHeaderWidget>
             ),
             MethodHelper.heightBox(height: 2.h),
             Text(
-              widget.userName,
+              profileProvider.userModel.data?.name ?? "",
               overflow: TextOverflow.ellipsis,
               style: TextSizeHelper.mediumHeaderStyle
                   .copyWith(color: AppColors.brownColor),

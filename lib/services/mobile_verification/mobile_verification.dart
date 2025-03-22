@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vaidraj/models/mobile_verification_model.dart';
+import 'package:vaidraj/provider/profile_provider.dart';
 import 'package:vaidraj/utils/shared_prefs_helper.dart/shared_prefs_helper.dart';
 import '../../utils/api_helper/api_helper.dart';
 import '../../utils/http_helper/http_helper.dart';
@@ -31,6 +33,9 @@ class MobileVerificationService {
           SharedPrefs.saveEmail(model.data?.email ?? "");
           SharedPrefs.saveFormToken(model.data?.formToken ?? "");
           SharedPrefs.saveDOB(model.data?.dob ?? "");
+          SharedPrefs.saveLanguage(model.data?.language ?? "");
+          ProfileProvider profileProvider = context.read<ProfileProvider>();
+          profileProvider.setUserModel = model;
           return model;
         }
       }
@@ -56,10 +61,15 @@ class MobileVerificationService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success'] == true) {
+          VerifyMobileNumberModel model =
+              VerifyMobileNumberModel.fromJson(data);
           SharedPrefs.saveToken(data['token']);
           // print("saving token for staff => ${data['token']}");
           SharedPrefs.saveRole(data['data']["role"]);
+          SharedPrefs.saveLanguage(data['data']["language"] ?? "");
           // print("saving role for staff => ${data['data']["role"]}");
+          ProfileProvider profileProvider = context.read<ProfileProvider>();
+          profileProvider.setUserModel = model;
           return true;
         }
       }

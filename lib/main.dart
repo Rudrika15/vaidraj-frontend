@@ -14,6 +14,7 @@ import 'package:vaidraj/provider/medical_history_provider.dart';
 import 'package:vaidraj/provider/mobile_verification_provider.dart';
 import 'package:vaidraj/provider/my_patients_provider.dart';
 import 'package:vaidraj/provider/prescription_provider.dart';
+import 'package:vaidraj/provider/profile_provider.dart';
 import 'package:vaidraj/screens/splash_screen/splash.dart';
 import 'package:sizer/sizer.dart';
 import 'provider/delete_account_provider.dart';
@@ -41,6 +42,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => MyPatientsProvider()),
       ChangeNotifierProvider(create: (_) => DeleteNotificationProvider()),
       ChangeNotifierProvider(create: (_) => DeleteUserProvider()),
+      ChangeNotifierProvider(create: (_) => ProfileProvider()),
     ],
     child: const MyApp(),
   ));
