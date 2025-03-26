@@ -172,11 +172,11 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                   ),
                                   MethodHelper.heightBox(height: 1.h),
                                   if (a.status == "completed") ...[
-                                    if(role != "manger")
-                                    Text(
-                                      "Prescriptions :-",
-                                      style: TextSizeHelper.xSmallHeaderStyle,
-                                    ),
+                                    if (role != "manger")
+                                      Text(
+                                        "Prescriptions :-",
+                                        style: TextSizeHelper.xSmallHeaderStyle,
+                                      ),
                                     for (PatientWisePrescriptions p
                                         in a.prescriptions ?? []) ...[
                                       for (PatientWiseMedicines m
@@ -193,7 +193,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                           style: TextSizeHelper.xSmallTextStyle,
                                         ),
                                         Text(
-                                          "How To Take? : ${m.toBeTaken ?? "Not Found"}",
+                                          "How To Take? : ${MethodHelper.capitalizeFirstLetter(m.toBeTaken ?? "Not Found")} Meal",
                                           style: TextSizeHelper.xSmallTextStyle,
                                         ),
                                       ]
@@ -228,56 +228,58 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      if (a.status != "completed"
-                                          ) ...[
-                                            if(role != "manger")
-                                        PrimaryBtn(
-                                          btnText: "Prescription",
-                                          onTap: () {
-                                            Provider.of<PrescriptionStateProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .emptyDiseaseListAfterSuccess();
+                                      if (a.status != "completed") ...[
+                                        if (role != "manger")
+                                          PrimaryBtn(
+                                            btnText: "Prescription",
+                                            onTap: () {
+                                              Provider.of<PrescriptionStateProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .emptyDiseaseListAfterSuccess();
 
-                                            /// this will wait for value if i have updated somthing in forward page
-                                            Navigator.of(context)
-                                                .push(MaterialPageRoute(
-                                                    builder: (context) => PrescriptionPage(
-                                                        isCreating: a.status !=
-                                                            "completed",
-                                                        appointmentId:
-                                                            a.id ?? 0,
-                                                        name: a.name ?? "",
-                                                        pId: a.prescriptions
-                                                                    ?.isNotEmpty ==
-                                                                true
-                                                            ? (a
-                                                                    .prescriptions?[
-                                                                        0]
-                                                                    .id) ??
-                                                                0
-                                                            : -1,
-                                                        diseaseId:
-                                                            a.diseaseId ?? 0)))
-                                                .then((value) {
-                                              if (value == true) {
-                                                initModel();
-                                              } else {
-                                                // print("not updated");
-                                              }
-                                            });
-                                          },
-                                          height: 3.h,
-                                          width: 25.w,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          backGroundColor: AppColors.whiteColor,
-                                          borderColor: AppColors.brownColor,
-                                          textStyle: TextSizeHelper
-                                              .xSmallTextStyle
-                                              .copyWith(
-                                                  color: AppColors.brownColor),
-                                        )
+                                              /// this will wait for value if i have updated somthing in forward page
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                      builder: (context) => PrescriptionPage(
+                                                          isCreating:
+                                                              a.status !=
+                                                                  "completed",
+                                                          appointmentId:
+                                                              a.id ?? 0,
+                                                          name: a.name ?? "",
+                                                          pId: a.prescriptions
+                                                                      ?.isNotEmpty ==
+                                                                  true
+                                                              ? (a
+                                                                      .prescriptions?[
+                                                                          0]
+                                                                      .id) ??
+                                                                  0
+                                                              : -1,
+                                                          diseaseId:
+                                                              a.diseaseId ?? 0)))
+                                                  .then((value) {
+                                                if (value == true) {
+                                                  initModel();
+                                                } else {
+                                                  // print("not updated");
+                                                }
+                                              });
+                                            },
+                                            height: 3.h,
+                                            width: 25.w,
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            backGroundColor:
+                                                AppColors.whiteColor,
+                                            borderColor: AppColors.brownColor,
+                                            textStyle: TextSizeHelper
+                                                .xSmallTextStyle
+                                                .copyWith(
+                                                    color:
+                                                        AppColors.brownColor),
+                                          )
                                       ] else ...[
                                         const Expanded(child: SizedBox())
                                       ],
@@ -287,40 +289,82 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                         IconButton(
                                             onPressed: () {
                                               //// delete prescription if needed
-                                              if (a.prescriptions?.isNotEmpty ==
-                                                  true) {
-                                                prescriptionService
-                                                    .deletePrescription(
-                                                        context: context,
-                                                        prescriptionId:
-                                                            a.prescriptions?[0]
-                                                                    .id ??
-                                                                -1)
-                                                    .then((success) {
-                                                  if (success) {
-                                                    isLoading = true;
-                                                    initModel();
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (context) => AlertDialog(
+                                                            backgroundColor:
+                                                                AppColors
+                                                                    .whiteColor,
+                                                            title: const Text(
+                                                                "Are You Sure ?"),
+                                                            content: const Text(
+                                                                "The Prescription Will Be Removed, You Can Add This Again."),
+                                                            actions: [
+                                                              PrimaryBtn(
+                                                                  width: 30.w,
+                                                                  btnText:
+                                                                      "Cancel",
+                                                                  onTap: () {
+                                                                    pop(context);
+                                                                  }),
+                                                              PrimaryBtn(
+                                                                  width: 30.w,
+                                                                  backGroundColor:
+                                                                      AppColors
+                                                                          .errorColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .errorColor,
+                                                                  textStyle: TextSizeHelper
+                                                                      .smallHeaderStyle
+                                                                      .copyWith(
+                                                                          color: AppColors
+                                                                              .whiteColor),
+                                                                  btnText:
+                                                                      "Delete",
+                                                                  onTap: () {
+                                                                    if (a.prescriptions
+                                                                            ?.isNotEmpty ==
+                                                                        true) {
+                                                                      prescriptionService
+                                                                          .deletePrescription(
+                                                                              context: context,
+                                                                              prescriptionId: a.prescriptions?[0].id ?? -1)
+                                                                          .then((success) {
+                                                                        if (success) {
+                                                                          isLoading =
+                                                                              true;
+                                                                          initModel();
 
-                                                    WidgetHelper.customSnackBar(
-                                                      context: context,
-                                                      title:
-                                                          "Successfully Deleted",
-                                                    );
-                                                  } else {
-                                                    WidgetHelper.customSnackBar(
-                                                        context: context,
-                                                        title:
-                                                            "Failed To Delete!!",
-                                                        isError: true);
-                                                  }
-                                                });
-                                              } else {
-                                                WidgetHelper.customSnackBar(
-                                                    context: context,
-                                                    title:
-                                                        "Something is Not Right!!",
-                                                    isError: true);
-                                              }
+                                                                          WidgetHelper
+                                                                              .customSnackBar(
+                                                                            context:
+                                                                                context,
+                                                                            title:
+                                                                                "Successfully Deleted",
+                                                                          );
+                                                                        } else {
+                                                                          WidgetHelper.customSnackBar(
+                                                                              context: context,
+                                                                              title: "Failed To Delete!!",
+                                                                              isError: true);
+                                                                        }
+                                                                        pop(context);
+                                                                      });
+                                                                    } else {
+                                                                      WidgetHelper.customSnackBar(
+                                                                          context:
+                                                                              context,
+                                                                          title:
+                                                                              "Something is Not Right!!",
+                                                                          isError:
+                                                                              true);
+                                                                      pop(context);
+                                                                    }
+                                                                  })
+                                                            ],
+                                                          ));
                                             },
                                             icon: const Icon(
                                               Icons.delete,

@@ -307,8 +307,7 @@ class _AdminProfilePageState extends State<ProfilePage> with NavigateHelper {
                                                 ),
                                                 MethodHelper.heightBox(
                                                     height: 1.h),
-                                                if (role != 'admin' &&
-                                                    role != "manager") ...[
+                                                if (role == "patient") ...[
                                                   branchProvider.isLoading
                                                       ? const Center(
                                                           child: Loader())

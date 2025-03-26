@@ -184,7 +184,7 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                           MethodHelper.widthBox(width: 2.w),
                       shrinkWrap: true,
                       scrollDirection: Axis.horizontal,
-                      itemCount: 365,
+                      itemCount: 25,
                       itemBuilder: (context, index) {
                         String date = DateFormat('EEE, dd MMM yyy')
                             .format(DateTime.now().add(Duration(days: index)));

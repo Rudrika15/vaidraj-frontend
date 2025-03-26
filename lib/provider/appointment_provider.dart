@@ -50,7 +50,7 @@ class AppointmentProvider extends ChangeNotifier {
         context: context,
         firstDate: DateTime(1950),
         lastDate: DateTime(
-            DateTime.now().year, DateTime.now().month, DateTime.now().day));
+            DateTime.now().year, DateTime.now().month + 1, DateTime.now().day));
     if (dob != null) {
       _date = DateFormat('yyyy-MM-dd').format(dob);
       _doctorAppointment = null;

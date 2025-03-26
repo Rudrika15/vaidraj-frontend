@@ -11,6 +11,7 @@ import 'package:vaidraj/services/prescription_service/prescription_service.dart'
 import 'package:vaidraj/utils/navigation_helper/navigation_helper.dart';
 import 'package:vaidraj/utils/widget_helper/widget_helper.dart';
 import 'package:vaidraj/widgets/custom_container.dart';
+import 'package:vaidraj/widgets/loader.dart';
 import '../../constants/text_size.dart';
 import '../../provider/get_brach_provider.dart';
 import '../../provider/prescription_provider.dart';
@@ -205,6 +206,10 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                     doctorAppointmentProvider.pagingController,
                                 builderDelegate: PagedChildBuilderDelegate<
                                         UpcomingAppointmentInfo>(
+                                    firstPageProgressIndicatorBuilder:
+                                        (context) => const Center(
+                                              child: Loader(),
+                                            ),
                                     noItemsFoundIndicatorBuilder: (context) =>
                                         SizedBox(
                                           height: 60.h,
@@ -445,50 +450,12 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                           /// logic to delete the prescriptions
                                                           showDialog(
                                                               context: context,
-                                                              builder:
-                                                                  (context) =>
-                                                                      AlertDialog(
-                                                                        backgroundColor:
-                                                                            AppColors.whiteColor,
-                                                                        title: const Text(
-                                                                            "Are You Sure ?"),
-                                                                        content:
-                                                                            const Text("The Prescription Will Be Removed, You Can Add This Again."),
-                                                                        actions: [
-                                                                          PrimaryBtn(
-                                                                              width: 30.w,
-                                                                              btnText: "Cancel",
-                                                                              onTap: () {
-                                                                                pop(context);
-                                                                              }),
-                                                                          PrimaryBtn(
-                                                                              width: 30.w,
-                                                                              backGroundColor: AppColors.errorColor,
-                                                                              borderColor: AppColors.errorColor,
-                                                                              textStyle: TextSizeHelper.smallHeaderStyle.copyWith(color: AppColors.whiteColor),
-                                                                              btnText: "Delete",
-                                                                              onTap: () {
-                                                                                if (item.prescriptions?.isNotEmpty == true) {
-                                                                                  prescriptionService.deletePrescription(context: context, prescriptionId: item.prescriptions?[0].id ?? -1).then((success) {
-                                                                                    if (success) {
-                                                                                      doctorAppointmentProvider.pagingController.refresh();
-                                                                                      pop(context);
-                                                                                      WidgetHelper.customSnackBar(
-                                                                                        context: context,
-                                                                                        title: "Successfully Deleted",
-                                                                                      );
-                                                                                    } else {
-                                                                                      WidgetHelper.customSnackBar(context: context, title: "Failed To Delete!!", isError: true);
-                                                                                    }
-                                                                                    pop(context);
-                                                                                  });
-                                                                                } else {
-                                                                                  WidgetHelper.customSnackBar(context: context, title: "Something is Not Right!!", isError: true);
-                                                                                  pop(context);
-                                                                                }
-                                                                              })
-                                                                        ],
-                                                                      ));
+                                                              builder: (context) => DeletePrescription(
+                                                                  item: item,
+                                                                  prescriptionService:
+                                                                      prescriptionService,
+                                                                  doctorAppointmentProvider:
+                                                                      doctorAppointmentProvider));
                                                         },
                                                         icon: const Icon(
                                                           Icons.delete,
@@ -504,6 +471,70 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                     ),
                   ),
       ),
+    );
+  }
+}
+
+class DeletePrescription extends StatelessWidget with NavigateHelper {
+  const DeletePrescription(
+      {super.key,
+      required this.item,
+      required this.prescriptionService,
+      required this.doctorAppointmentProvider});
+  final UpcomingAppointmentInfo item;
+  final PrescriptionService prescriptionService;
+  final AppointmentProvider doctorAppointmentProvider;
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppColors.whiteColor,
+      title: const Text("Are You Sure ?"),
+      content: const Text(
+          "The Prescription Will Be Removed, You Can Add This Again."),
+      actions: [
+        PrimaryBtn(
+            width: 30.w,
+            btnText: "Cancel",
+            onTap: () {
+              pop(context);
+            }),
+        PrimaryBtn(
+            width: 30.w,
+            backGroundColor: AppColors.errorColor,
+            borderColor: AppColors.errorColor,
+            textStyle: TextSizeHelper.smallHeaderStyle
+                .copyWith(color: AppColors.whiteColor),
+            btnText: "Delete",
+            onTap: () {
+              if (item.prescriptions?.isNotEmpty == true) {
+                prescriptionService
+                    .deletePrescription(
+                        context: context,
+                        prescriptionId: item.prescriptions?[0].id ?? -1)
+                    .then((success) {
+                  if (success) {
+                    doctorAppointmentProvider.pagingController.refresh();
+                    WidgetHelper.customSnackBar(
+                      context: context,
+                      title: "Successfully Deleted",
+                    );
+                  } else {
+                    WidgetHelper.customSnackBar(
+                        context: context,
+                        title: "Failed To Delete!!",
+                        isError: true);
+                  }
+                  pop(context);
+                });
+              } else {
+                WidgetHelper.customSnackBar(
+                    context: context,
+                    title: "Something is Not Right!!",
+                    isError: true);
+                pop(context);
+              }
+            })
+      ],
     );
   }
 }

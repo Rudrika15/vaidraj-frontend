@@ -15,6 +15,7 @@ import 'package:vaidraj/widgets/custom_container.dart';
 import 'package:vaidraj/widgets/custom_dropdown.dart';
 import 'package:vaidraj/widgets/custom_searchbar.dart';
 import '../../provider/my_patients_provider.dart';
+import '../../widgets/loader.dart';
 import '../../widgets/primary_btn.dart';
 import '../home/home_screen.dart';
 import 'patients_history.dart';
@@ -94,6 +95,7 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomSearchBar(
+                  hintText: "Search By Name Or Phone Number",
                   trailing: [
                     IconButton(
                         onPressed: () {
@@ -175,6 +177,12 @@ class _AdminPatientsScreenState extends State<AdminPatientsScreen>
                     shrinkWrap: true,
                     pagingController: myPatientProvider.pagingController,
                     builderDelegate: PagedChildBuilderDelegate<PatientsInfo>(
+                      firstPageProgressIndicatorBuilder: (context) =>
+                          CustomContainer(
+                        alignment: Alignment.center,
+                        height: 50.h,
+                        child: const Loader(),
+                      ),
                       noItemsFoundIndicatorBuilder: (context) => SizedBox(
                         height: 60.h,
                         child: Center(
