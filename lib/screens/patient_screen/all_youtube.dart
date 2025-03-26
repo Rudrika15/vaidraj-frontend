@@ -139,6 +139,12 @@ class _RenderSpecialityState extends State<RenderYouTubeVideos>
             shrinkWrap: true,
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<YoutubeVideoInfo>(
+              newPageProgressIndicatorBuilder: (context) => const Center(
+              child: Loader(),
+            ),
+            firstPageProgressIndicatorBuilder: (context) => const Center(
+              child: Loader(),
+            ),
               noItemsFoundIndicatorBuilder: (context) => CustomContainer(
                   alignment: Alignment.center,
                   //// will show to let user start controller again

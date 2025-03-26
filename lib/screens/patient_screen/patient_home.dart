@@ -192,6 +192,12 @@ class _SpecialitiesRenderWidgetState extends State<SpecialitiesRenderWidget> {
                 builderDelegate: PagedChildBuilderDelegate<Diseases>(
                   firstPageErrorIndicatorBuilder: (context) =>
                       PrimaryBtn(btnText: "Reload", onTap: () {}),
+                  newPageProgressIndicatorBuilder: (context) => const Center(
+                    child: Loader(),
+                  ),
+                  firstPageProgressIndicatorBuilder: (context) => const Center(
+                    child: Loader(),
+                  ),
                   noItemsFoundIndicatorBuilder: (context) => CustomContainer(
                       alignment: Alignment.center,
                       //// will show to let user start controller again

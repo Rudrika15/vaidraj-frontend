@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/retry.dart';
@@ -85,7 +86,7 @@ class HttpHelper {
 
       var response =
           await client.delete(url, headers: headers ?? header, body: body);
-      print(response.body);
+      kDebugMode ? print(response.body) : null;
       if (context.mounted) {
         return httpErrorHandling(response, context);
       }
@@ -114,7 +115,7 @@ class HttpHelper {
       headers: headers ?? header,
       encoding: encoding,
     );
-    print(response.body);
+    kDebugMode ? print(response.body) : null;
     if (context.mounted) {
       return httpErrorHandling(response, context);
     }
@@ -141,7 +142,7 @@ class HttpHelper {
       headers: headers ?? header,
       encoding: encoding,
     );
-    print(response.body);
+    kDebugMode ? print(response.body) : null;
     if (context.mounted) {
       return httpErrorHandling(response, context);
     }
@@ -159,13 +160,13 @@ class HttpHelper {
 
       return response;
     } catch (e) {
-      print(e);
+      kDebugMode ? print(e) : null;
     }
   }
 
   // error handling for http methods
   static Response httpErrorHandling(Response response, BuildContext context) {
-    print(response.statusCode);
+    kDebugMode ? print(response.statusCode) : null;
     // print(response.body);
     if (response.statusCode != 200 && response.statusCode != 201) {
       if (context.mounted) {
@@ -184,7 +185,7 @@ class HttpHelper {
           color: AppColors.errorColor,
         );
         if (response.statusCode == 401) {
-          print(response.body);
+          kDebugMode ? print(response.body) : null;
 
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
@@ -196,7 +197,7 @@ class HttpHelper {
 
         return response;
       } else if (response.statusCode == 401) {
-        print(response.body);
+        kDebugMode ? print(response.body) : null;
 
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
@@ -205,7 +206,7 @@ class HttpHelper {
             (route) => false);
         return response;
       } else {
-        print(response.body);
+        kDebugMode ? print(response.body) : null;
         WidgetHelper.customSnackBar(
           isError: true,
           context: context,
