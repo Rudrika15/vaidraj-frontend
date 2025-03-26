@@ -41,8 +41,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 onPressedSecondBtn: () => SystemChannels.platform
                     .invokeMethod('SystemNavigator.pop')));
       },
-      child: Column(
-        children: const [
+      child: const Column(
+        children: [
           InScreenHeading(heading: "Appointment"),
 
           /// render appointment
@@ -154,15 +154,16 @@ class _RenderTodaysAppointmentsState extends State<RenderTodaysAppointments>
                             style: TextSizeHelper.xSmallTextStyle,
                           ),
                           Text(
-                            "Subject  : ${appointment?.subject}",
+                            "Subject  : ${appointment?.subject ?? "Not Provided"}",
                             style: TextSizeHelper.xSmallTextStyle,
                           ),
                           Text(
-                            "Message : ${appointment?.message}",
+                            "Message : ${appointment?.message ?? "Not Provided"}",
                             style: TextSizeHelper.xSmallTextStyle,
                           ),
                           Text(
                             "Address : ${appointment?.address}",
+                            overflow: TextOverflow.ellipsis,
                             style: TextSizeHelper.xSmallTextStyle,
                           ),
                           if (role != "manager") ...[

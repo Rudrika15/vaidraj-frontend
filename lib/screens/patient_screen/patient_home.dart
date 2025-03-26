@@ -289,11 +289,11 @@ class RenderUpcomingAppointment extends StatelessWidget {
                         style: TextSizeHelper.xSmallTextStyle,
                       ),
                       Text(
-                        "Subject  : ${appointment.subject}",
+                        "Subject  : ${appointment.subject ?? "Not Provided"}",
                         style: TextSizeHelper.xSmallTextStyle,
                       ),
                       Text(
-                        "Message : ${appointment.message}",
+                        "Message : ${appointment.message ?? "Not Provided"}",
                         style: TextSizeHelper.xSmallTextStyle,
                       ),
                     ],

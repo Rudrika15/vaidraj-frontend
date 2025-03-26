@@ -224,7 +224,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                                   keyboardType: TextInputType.text,
                                   controller: otherMedicineController,
                                   decoration: MethodHelper.greenUnderLineBorder(
-                                      hintText: "Other Notes (if Any)"))),
+                                      hintText: "Other Medicine (if Any)"))),
                               paddingMethod(CustomTextFieldWidget(
                                   validator: (value) {
                                     return null;
@@ -471,7 +471,7 @@ class _PrescriptionItemWidgetState extends State<PrescriptionPageWidget> {
         child: Row(
           children: ['before', 'after'].map((when) {
             return _buildSelectableButton(
-              label: '$when Meal',
+              label: '${MethodHelper.capitalizeFirstLetter(when)} Meal',
               isSelected: medicine?.toBeTaken == when,
               onTap: () {
                 setState(() {

@@ -193,4 +193,8 @@ class MethodHelper {
       _timer = Timer(Duration(milliseconds: milliseconds), action);
     };
   }
+  static String capitalizeFirstLetter(String value) {
+  if (value.isEmpty) return value;
+  return value[0].toUpperCase() + value.substring(1);
+}
 }

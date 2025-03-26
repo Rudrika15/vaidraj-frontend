@@ -214,15 +214,17 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
                                                 style: TextSizeHelper
                                                     .xSmallTextStyle,
                                               ),
-                                            if (pp.otherMedicines != "")
+                                            if (pp.otherMedicines != "" &&
+                                                pp.otherMedicines != null) ...[
                                               const Divider(
                                                 thickness: 0.5,
                                               ),
-                                            Text(
-                                              'Other Medicines : ${pp.otherMedicines}',
-                                              style: TextSizeHelper
-                                                  .xSmallTextStyle,
-                                            ),
+                                              Text(
+                                                'Other Medicines : ${pp.otherMedicines}',
+                                                style: TextSizeHelper
+                                                    .xSmallTextStyle,
+                                              ),
+                                            ],
                                             MethodHelper.heightBox(height: 1.h),
                                             Row(
                                               mainAxisAlignment:

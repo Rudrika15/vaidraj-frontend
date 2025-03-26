@@ -172,6 +172,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                   ),
                                   MethodHelper.heightBox(height: 1.h),
                                   if (a.status == "completed") ...[
+                                    if(role != "manger")
                                     Text(
                                       "Prescriptions :-",
                                       style: TextSizeHelper.xSmallHeaderStyle,
@@ -227,8 +228,9 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      if (a.status != "completed" &&
-                                          role != "manger") ...[
+                                      if (a.status != "completed"
+                                          ) ...[
+                                            if(role != "manger")
                                         PrimaryBtn(
                                           btnText: "Prescription",
                                           onTap: () {

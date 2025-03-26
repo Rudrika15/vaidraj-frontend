@@ -498,9 +498,9 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                       keyboardType: TextInputType.text,
                       // validator: (value) => null,
                       validator: (value) {
-                        if (value?.isEmpty == true) {
-                          return langProvider.translate("subjectReq");
-                        }
+                        // if (value?.isEmpty == true) {
+                        //   return langProvider.translate("subjectReq");
+                        // }
                         return null;
                       },
                     ),
@@ -515,9 +515,9 @@ class _AppointmentState extends State<Appointment> with NavigateHelper {
                       keyboardType: TextInputType.text,
                       // validator: (value) => null,
                       validator: (value) {
-                        if (value?.isEmpty == true) {
-                          return langProvider.translate("messageReq");
-                        }
+                        // if (value?.isEmpty == true) {
+                        //   return langProvider.translate("messageReq");
+                        // }
                         return null;
                       },
                     ),

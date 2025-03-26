@@ -317,12 +317,12 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                     .xSmallTextStyle,
                                               ),
                                               Text(
-                                                "Subject  : ${item.subject}",
+                                                "Subject  : ${item.subject ?? "Not Provided"}",
                                                 style: TextSizeHelper
                                                     .xSmallTextStyle,
                                               ),
                                               Text(
-                                                "Message : ${item.message}",
+                                                "Message : ${item.message ?? "Not Provided"}",
                                                 style: TextSizeHelper
                                                     .xSmallTextStyle,
                                               ),
@@ -331,11 +331,12 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                 const Divider(
                                                   thickness: 0.5,
                                                 ),
-                                                Text(
-                                                  "Prescriptions :-",
-                                                  style: TextSizeHelper
-                                                      .xSmallHeaderStyle,
-                                                ),
+                                                if (role != "manger")
+                                                  Text(
+                                                    "Prescriptions :-",
+                                                    style: TextSizeHelper
+                                                        .xSmallHeaderStyle,
+                                                  ),
                                                 for (Prescriptions p
                                                     in item.prescriptions ??
                                                         []) ...[
@@ -367,65 +368,67 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                     MainAxisAlignment.end,
                                                 children: [
                                                   if (item.status !=
-                                                          "completed" &&
-                                                      role != "manger") ...[
-                                                    PrimaryBtn(
-                                                      btnText: "Prescription",
-                                                      onTap: () {
-                                                        Provider.of<PrescriptionStateProvider>(
-                                                                context,
-                                                                listen: false)
-                                                            .emptyDiseaseListAfterSuccess();
+                                                      "completed") ...[
+                                                    if (role != "manager")
+                                                      PrimaryBtn(
+                                                        btnText: "Prescription",
+                                                        onTap: () {
+                                                          Provider.of<PrescriptionStateProvider>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .emptyDiseaseListAfterSuccess();
 
-                                                        /// this will wait for value if i have updated somthing in forward page
-                                                        Navigator.of(context)
-                                                            .push(MaterialPageRoute(
-                                                                builder: (context) => PrescriptionPage(
-                                                                    isCreating: item.status !=
-                                                                        "completed",
-                                                                    appointmentId:
-                                                                        item.id ??
-                                                                            0,
-                                                                    name: item.name ??
-                                                                        "",
-                                                                    pId: item.prescriptions?.isNotEmpty ==
-                                                                            true
-                                                                        ? (item.prescriptions?[0].id) ??
-                                                                            0
-                                                                        : -1,
-                                                                    previousPrescriptionDisease: item.status ==
-                                                                            "completed"
-                                                                        ? (item
-                                                                            .prescriptions?[0]
-                                                                            .medicines)
-                                                                        : null,
-                                                                    diseaseId: item.diseaseId ?? 0)))
-                                                            .then((value) {
-                                                          if (value == true) {
-                                                            doctorAppointmentProvider
-                                                                .pagingController
-                                                                .refresh();
-                                                          } else {
-                                                            print(
-                                                                "not updated");
-                                                          }
-                                                        });
-                                                      },
-                                                      height: 3.h,
-                                                      width: 25.w,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      backGroundColor:
-                                                          AppColors.whiteColor,
-                                                      borderColor:
-                                                          AppColors.brownColor,
-                                                      textStyle: TextSizeHelper
-                                                          .xSmallTextStyle
-                                                          .copyWith(
-                                                              color: AppColors
-                                                                  .brownColor),
-                                                    )
+                                                          /// this will wait for value if i have updated somthing in forward page
+                                                          Navigator.of(context)
+                                                              .push(MaterialPageRoute(
+                                                                  builder: (context) => PrescriptionPage(
+                                                                      isCreating:
+                                                                          item.status !=
+                                                                              "completed",
+                                                                      appointmentId:
+                                                                          item.id ??
+                                                                              0,
+                                                                      name:
+                                                                          item.name ??
+                                                                              "",
+                                                                      pId: item.prescriptions?.isNotEmpty == true
+                                                                          ? (item.prescriptions?[0].id) ??
+                                                                              0
+                                                                          : -1,
+                                                                      previousPrescriptionDisease: item.status ==
+                                                                              "completed"
+                                                                          ? (item
+                                                                              .prescriptions?[0]
+                                                                              .medicines)
+                                                                          : null,
+                                                                      diseaseId: item.diseaseId ?? 0)))
+                                                              .then((value) {
+                                                            if (value == true) {
+                                                              doctorAppointmentProvider
+                                                                  .pagingController
+                                                                  .refresh();
+                                                            } else {
+                                                              print(
+                                                                  "not updated");
+                                                            }
+                                                          });
+                                                        },
+                                                        height: 3.h,
+                                                        width: 25.w,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                        backGroundColor:
+                                                            AppColors
+                                                                .whiteColor,
+                                                        borderColor: AppColors
+                                                            .brownColor,
+                                                        textStyle: TextSizeHelper
+                                                            .xSmallTextStyle
+                                                            .copyWith(
+                                                                color: AppColors
+                                                                    .brownColor),
+                                                      )
                                                   ] else ...[
                                                     const Expanded(
                                                         child: SizedBox())
@@ -440,49 +443,52 @@ class _AdminAppointmentScreenState extends State<AdminAppointmentScreen>
                                                             EdgeInsets.all(0),
                                                         onPressed: () {
                                                           /// logic to delete the prescriptions
-                                                          if (item.prescriptions
-                                                                  ?.isNotEmpty ==
-                                                              true) {
-                                                            prescriptionService
-                                                                .deletePrescription(
-                                                                    context:
-                                                                        context,
-                                                                    prescriptionId:
-                                                                        item.prescriptions?[0].id ??
-                                                                            -1)
-                                                                .then(
-                                                                    (success) {
-                                                              if (success) {
-                                                                doctorAppointmentProvider
-                                                                    .pagingController
-                                                                    .refresh();
-                                                                WidgetHelper
-                                                                    .customSnackBar(
-                                                                  context:
-                                                                      context,
-                                                                  title:
-                                                                      "Successfully Deleted",
-                                                                );
-                                                              } else {
-                                                                WidgetHelper.customSnackBar(
-                                                                    context:
-                                                                        context,
-                                                                    title:
-                                                                        "Failed To Delete!!",
-                                                                    isError:
-                                                                        true);
-                                                              }
-                                                            });
-                                                          } else {
-                                                            WidgetHelper
-                                                                .customSnackBar(
-                                                                    context:
-                                                                        context,
-                                                                    title:
-                                                                        "Something is Not Right!!",
-                                                                    isError:
-                                                                        true);
-                                                          }
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) =>
+                                                                      AlertDialog(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        title: const Text(
+                                                                            "Are You Sure ?"),
+                                                                        content:
+                                                                            const Text("The Prescription Will Be Removed, You Can Add This Again."),
+                                                                        actions: [
+                                                                          PrimaryBtn(
+                                                                              width: 30.w,
+                                                                              btnText: "Cancel",
+                                                                              onTap: () {
+                                                                                pop(context);
+                                                                              }),
+                                                                          PrimaryBtn(
+                                                                              width: 30.w,
+                                                                              backGroundColor: AppColors.errorColor,
+                                                                              borderColor: AppColors.errorColor,
+                                                                              textStyle: TextSizeHelper.smallHeaderStyle.copyWith(color: AppColors.whiteColor),
+                                                                              btnText: "Delete",
+                                                                              onTap: () {
+                                                                                if (item.prescriptions?.isNotEmpty == true) {
+                                                                                  prescriptionService.deletePrescription(context: context, prescriptionId: item.prescriptions?[0].id ?? -1).then((success) {
+                                                                                    if (success) {
+                                                                                      doctorAppointmentProvider.pagingController.refresh();
+                                                                                      pop(context);
+                                                                                      WidgetHelper.customSnackBar(
+                                                                                        context: context,
+                                                                                        title: "Successfully Deleted",
+                                                                                      );
+                                                                                    } else {
+                                                                                      WidgetHelper.customSnackBar(context: context, title: "Failed To Delete!!", isError: true);
+                                                                                    }
+                                                                                    pop(context);
+                                                                                  });
+                                                                                } else {
+                                                                                  WidgetHelper.customSnackBar(context: context, title: "Something is Not Right!!", isError: true);
+                                                                                  pop(context);
+                                                                                }
+                                                                              })
+                                                                        ],
+                                                                      ));
                                                         },
                                                         icon: const Icon(
                                                           Icons.delete,
