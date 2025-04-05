@@ -19,6 +19,7 @@ import 'package:vaidraj/screens/splash_screen/splash.dart';
 import 'package:sizer/sizer.dart';
 import 'provider/delete_account_provider.dart';
 import 'utils/notification_helper/notification_helper.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,22 +58,24 @@ class MyApp extends StatelessWidget {
     return Consumer<LocalizationProvider>(
       builder: (context, utils, child) => Sizer(
         builder: (context, orientation, screenType) {
-          return MaterialApp(
-            title: 'Vaidraj App',
-            debugShowCheckedModeBanner: false,
-            locale: Locale(utils.currentLocale),
-            localizationsDelegates: const [
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('en', ''),
-            ],
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
+          return UpgradeAlert(
+            child: MaterialApp(
+              title: 'Vaidraj App',
+              debugShowCheckedModeBanner: false,
+              locale: Locale(utils.currentLocale),
+              localizationsDelegates: const [
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en', ''),
+              ],
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                useMaterial3: true,
+              ),
+              home: const SplashScreen(),
             ),
-            home: const SplashScreen(),
           );
         },
       ),
