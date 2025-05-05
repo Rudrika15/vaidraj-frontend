@@ -80,9 +80,12 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
   void initState() {
     super.initState();
     var provider = Provider.of<MedicalHistoryProvider>(context, listen: false);
-
-    provider.getMedicalHistory(
-      context: context,
+    Future.microtask(
+      () {
+        provider.getMedicalHistory(
+          context: context,
+        );
+      },
     );
 
     if (productModel == null) {
@@ -192,7 +195,14 @@ class _RenderMedicalHistoryState extends State<RenderMedicalHistory> {
                                             for (PatientWiseMedicines m
                                                 in pp.medicines ?? []) ...[
                                               Text(
-                                                "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
+                                                "Medicine  : ${productModel?.data?.data?.firstWhere(
+                                                      (e) =>
+                                                          e.id.toString() ==
+                                                          m.productId,
+                                                      orElse: () => Product(
+                                                          productName:
+                                                              "Not Found"),
+                                                    ).productName}",
                                                 style: TextSizeHelper
                                                     .xSmallTextStyle,
                                               ),
