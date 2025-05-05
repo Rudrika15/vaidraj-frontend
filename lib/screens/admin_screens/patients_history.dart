@@ -107,6 +107,7 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                 itemBuilder: (context, index) {
                   PatientHistoryInfo? item =
                       patientsHistoryModel?.data?.data?[index];
+
                   return CustomContainer(
                     margin:
                         const EdgeInsets.symmetric(vertical: AppSizes.size10),
@@ -185,7 +186,13 @@ class _RenderPatientsHistoryState extends State<PatientsHistoryScreen>
                                           thickness: 0.5,
                                         ),
                                         Text(
-                                          "Medicine  : ${productModel?.data?.data?.firstWhere((e) => e.id.toString() == m.productId).productName}",
+                                          "Medicine  : ${productModel?.data?.data?.firstWhere(
+                                                (e) =>
+                                                    e.id.toString() ==
+                                                    m.productId,
+                                                orElse: () => Product(
+                                                    productName: "Not Found"),
+                                              ).productName}",
                                           style: TextSizeHelper.xSmallTextStyle,
                                         ),
                                         Text(
