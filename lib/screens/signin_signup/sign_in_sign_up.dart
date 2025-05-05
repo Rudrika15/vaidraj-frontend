@@ -296,30 +296,26 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                     ),
                                     MethodHelper.heightBox(height: 1.h),
                                     CustomTextFieldWidget(
-                                      decoration:
-                                          MethodHelper.brownUnderLineBorder(
-                                              hintText: langProvider
-                                                  .translate("email"),
-                                              prefixIcon: Icons.email_outlined),
-                                      controller: emailController,
-                                      keyboardType: TextInputType.emailAddress,
-                                      maxLength: 40,
-                                      validator: (value) {
-                                        if (value?.isEmpty == true) {
-                                          return langProvider
-                                              .translate("email");
-                                        } else {
-                                          if (!RegExp(
-                                                  r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
-                                              .hasMatch(value ?? "")) {
+                                        decoration:
+                                            MethodHelper.brownUnderLineBorder(
+                                                hintText: langProvider
+                                                    .translate("email"),
+                                                prefixIcon:
+                                                    Icons.email_outlined),
+                                        controller: emailController,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        maxLength: 40,
+                                        validator: (value) {
+                                          if (emailController.text.isNotEmpty &&
+                                              !RegExp(r'^(?!.*[<>\";])([a-zA-Z0-9._%+-]+)@[a-zA-Z.-]+\.[a-zA-Z]{2,}$')
+                                                  .hasMatch(value ?? "")) {
                                             return langProvider
                                                 .translate("emailNotValid");
                                           }
-                                          ;
-                                        }
-                                        return null;
-                                      },
-                                    ),
+
+                                          return null;
+                                        }),
                                     GestureDetector(
                                       onTap: () async {
                                         dob = await showDatePicker(
@@ -551,7 +547,9 @@ class _SignInSignUpState extends State<SignInSignUp> with NavigateHelper {
                                 context: context,
                                 branchId: branchSelection,
                                 name: nameController.text,
-                                email: emailController.text,
+                                email: emailController.text.isEmpty
+                                    ? ""
+                                    : emailController.text,
                                 mobile: numberController.text,
                                 password: "123456",
                                 address: addressController.text,
